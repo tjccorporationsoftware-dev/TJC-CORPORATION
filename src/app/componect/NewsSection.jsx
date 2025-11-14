@@ -33,34 +33,6 @@ export default function NewsSlider() {
             date: "6 มี.ค. 2568",
             image: "/images/Screenshot 2025-06-03 101538.png",
         },
-        {
-            id: 5,
-            title: "ร่วมสนับสนุนการเเข่งขันกีฬา",
-            desc: "ระบบจัดส่งอัจฉริยะและบริการติดตั้งแบบ Smart Installation",
-            date: "12 พ.ย. 2025",
-            image: "/images/05.jpg",
-        },
-        {
-            id: 6,
-            title: "ร่วมสนับสนุนการเเข่งขันกีฬา",
-            desc: "ระบบจัดส่งอัจฉริยะและบริการติดตั้งแบบ Smart Installation",
-            date: "12 พ.ย. 2025",
-            image: "/images/05.jpg",
-        },
-        {
-            id: 7,
-            title: "ร่วมสนับสนุนการเเข่งขันกีฬา",
-            desc: "ระบบจัดส่งอัจฉริยะและบริการติดตั้งแบบ Smart Installation",
-            date: "12 พ.ย. 2025",
-            image: "/images/05.jpg",
-        },
-        {
-            id: 8,
-            title: "ร่วมสนับสนุนการเเข่งขันกีฬา",
-            desc: "ระบบจัดส่งอัจฉริยะและบริการติดตั้งแบบ Smart Installation",
-            date: "12 พ.ย. 2025",
-            image: "/images/05.jpg",
-        },
     ];
 
     const scroll = (direction) => {
@@ -75,7 +47,6 @@ export default function NewsSlider() {
         });
     };
 
-    // Auto Slide
     useEffect(() => {
         const interval = setInterval(() => {
             const el = containerRef.current;
@@ -110,11 +81,9 @@ export default function NewsSlider() {
                 {/* LEFT */}
                 <button
                     onClick={() => scroll("left")}
-                    className="
-                        absolute top-1/2 -translate-y-1/2 sm:flex hidden
-                        left-0 z-20 bg-white/90 backdrop-blur
-                        border border-gray-300 shadow p-3 rounded-full
-                    "
+                    className="absolute top-1/2 -translate-y-1/2 sm:flex hidden
+                               left-0 z-20 bg-white/90 backdrop-blur
+                               border border-gray-300 shadow p-3 rounded-full"
                 >
                     {"<"}
                 </button>
@@ -122,11 +91,9 @@ export default function NewsSlider() {
                 {/* RIGHT */}
                 <button
                     onClick={() => scroll("right")}
-                    className="
-                        absolute top-1/2 -translate-y-1/2 sm:flex hidden
-                        right-0 z-20 bg-white/90 backdrop-blur
-                        border border-gray-300 shadow p-3 rounded-full
-                    "
+                    className="absolute top-1/2 -translate-y-1/2 sm:flex hidden
+                               right-0 z-20 bg-white/90 backdrop-blur
+                               border border-gray-300 shadow p-3 rounded-full"
                 >
                     {">"}
                 </button>
@@ -147,21 +114,17 @@ export default function NewsSlider() {
                                 bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden
                                 transition-all duration-300
 
-                                /* --- Responsive Width --- */
-                                min-w-[95%] max-w-[95%]              /* xxs, xs */
-                                xs:min-w-[90%] xs:max-w-[90%]
-                                sm:min-w-[60%] sm:max-w-[60%]      /* sm = 640px */
-                                md:min-w-[50%] md:max-w-[50%]      /* md = tablet */
-                                lg:min-w-[33%] lg:max-w-[33%]      /* laptop */
-                                xl:min-w-[30%] xl:max-w-[30%]      /* large laptop */
-                                2xl:min-w-[25%] 2xl:max-w-[25%]    /* 2K */
-                                3xl:min-w-[22%] 3xl:max-w-[22%]    /* 1900px */
-                                4xl:min-w-[20%] 4xl:max-w-[20%]    /* 4K ultra wide */
+                                /* --- TRUE RESPONSIVE --- */
+                                min-w-[90%] max-w-[90%]        /* Mobile */
+                                sm:min-w-[50%] sm:max-w-[50%]  /* Tablet = 2 card */
+                                md:min-w-[45%] md:max-w-[45%]
+                                lg:min-w-[33%] lg:max-w-[33%]  /* Laptop = 3 card */
+                                xl:min-w-[25%] xl:max-w-[25%]  /* 2K/4K = 4 card */
                             "
                         >
                             <img
                                 src={n.image}
-                                className="w-full h-48 xs:h-52 sm:h-56 md:h-60 lg:h-52 xl:h-56 object-cover"
+                                className="w-full h-48 sm:h-52 md:h-56 object-cover"
                                 alt={n.title}
                             />
 
