@@ -55,28 +55,23 @@ export default function Hero() {
                         {/* Title */}
                         <motion.h1
                             className="
-                                font-extrabold leading-tight tracking-tight
-                                text-white drop-shadow-[0_5px_12px_rgba(0,0,0,0.9)]
-                                bg-linear-to-r from-white via-gray-200 to-[#d4af37]
-                                bg-clip-text
+    font-extrabold leading-tight tracking-tight
+    text-white drop-shadow-[0_5px_12px_rgba(0,0,0,0.9)]
+    bg-linear-to-r from-white via-gray-200 to-[#d4af37]
+    bg-clip-text
 
-                                text-[28px]
-                                xxs:text-[30px]
-                                xs:text-[34px]
-                                sm:text-[38px]
-                                md:text-[50px]
-                                lg:text-[56px]
-                                xl:text-[64px]
-                                2xl:text-[70px]
-                                3xl:text-[78px]
-                                4xl:text-[90px]
-                            "
+    text-[24px] sm:text-[28px] md:text-[34px] lg:text-[40px] xl:text-[44px] 2xl:text-[50px]
+    whitespace-nowrap
+    overflow-hidden
+    truncate
+  "
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
                         >
                             บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด
                         </motion.h1>
+
 
                         {/* Description */}
                         <motion.p

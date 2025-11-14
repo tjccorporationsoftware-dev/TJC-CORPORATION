@@ -42,10 +42,7 @@ export default function Services() {
   };
 
   return (
-    <section
-      id="services"
-      className="relative py-12 sm:py-16 md:py-20 bg-white overflow-hidden"
-    >
+    <section id="services" className="relative py-12 sm:py-16 md:py-20 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
 
         {/* Header */}
@@ -53,7 +50,7 @@ export default function Services() {
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: false, amount: 0.25 }}
+          viewport={{ once: true, amount: 0.25 }}
           className="text-center mb-10 md:mb-16"
         >
           <motion.h2
@@ -61,6 +58,7 @@ export default function Services() {
             initial={{ scale: 0.9 }}
             whileInView={{ scale: 1 }}
             transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
           >
             บริการของเรา
           </motion.h2>
@@ -74,6 +72,7 @@ export default function Services() {
             initial={{ width: 0 }}
             whileInView={{ width: 80 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
+            viewport={{ once: true }}
           />
         </motion.div>
 
@@ -82,7 +81,7 @@ export default function Services() {
           variants={container}
           initial="hidden"
           whileInView="show"
-          viewport={{ once: false, amount: 0.3 }}
+          viewport={{ once: true, amount: 0.3 }}
           className="
             grid gap-4 sm:gap-8
             grid-cols-1 
@@ -108,8 +107,8 @@ export default function Services() {
                 shadow-[5px_5px_5px_rgba(0,0,0,0.20)]
                 transition-all duration-300
 
-                max-w-[260px] w-full    /* ทำให้เล็กลงเฉพาะมือถือ */
-                sm:max-w-full           /* จอใหญ่กลับไปปกติ */
+                max-w-[260px] w-full
+                sm:max-w-full
               "
             >
               {/* Image */}

@@ -7,7 +7,7 @@ export default function Work() {
 
     const [isMobile, setIsMobile] = useState(false);
 
-    // ✔ ตรวจขนาดจอแบบปลอดภัย (ไม่มี window error)
+    // ตรวจขนาดจอแบบปลอดภัย
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth < 640);
@@ -18,7 +18,7 @@ export default function Work() {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    // ✔ ใช้ useMemo เพื่อลดการคำนวณทุก render → animation เนียนขึ้น
+    // ใช้ useMemo เพื่อลดการคำนวณทุก render → animation เนียนขึ้น
     const animationConfig = useMemo(() => {
         return {
             distance: isMobile ? 80 : 120,
@@ -62,7 +62,6 @@ export default function Work() {
         },
     };
 
-    // ✔ อนิเมชันแบบลื่นขึ้น ใช้ค่า config ที่คงที่ (ไม่คำนวณซ้ำ)
     const getItemVariant = (index) => ({
         hidden: {
             opacity: 0,
@@ -92,13 +91,12 @@ export default function Work() {
             />
 
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-
                 {/* Header */}
                 <motion.div
                     initial={shouldReduceMotion ? {} : { opacity: 0, y: 50 }}
                     whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
                     transition={{ duration: 1, ease: "easeOut" }}
-                    viewport={{ once: false, amount: 0.4 }}
+                    viewport={{ once: true, amount: 0.4 }} // <-- เล่นแค่ครั้งเดียว
                     className="text-center mb-12"
                 >
                     <h2
@@ -108,7 +106,8 @@ export default function Work() {
                         สินค้าและโซลูชันของเรา
                     </h2>
                     <p className="mt-3 text-gray-600 max-w-3xl mx-auto">
-                        เราเลือกสรรสินค้าที่เน้นคุณภาพ ทนทาน และตอบโจทย์การใช้งานจริงสำหรับองค์กร สถาบันการศึกษา และธุรกิจ
+                        เราเลือกสรรสินค้าที่เน้นคุณภาพ ทนทาน และตอบโจทย์การใช้งานจริงสำหรับองค์กร
+                        สถาบันการศึกษา และธุรกิจ
                     </p>
                     <div className="mt-6 flex justify-center">
                         <span className="inline-block h-1 w-28 rounded-full bg-linear-to-r from-yellow-400 to-yellow-500" />
@@ -119,7 +118,7 @@ export default function Work() {
                 <motion.div
                     initial="hidden"
                     whileInView="show"
-                    viewport={{ once: false, amount: 0.3 }}
+                    viewport={{ once: true, amount: 0.3 }} // <-- เล่นแค่ครั้งเดียว
                     variants={container}
                     className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10"
                 >
@@ -144,7 +143,6 @@ export default function Work() {
                             />
 
                             <div className="relative z-10 flex flex-col h-full">
-
                                 {/* Image */}
                                 <div className="h-40 sm:h-44 md:h-48 overflow-hidden bg-gray-50">
                                     <motion.img
@@ -179,9 +177,7 @@ export default function Work() {
                                                 →
                                             </span>
                                         </a>
-                                        <div className="text-xs text-gray-400">
-                                            SKU: {1000 + p.id}
-                                        </div>
+                                        <div className="text-xs text-gray-400">SKU: {1000 + p.id}</div>
                                     </div>
                                 </div>
                             </div>

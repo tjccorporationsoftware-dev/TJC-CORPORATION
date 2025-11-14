@@ -30,11 +30,10 @@ export default function CertificationsSection() {
     return (
         <>
             {/* SECTION */}
-
             <motion.section
                 initial="hidden"
                 whileInView="show"
-                viewport={{ amount: 0.25 }}
+                viewport={{ once: true, amount: 0.2 }}   
                 variants={fadeUp}
                 className="bg-linear-to-b from-gray-50 via-white to-gray-100
                 py-14 md:py-20 border-t border-gray-200"
@@ -68,17 +67,16 @@ export default function CertificationsSection() {
                             <motion.div
                                 key={index}
                                 variants={fadeUp}
-                                transition={{ delay: index * 0.15 }}
+                                transition={{ delay: index * 0.18 }}
                                 whileHover={{
-                                    scale: 1.03,
+                                    scale: 1.04,
                                     boxShadow: "8px 8px 0px rgba(212,175,55,0.35)",
-                                    transition: { duration: 0.3 },
+                                    transition: { duration: 0.28 },
                                 }}
                                 className="
                                     bg-white rounded-2xl border border-gray-200
                                     shadow-[5px_5px_0px_rgba(180,180,180,0.25)]
-                                    hover:shadow-[8px_8px_0px_rgba(212,175,55,0.35)]
-                                    p-5 sm:p-6 lg:p-7 transition-all duration-500
+                                    p-5 sm:p-6 lg:p-7 transition-all duration-300
                                     cursor-pointer
                                 "
                                 onClick={() => setSelectedImage(cert.img)}
@@ -87,8 +85,10 @@ export default function CertificationsSection() {
                                     src={cert.img}
                                     alt={cert.title}
                                     className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-5 object-contain"
-                                    whileInView={{ scale: [0.92, 1] }}
-                                    transition={{ duration: 0.45 }}
+                                    initial={{ scale: 0.9, opacity: 0 }}
+                                    whileInView={{ scale: 1, opacity: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5 }}
                                 />
 
                                 <h3 className="text-lg sm:text-xl font-semibold text-yellow-700 mb-2">
@@ -120,7 +120,7 @@ export default function CertificationsSection() {
                             className="max-w-[90vw] max-h-[85vh] rounded-lg shadow-2xl"
                             initial={{ scale: 0.7, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.85, opacity: 0 }}
+                            exit={{ scale: 0.8, opacity: 0 }}
                             transition={{ duration: 0.25 }}
                         />
                     </motion.div>

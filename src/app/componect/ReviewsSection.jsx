@@ -36,7 +36,7 @@ export default function ReviewsSection() {
             initial="hidden"
             whileInView="show"
             variants={fadeUp}
-            viewport={{ once: false, amount: 0.3 }}
+            viewport={{ once: true, amount: 0.3 }} // <-- เล่นครั้งเดียว
             className="bg-linear-to-b from-white via-gray-50 to-white py-20 border-t border-gray-200"
         >
             <div className="max-w-7xl mx-auto px-6 text-center">

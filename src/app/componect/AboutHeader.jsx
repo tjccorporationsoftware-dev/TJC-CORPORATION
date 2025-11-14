@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
 
 export default function AboutHeader() {
-  const [isReadyToHover, setIsReadyToHover] = useState(false); // <-- เพิ่ม
+  const [isReadyToHover, setIsReadyToHover] = useState(false);
 
   const items = [
     {
@@ -17,6 +17,7 @@ export default function AboutHeader() {
     },
   ];
 
+  // ------- Detect screen width -------
   const useScreen = (width) => {
     const [isMatch, setIsMatch] = useState(false);
     useEffect(() => {
@@ -33,12 +34,13 @@ export default function AboutHeader() {
 
   const isMobile = useScreen(640);
 
+  // ------- Animations -------
   const fadeUp = {
     hidden: { opacity: 0, y: isMobile ? 50 : 20 },
     show: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.6, ease: "easeOut" },
+      transition: { duration: 0.7, ease: "easeOut" },
     },
   };
 
@@ -47,19 +49,18 @@ export default function AboutHeader() {
     show: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.65, ease: "easeOut" },
+      transition: { duration: 0.75, ease: "easeOut" },
     },
   };
 
   return (
     <div id="about" className="bg-white">
-
       {/* ---------------- HEADER ---------------- */}
       <motion.section
         variants={fadeUp}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: false, amount: 0.25 }}
+        viewport={{ once: true, amount: 0.25 }} // ← ป้องกันกระพริบ
         className="
           relative
           py-10 sm:py-12 md:py-14 lg:py-16
@@ -130,8 +131,8 @@ export default function AboutHeader() {
             variants={cardAnim}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: false, amount: 0.3 }}
-            onAnimationComplete={() => setIsReadyToHover(true)} // <-- เปิด hover หลังอนิเมชันจบ
+            viewport={{ once: true, amount: 0.3 }} // ← ป้องกันกระพริบ!
+            onAnimationComplete={() => setIsReadyToHover(true)}
             whileHover={
               isReadyToHover
                 ? {

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function TeamSection() {
   const [previewImg, setPreviewImg] = useState(null);
-  const [isReadyToHover, setIsReadyToHover] = useState(false); // <-- เพิ่ม
+  const [isReadyToHover, setIsReadyToHover] = useState(false);
 
   const members = [
     { name: "นายสนั่น สุตัญจั้งใจ", role: "ประธานบริษัท", img: "/images/executive01.jpg" },
@@ -12,29 +12,45 @@ export default function TeamSection() {
     { name: "นายอรรถสิทธิ์ สุตัญตั้งใจ", role: "ประธานเจ้าหน้าที่บริหาร", img: "/images/executive03.jpg" },
   ];
 
+  // ⭐ Animation แบบไม่ re-trigger จะทำให้ไม่กระพริบ
+  const fadeUp = {
+    hidden: { opacity: 0, y: 50 },
+    show: { opacity: 1, y: 0 }
+  };
+
+  const slideLeft = {
+    hidden: { opacity: 0, x: -70 },
+    show: { opacity: 1, x: 0 }
+  };
+
+  const slideRight = {
+    hidden: { opacity: 0, x: 70 },
+    show: { opacity: 1, x: 0 }
+  };
+
   return (
     <>
-      {/* =================== MAIN SECTION =================== */}
       <motion.section
-        initial={{ opacity: 0, y: 70 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        variants={fadeUp}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.9, ease: "easeOut" }}
-        viewport={{ once: false, amount: 0.25 }}
         className="bg-linear-to-br from-white via-gray-50 to-gray-100 py-14 sm:py-18 md:py-20 lg:py-24 border-t border-gray-200"
       >
         <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-12 md:gap-14 items-center">
 
-          {/* 📸 Left Image */}
+          {/* LEFT IMAGE */}
           <motion.div
-            initial={{ opacity: 0, x: -90 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.0, ease: "easeOut" }}
-            viewport={{ once: false, amount: 0.25 }}
+            variants={slideLeft}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
             className="relative group rounded-3xl overflow-hidden shadow-[10px_10px_30px_rgba(0,0,0,0.08)] border border-gray-200"
           >
-            <motion.img
+            <img
               src="/images/tjc.jpg"
-              alt="Company Building"
               className="w-full h-[280px] sm:h-[340px] md:h-[420px] lg:h-[480px] object-cover rounded-3xl transition-transform duration-1000 group-hover:scale-110 cursor-pointer"
               onClick={() => setPreviewImg("/images/tjc.jpg")}
             />
@@ -42,12 +58,13 @@ export default function TeamSection() {
             <div className="absolute inset-0 border-[3px] border-yellow-500/40 rounded-3xl" />
           </motion.div>
 
-          {/* 👨‍💼 Right Side */}
+          {/* RIGHT TEXT */}
           <motion.div
-            initial={{ opacity: 0, x: 90 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1.0, ease: "easeOut" }}
-            viewport={{ once: false, amount: 0.25 }}
+            variants={slideRight}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            transition={{ duration: 0.9, ease: "easeOut" }}
             className="text-center md:text-left"
           >
             <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-800 mb-5 tracking-wide">
@@ -58,29 +75,26 @@ export default function TeamSection() {
               ทีมผู้บริหารของเราประกอบด้วยผู้เชี่ยวชาญในหลากหลายสาขา
               ทั้งเทคโนโลยี การตลาด และการบริหารจัดการ
               มุ่งมั่นสร้างองค์กรที่เติบโตอย่างมั่นคงและยั่งยืน
-              ด้วยความเป็นมืออาชีพและจิตวิญญาณแห่งนวัตกรรม
             </p>
 
-            {/* สมาชิก */}
+            {/* MEMBERS */}
             <div className="space-y-5 sm:space-y-6">
               {members.map((m, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: 40 }}
-                  whileInView={{
-                    opacity: 1,
-                    x: 0,
-                    transition: { duration: 0.7 + i * 0.15, ease: "easeOut" },
-                  }}
-                  viewport={{ once: true, amount: 0.25 }}
-                  onAnimationComplete={() => setIsReadyToHover(true)} // <-- อนุญาต hover เมื่ออนิเมชันจบ
+                  variants={fadeUp}
+                  initial="hidden"
+                  whileInView="show"
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6 + i * 0.15 }}
+                  onAnimationComplete={() => setIsReadyToHover(true)}
                   whileHover={
                     isReadyToHover
                       ? {
                         scale: 1.03,
                         boxShadow: "0 6px 20px rgba(212,175,55,0.28)",
                         backgroundColor: "rgba(255,255,255,0.95)",
-                        transition: { duration: 0.28 },
+                        transition: { duration: 0.25 },
                       }
                       : {}
                   }
@@ -96,20 +110,11 @@ export default function TeamSection() {
                 >
                   <img
                     src={m.img}
-                    alt={m.name}
-                    className="
-                      w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 
-                      rounded-full object-cover object-top
-                      border-2 border-yellow-500 shadow-md
-                    "
+                    className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full object-top object-cover border-2 border-yellow-500 shadow-md"
                   />
                   <div className="text-left">
-                    <h4 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800">
-                      {m.name}
-                    </h4>
-                    <p className="text-yellow-700 text-xs sm:text-sm md:text-base font-medium">
-                      {m.role}
-                    </p>
+                    <h4 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800">{m.name}</h4>
+                    <p className="text-yellow-700 text-xs sm:text-sm md:text-base font-medium">{m.role}</p>
                   </div>
                 </motion.div>
               ))}
@@ -118,11 +123,11 @@ export default function TeamSection() {
         </div>
       </motion.section>
 
-      {/* =================== LIGHTBOX MODAL =================== */}
+      {/* LIGHTBOX */}
       <AnimatePresence>
         {previewImg && (
           <motion.div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-999"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-9999"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
