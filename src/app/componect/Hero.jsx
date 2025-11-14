@@ -15,7 +15,7 @@ export default function Hero() {
 
     return (
         <div id="hero" className="" >
-            <section className="relative overflow-hidden h-[90vh] flex items-center text-white">
+            <section className="relative overflow-hidden h-[92vh] flex items-center text-white">
                 {/* 🎥 วิดีโอพื้นหลัง */}
                 <video
                     ref={videoRef}
