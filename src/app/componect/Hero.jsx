@@ -14,89 +14,137 @@ export default function Hero() {
     }, []);
 
     return (
-        <div id="hero">
-            <section className="relative overflow-hidden min-h-screen md:h-[92vh] flex items-center text-white">
+        <div id="hero" className=" mt-16 " >
+            <section className="
+                relative overflow-hidden 
+                min-h-screen 
+                md:min-h-[92vh] 
+                flex items-center 
+                text-white
+            ">
 
-                {/* 🎥 วิดีโอพื้นหลัง */}
+                {/* 🎥 Background Video */}
                 <video
                     ref={videoRef}
                     autoPlay
                     loop
                     muted
                     playsInline
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full object-cover object-center"
                 >
                     <source src="/video/1112.mp4" type="video/mp4" />
                 </video>
 
-                {/* 🌫️ Overlay */}
-                <div className="absolute inset-0 bg-linear-to-t from-gray-900/90 via-gray-800/60 to-transparent"></div>
+                {/* Overlay */}
+                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/50 to-transparent"></div>
 
-                {/* ✨ Content */}
-                <div className="relative z-10 w-full px-6 sm:px-10 md:px-12 lg:ml-[60px]">
+                {/* Content */}
+                <div className="
+                    relative z-10 w-full 
+                    px-4 xxs:px-5 xs:px-6 sm:px-10 md:px-12 
+                    lg:ml-[60px] 
+                    mt-20 sm:mt-24 md:mt-20
+                ">
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1.2, ease: "easeOut" }}
+                        transition={{ duration: 1.2 }}
                         className="max-w-2xl mx-auto md:mx-0 text-center md:text-left"
                     >
 
-                        {/* 🏢 หัวข้อหลัก */}
+                        {/* Title */}
                         <motion.h1
-                            className="text-[32px] sm:text-[38px] md:text-[50px] lg:text-[56px] 
-                                       font-extrabold leading-tight tracking-tight 
-                                       text-white drop-shadow-[0_5px_12px_rgba(0,0,0,0.9)]
-                                       bg-linear-to-r from-white via-[#f8f8f8] to-[#d4af37]
-                                       bg-clip-text"
+                            className="
+                                font-extrabold leading-tight tracking-tight
+                                text-white drop-shadow-[0_5px_12px_rgba(0,0,0,0.9)]
+                                bg-linear-to-r from-white via-gray-200 to-[#d4af37]
+                                bg-clip-text
+
+                                text-[28px]
+                                xxs:text-[30px]
+                                xs:text-[34px]
+                                sm:text-[38px]
+                                md:text-[50px]
+                                lg:text-[56px]
+                                xl:text-[64px]
+                                2xl:text-[70px]
+                                3xl:text-[78px]
+                                4xl:text-[90px]
+                            "
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2, duration: 1 }}
+                            transition={{ delay: 0.2 }}
                         >
                             บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด
                         </motion.h1>
 
-                        {/* 📝 คำอธิบาย */}
+                        {/* Description */}
                         <motion.p
-                            className="mt-5 text-base sm:text-lg md:text-xl 
-                                       max-w-[90%] md:max-w-[600px] mx-auto md:mx-0 
-                                       text-gray-100 leading-relaxed"
+                            className="
+                                mt-4 sm:mt-5 
+                                text-[14px] xxs:text-[15px] xs:text-[16px] 
+                                sm:text-[17px] md:text-[19px] lg:text-[20px]
+                                2xl:text-[22px] 3xl:text-[24px]
+
+                                max-w-[95%] md:max-w-[620px]
+                                mx-auto md:mx-0
+                                text-gray-100 leading-relaxed
+                            "
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 0.6, duration: 1 }}
+                            transition={{ delay: 0.6 }}
                         >
-                            ผู้ให้บริการขาย ติดตั้ง และจัดส่งอุปกรณ์คอมพิวเตอร์ อุปกรณ์สำนักงานครบชุด
-                            รวมถึงครุภัณฑ์ทางการศึกษา ด้วยมาตรฐานคุณภาพและบริการที่เชื่อถือได้
+                            ผู้ให้บริการขาย ติดตั้ง และจัดส่งอุปกรณ์คอมพิวเตอร์และสำนักงานครบวงจร
+                            รวมถึงครุภัณฑ์ทางการศึกษา ด้วยมาตรฐานคุณภาพและบริการระดับมืออาชีพ
                         </motion.p>
 
-                        {/* 🔸 สถิติ */}
+                        {/* Stats */}
                         <motion.div
-                            className="mt-10 border-t border-gray-400/40 pt-8"
+                            className="mt-10 border-t border-gray-300/40 pt-8"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 1.3, duration: 1 }}
+                            transition={{ delay: 1.3 }}
                         >
-                            <div className="
-                                grid 
-                                grid-cols-1 
-                                sm:grid-cols-2 
-                                lg:grid-cols-3 
-                                gap-6 
-                                text-center
-                            ">
-                                <div className="p-5 rounded-xl bg-linear-to-br from-gray-800/70 to-gray-700/40 shadow-lg backdrop-blur-md">
-                                    <h3 className="text-4xl font-bold text-[#d4af37]">100+</h3>
-                                    <p className="text-sm text-white">ลูกค้าที่ไว้วางใจ</p>
-                                </div>
-
-                                <div className="p-5 rounded-xl bg-linear-to-br from-gray-800/70 to-gray-700/40 shadow-lg backdrop-blur-md">
-                                    <h3 className="text-4xl font-bold text-[#d4af37]">85+</h3>
-                                    <p className="text-sm text-white">โปรเจกต์สำเร็จ</p>
-                                </div>
-
-                                <div className="p-5 rounded-xl bg-linear-to-br from-gray-800/70 to-gray-700/40 shadow-lg backdrop-blur-md">
-                                    <h3 className="text-4xl font-bold text-[#d4af37]">10 ปี</h3>
-                                    <p className="text-sm text-white">ประสบการณ์ในวงการ</p>
-                                </div>
+                            <div
+                                className="
+                                    grid 
+                                    grid-cols-1 
+                                    xxs:grid-cols-2 
+                                    sm:grid-cols-2 
+                                    lg:grid-cols-3 
+                                    gap-6 
+                                    text-center
+                                "
+                            >
+                                {[
+                                    { num: "100+", label: "ลูกค้าที่ไว้วางใจ" },
+                                    { num: "85+", label: "โปรเจกต์สำเร็จ" },
+                                    { num: "10 ปี", label: "ประสบการณ์ในวงการ" },
+                                ].map((item, index) => (
+                                    <div
+                                        key={index}
+                                        className="
+                                            p-5 rounded-xl 
+                                            bg-linear-to-br from-gray-800/70 to-gray-700/40 
+                                            shadow-lg backdrop-blur-md
+                                        "
+                                    >
+                                        <h3 className="
+                                            font-bold text-[#d4af37]
+                                            text-[32px] sm:text-[38px] md:text-[42px] 
+                                            lg:text-[46px] 2xl:text-[52px] 3xl:text-[60px]
+                                        ">
+                                            {item.num}
+                                        </h3>
+                                        <p className="
+                                            text-white 
+                                            text-[12px] xxs:text-[13px] sm:text-[14px] 
+                                            md:text-[15px] lg:text-[16px]
+                                        ">
+                                            {item.label}
+                                        </p>
+                                    </div>
+                                ))}
                             </div>
                         </motion.div>
                     </motion.div>

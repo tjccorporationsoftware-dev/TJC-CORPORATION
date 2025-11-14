@@ -7,6 +7,7 @@ module.exports = {
   ],
   theme: {
     extend: {
+      // 🎨 Colors
       colors: {
         gold: {
           100: "#FFF8E1",
@@ -32,10 +33,26 @@ module.exports = {
           900: '#111827',
         },
       },
+
+      // 📱 Breakpoints แบบ Ultra-Responsive
+      screens: {
+        xxs: "360px",   // มือถือเล็กมาก เช่น Galaxy A01, iPhone 5 SE
+        xs: "420px",    // มือถือทั่วไป 4.7"–5.0"
+        sm: "640px",    // มือถือใหญ่
+        md: "768px",    // Tablet / iPad Mini
+        lg: "1024px",   // iPad 11" / Notebook 13"
+        xl: "1280px",   // Laptop 15"
+        "2xl": "1536px",
+        "3xl": "1900px", // 2K / Ultrawide
+        "4xl": "2200px", // 4K + Super Ultrawide
+      },
     },
   },
+
+  // 🧩 Core plugins
   corePlugins: {
     preflight: true,
   },
+
   plugins: [],
 };

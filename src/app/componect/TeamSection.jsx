@@ -116,7 +116,7 @@ export default function TeamSection() {
       <AnimatePresence>
         {previewImg && (
           <motion.div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-[999]"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-999"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
