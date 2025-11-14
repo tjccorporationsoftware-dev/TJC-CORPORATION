@@ -112,9 +112,9 @@ export default function Hero() {
                                 "
                             >
                                 {[
-                                    { num: "100+", label: "ลูกค้าที่ไว้วางใจ" },
-                                    { num: "85+", label: "โปรเจกต์สำเร็จ" },
-                                    { num: "10 ปี", label: "ประสบการณ์ในวงการ" },
+                                    { num: "999+", label: "ลูกค้าที่ไว้วางใจ" },
+                                    { num: "999+", label: "โปรเจกต์สำเร็จ" },
+                                    { num: "10+ ปี", label: "ประสบการณ์ในวงการ" },
                                 ].map((item, index) => (
                                     <div
                                         key={index}
@@ -128,10 +128,10 @@ export default function Hero() {
                                             className="
                                                 font-bold text-[#d4af37]
                                                 text-[30px]
-                                                sm:text-[36px]
-                                                md:text-[42px]
-                                                lg:text-[46px]
-                                                xl:text-[52px]
+                                                sm:text-[24px]
+                                                md:text-[28px]
+                                                lg:text-[32px]
+                                                xl:text-[36px]
                                             "
                                         >
                                             {item.num}
