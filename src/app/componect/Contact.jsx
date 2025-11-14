@@ -69,8 +69,8 @@ export default function Contact() {
                         </div>
 
                         {/* HR Phone */}
-                        <Link href="0807382155" >
-                            <div className="flex items-start gap-4">
+                        <Link href="tel:0807382155">
+                            <div className="flex items-start gap-4 cursor-pointer">
                                 <i className="bx bx-phone-call text-[#bfa334] text-2xl mt-1"></i>
                                 <div>
                                     <p className="text-sm text-gray-500">เบอร์กลางบริษัท HR</p>
@@ -81,10 +81,10 @@ export default function Contact() {
                             </div>
                         </Link>
 
-                        {/* Line Official → ปรับเป็นโทนทองให้เข้ากัน */}
-                        <Link href="https://line.me/ti/p/dGpNTpUUdq" >
-                            <div className="flex items-start gap-4">
-                                <img src="images/line2.png" alt="" className=" w-8 " />
+                        {/* Line Official */}
+                        <Link href="https://line.me/ti/p/dGpNTpUUdq" target="_blank">
+                            <div className="flex items-start gap-4 cursor-pointer">
+                                <img src="/images/line2.png" alt="Line OA" className="w-8" />
                                 <div>
                                     <p className="text-sm text-gray-500">Line Official</p>
                                     <p className="font-semibold hover:text-[#bfa334] transition">
@@ -93,6 +93,7 @@ export default function Contact() {
                                 </div>
                             </div>
                         </Link>
+
 
                         {/* Address */}
                         <div className="flex items-start gap-4">
