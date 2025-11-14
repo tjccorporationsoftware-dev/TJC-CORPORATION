@@ -9,7 +9,7 @@ export default function AboutHeader() {
   const items = [
     {
       title: "วิสัยทัศน์",
-      desc: "เป็นบรฺิษัทชั้นนำด้านเทคโนโลยีสารสนเทศและสื่อสาร สินค้าไอที และจัดจำหน่ายวัสดุครุภัณฑ์สำนักงานครุภัณฑ์ทางการศึกษาที่ดีที่สุดในประเทศไทยและสร้างความพึงพอใจให้ลูกค้าสูงสุด",
+      desc: "เป็นบริษัทชั้นนำด้านเทคโนโลยีสารสนเทศและสื่อสาร สินค้าไอที และจัดจำหน่ายวัสดุครุภัณฑ์สำนักงานครุภัณฑ์ทางการศึกษาที่ดีที่สุดในประเทศไทยและสร้างความพึงพอใจให้ลูกค้าสูงสุด",
     },
     {
       title: "พันธกิจ",
@@ -23,12 +23,10 @@ export default function AboutHeader() {
     useEffect(() => {
       const media = window.matchMedia(`(max-width: ${width}px)`);
       const listener = () => setIsMatch(media.matches);
-
       listener();
       media.addEventListener("change", listener);
       return () => media.removeEventListener("change", listener);
     }, [width]);
-
     return isMatch;
   };
 
@@ -60,7 +58,7 @@ export default function AboutHeader() {
         variants={fadeUp}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, amount: 0.25 }} // ← ป้องกันกระพริบ
+        viewport={{ once: true, amount: 0.25 }}
         className="
           relative
           py-10 sm:py-12 md:py-14 lg:py-16
@@ -87,16 +85,6 @@ export default function AboutHeader() {
         >
           เกี่ยวกับบริษัท
         </motion.h2>
-
-        <motion.div
-          variants={fadeUp}
-          className="
-            h-[3px]
-            bg-linear-to-r from-gray-300 via-yellow-500 to-gray-300
-            mx-auto w-20 sm:w-[100px] md:w-[120px]
-            mt-3 rounded-full
-          "
-        />
 
         <motion.p
           variants={fadeUp}
@@ -131,7 +119,7 @@ export default function AboutHeader() {
             variants={cardAnim}
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, amount: 0.3 }} // ← ป้องกันกระพริบ!
+            viewport={{ once: true, amount: 0.3 }}
             onAnimationComplete={() => setIsReadyToHover(true)}
             whileHover={
               isReadyToHover

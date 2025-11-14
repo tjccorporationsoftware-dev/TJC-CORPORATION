@@ -18,12 +18,12 @@ export default function CertificationsSection() {
         {
             title: "ISO 14001:2015",
             desc: "มาตรฐานระบบบริหารสิ่งแวดล้อมสากล ช่วยลดผลกระทบต่อสิ่งแวดล้อมและพัฒนาความยั่งยืนทางธุรกิจ",
-            img: "/images/รับรอง01.png",
+            img: "/images/06.png",
         },
         {
             title: "ISO 9001:2015",
             desc: "มาตรฐานระบบบริหารคุณภาพสากล เพื่อให้ผลิตภัณฑ์และบริการได้คุณภาพและความพึงพอใจสูงสุด",
-            img: "/images/รับรอง02.png",
+            img: "/images/07.png",
         },
     ];
 
@@ -50,7 +50,7 @@ export default function CertificationsSection() {
 
                     <motion.p
                         variants={fadeUp}
-                        className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto mb-10 md:mb-14"
+                        className="text-base sm:text-lg text-gray-600 max-w-3xl mx-auto mb-10 md:mb-14"
                     >
                         เราดำเนินธุรกิจตามมาตรฐานระดับสากล เพื่อให้ลูกค้าได้รับคุณภาพที่ดีที่สุด
                         พร้อมความเชื่อถือได้สูงสุด

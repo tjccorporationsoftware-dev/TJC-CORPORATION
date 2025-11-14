@@ -42,7 +42,7 @@ export default function Services() {
   };
 
   return (
-    <section id="services" className="relative py-12 sm:py-16 md:py-20 bg-white overflow-hidden">
+    <section id="services" className="relative py-12 sm:py-16 md:py-20 bg-linear-to-b from-gray-50 to-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
 
         {/* Header */}
@@ -54,7 +54,7 @@ export default function Services() {
           className="text-center mb-10 md:mb-16"
         >
           <motion.h2
-            className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-3"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-3 sm:mb-4"
             initial={{ scale: 0.9 }}
             whileInView={{ scale: 1 }}
             transition={{ duration: 0.5 }}
@@ -63,17 +63,9 @@ export default function Services() {
             บริการของเรา
           </motion.h2>
 
-          <p className="text-sm sm:text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
             ครบวงจรด้านอุปกรณ์คอมพิวเตอร์ ตั้งแต่จำหน่าย ติดตั้ง ไปจนถึงบริการหลังการขาย
           </p>
-
-          <motion.div
-            className="w-14 sm:w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"
-            initial={{ width: 0 }}
-            whileInView={{ width: 80 }}
-            transition={{ duration: 0.8, ease: "easeInOut" }}
-            viewport={{ once: true }}
-          />
         </motion.div>
 
         {/* Grid */}
@@ -83,11 +75,10 @@ export default function Services() {
           whileInView="show"
           viewport={{ once: true, amount: 0.3 }}
           className="
-            grid gap-4 sm:gap-8
+            grid gap-6 sm:gap-8
             grid-cols-1 
-            md:grid-cols-2 
+            sm:grid-cols-2 
             lg:grid-cols-4
-            place-items-center
           "
         >
           {services.map((service) => (
@@ -95,50 +86,75 @@ export default function Services() {
               key={service.title}
               variants={item}
               whileHover={{
-                y: -6,
-                boxShadow:
-                  "6px 6px 0px rgba(0,0,0,0.25), -3px -3px 0px rgba(255,255,255,0.5)",
+                y: -12,
+                scale: 1.03,
               }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
               className="
-                group bg-white rounded-2xl
-                p-4 sm:p-6 lg:p-7
+                group 
+                bg-white
+                rounded-2xl
+                p-6 sm:p-8
                 border-l-4 border-b-4 border-yellow-500
-                shadow-[5px_5px_5px_rgba(0,0,0,0.20)]
-                transition-all duration-300
-
-                max-w-[260px] w-full
-                sm:max-w-full
+                shadow-[-3px_3px_0px_0px_rgba(234,179,8,0.25)]
+                hover:shadow-[-5px_5px_0px_0px_rgba(234,179,8,0.4)]
+                transition-all duration-400
+                relative
+                overflow-hidden
+                h-full
+                flex flex-col
+                
+                before:absolute before:inset-0 before:rounded-2xl
+                before:border-2 before:border-gray-100
+                before:pointer-events-none
+                before:z-0
+                
+                after:absolute after:top-0 after:right-0 
+                after:w-32 after:h-32 
+                after:bg-linear-to-br after:from-yellow-400/10 after:to-transparent
+                after:rounded-full after:blur-2xl
+                after:-translate-y-1/2 after:translate-x-1/2
+                after:group-hover:scale-150
+                after:transition-transform after:duration-500
               "
             >
-              {/* Image */}
+              {/* Image Container - Fixed Height */}
               <motion.div
-                whileHover={{ scale: 1.07, rotate: 1 }}
+                whileHover={{ scale: 1.05, rotate: -2 }}
                 transition={{ duration: 0.3 }}
-                className="mb-3 sm:mb-6 flex justify-center"
+                className="mb-6 flex justify-center items-center relative z-10 h-40"
               >
                 <img
                   src={service.images}
                   alt={service.title}
                   className="
-                    w-20 h-20
-                    sm:w-32 sm:h-32 
-                    lg:w-40 lg:h-40 
+                    w-32 h-32
                     object-contain 
-                    drop-shadow-[2px_3px_3px_rgba(0,0,0,0.3)]
+                    drop-shadow-[3px_4px_6px_rgba(0,0,0,0.2)]
+                    group-hover:drop-shadow-[4px_6px_8px_rgba(234,179,8,0.3)]
+                    transition-all duration-300
                   "
                 />
               </motion.div>
 
-              {/* Text */}
-              <div className="text-center">
-                <h3 className="text-base sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2 group-hover:text-yellow-600 transition">
+              {/* Text Container - Flexible Height */}
+              <div className="text-center relative z-10 flex-1 flex flex-col">
+                <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors duration-300">
                   {service.title}
                 </h3>
 
-                <p className="text-xs sm:text-base text-gray-600 leading-relaxed mb-2 sm:mb-3">
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed flex-1">
                   {service.desc}
                 </p>
+
+                {/* Decorative line */}
+                <motion.div 
+                  className="w-16 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"
+                  initial={{ width: 0 }}
+                  whileInView={{ width: 64 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  viewport={{ once: true }}
+                />
               </div>
             </motion.div>
           ))}

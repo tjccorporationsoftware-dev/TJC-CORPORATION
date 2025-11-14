@@ -7,31 +7,31 @@ export default function NewsSlider() {
     const news = [
         {
             id: 1,
-            title: "เปิดตัวบริการใหม่ปี 2025",
+            title: "ร่วมสนับสนุนการเเข่งขันกีฬา",
             desc: "ระบบจัดส่งอัจฉริยะและบริการติดตั้งแบบ Smart Installation",
             date: "12 พ.ย. 2025",
-            image: "/images/news1.jpg",
+            image: "/images/05.jpg",
         },
         {
             id: 2,
-            title: "ขยายคลังสินค้าเพิ่ม",
+            title: "กิจกรรมการประกวดราคาอิเล็กทรอนิกส์",
             desc: "รองรับการจัดส่งรวดเร็วทั่วประเทศมากขึ้น",
-            date: "3 พ.ย. 2025",
-            image: "/images/news2.jpg",
+            date: "6 มิ.ย. 2567",
+            image: "/images/3.jpg",
         },
         {
             id: 3,
-            title: "โปรโมชั่นพิเศษปลายปี",
+            title: "บันทึกข้อตกลงความร่วมมือบริษัท ทีเจซี คอรปอเรชั่น จำกัด",
             desc: "ลดสูงสุด 30% สำหรับลูกค้าองค์กร",
-            date: "27 ต.ค. 2025",
-            image: "/images/news3.jpg",
+            date: "14 พ.ย. 2568",
+            image: "/images/04.jpg",
         },
         {
             id: 4,
-            title: "เปิดตัวบริการใหม่ปี 2025",
+            title: "สนับสนุนทีมปิงปองหงส์ขาว",
             desc: "ระบบจัดส่งอัจฉริยะและบริการติดตั้งแบบ Smart Installation",
-            date: "12 พ.ย. 2025",
-            image: "/images/news1.jpg",
+            date: "6 มิ.ค. 2568",
+            image: "/images/Screenshot 2025-06-03 101538.png",
         },
     ];
 
@@ -61,7 +61,7 @@ export default function NewsSlider() {
             } else {
                 el.scrollBy({ left: cardWidth, behavior: "smooth" });
             }
-        }, 2800);
+        }, 1500);
 
         return () => clearInterval(interval);
     }, []);

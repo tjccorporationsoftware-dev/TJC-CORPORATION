@@ -109,9 +109,7 @@ export default function Work() {
                         เราเลือกสรรสินค้าที่เน้นคุณภาพ ทนทาน และตอบโจทย์การใช้งานจริงสำหรับองค์กร
                         สถาบันการศึกษา และธุรกิจ
                     </p>
-                    <div className="mt-6 flex justify-center">
-                        <span className="inline-block h-1 w-28 rounded-full bg-linear-to-r from-yellow-400 to-yellow-500" />
-                    </div>
+                    
                 </motion.div>
 
                 {/* Grid */}

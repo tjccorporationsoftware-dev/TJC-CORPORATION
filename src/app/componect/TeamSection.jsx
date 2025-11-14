@@ -4,15 +4,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export default function TeamSection() {
   const [previewImg, setPreviewImg] = useState(null);
-  const [isReadyToHover, setIsReadyToHover] = useState(false);
 
   const members = [
-    { name: "นายสนั่น สุตัญจั้งใจ", role: "ประธานบริษัท", img: "/images/executive01.jpg" },
+    { name: "นายสนั่น สุตัญตั้งใจ", role: "ประธานบริษัท", img: "/images/executive01.jpg" },
     { name: "นางประนอม สุตัญตั้งใจ", role: "รองประธานบริษัท", img: "/images/executive02.jpg" },
     { name: "นายอรรถสิทธิ์ สุตัญตั้งใจ", role: "ประธานเจ้าหน้าที่บริหาร", img: "/images/executive03.jpg" },
   ];
 
-  // ⭐ Animation แบบไม่ re-trigger จะทำให้ไม่กระพริบ
   const fadeUp = {
     hidden: { opacity: 0, y: 50 },
     show: { opacity: 1, y: 0 }
@@ -34,7 +32,7 @@ export default function TeamSection() {
         variants={fadeUp}
         initial="hidden"
         whileInView="show"
-        viewport={{ once: true, amount: 0.2 }}
+        viewport={{ once: true, amount: 0.5 }}
         transition={{ duration: 0.9, ease: "easeOut" }}
         className="bg-linear-to-br from-white via-gray-50 to-gray-100 py-14 sm:py-18 md:py-20 lg:py-24 border-t border-gray-200"
       >
@@ -71,7 +69,7 @@ export default function TeamSection() {
               ทีมผู้บริหารของเรา
             </h3>
 
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg mb-8 max-w-xl mx-auto md:mx-0">
+            <p className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg mb-8 max-w-2xl mx-auto md:mx-0">
               ทีมผู้บริหารของเราประกอบด้วยผู้เชี่ยวชาญในหลากหลายสาขา
               ทั้งเทคโนโลยี การตลาด และการบริหารจัดการ
               มุ่งมั่นสร้างองค์กรที่เติบโตอย่างมั่นคงและยั่งยืน
@@ -87,17 +85,23 @@ export default function TeamSection() {
                   whileInView="show"
                   viewport={{ once: true }}
                   transition={{ duration: 0.6 + i * 0.15 }}
-                  onAnimationComplete={() => setIsReadyToHover(true)}
-                  whileHover={
-                    isReadyToHover
-                      ? {
-                        scale: 1.03,
-                        boxShadow: "0 6px 20px rgba(212,175,55,0.28)",
-                        backgroundColor: "rgba(255,255,255,0.95)",
-                        transition: { duration: 0.25 },
-                      }
-                      : {}
-                  }
+
+                  /* ⭐ สถานะปกติ - ไม่มีดีเลย์ขณะออก hover */
+                  animate={{
+                    scale: 1,
+                    boxShadow: "0 0 0 rgba(0,0,0,0)",
+                    backgroundColor: "white",
+                    transition: { duration: 0 } // ← ออก hover = ทันที
+                  }}
+
+                  /* ⭐ เข้า hover เร็วและลื่น */
+                  whileHover={{
+                    scale: 1.03,
+                    boxShadow: "0 6px 20px rgba(212,175,55,0.28)",
+                    backgroundColor: "rgba(255,255,255,0.95)",
+                    transition: { duration: 0.18 } // ← เข้า hover เร็ว
+                  }}
+
                   className="
                     flex items-center gap-4 sm:gap-5 
                     bg-white rounded-2xl 
