@@ -3,8 +3,12 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const fadeUp = {
-    hidden: { opacity: 0, y: 40 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } },
+    hidden: { opacity: 0, y: 35 },
+    show: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.7, ease: "easeOut" },
+    },
 };
 
 export default function CertificationsSection() {
@@ -13,78 +17,94 @@ export default function CertificationsSection() {
     const certs = [
         {
             title: "ISO 14001:2015",
-            desc: "มาตรฐานระบบบริหารสิ่งแวดล้อมสากล ที่ช่วยให้องค์กรวางกรอบการจัดการด้านสิ่งแวดล้อม ลดผลกระทบจากการดำเนินงาน ปฏิบัติตามกฎหมาย และพัฒนาการดำเนินงานอย่างยั่งยืน",
+            desc: "มาตรฐานระบบบริหารสิ่งแวดล้อมสากล ช่วยลดผลกระทบต่อสิ่งแวดล้อมและพัฒนาความยั่งยืนทางธุรกิจ",
             img: "/images/รับรอง01.png",
         },
         {
             title: "ISO 9001:2015",
-            desc: "มาตรฐานระบบบริหารคุณภาพสากล ที่กำหนดข้อกำหนดในการจัดตั้ง รักษา และปรับปรุงระบบบริหารคุณภาพ (QMS) เพื่อให้บริการหรือผลิตภัณฑ์ขององค์กรตรงตามความต้องการของลูกค้า และสร้างความมั่นใจในคุณภาพอย่างต่อเนื่อง",
+            desc: "มาตรฐานระบบบริหารคุณภาพสากล เพื่อให้ผลิตภัณฑ์และบริการได้คุณภาพและความพึงพอใจสูงสุด",
             img: "/images/รับรอง02.png",
         },
     ];
 
     return (
         <>
+            {/* SECTION */}
+
             <motion.section
                 initial="hidden"
                 whileInView="show"
+                viewport={{ amount: 0.25 }}
                 variants={fadeUp}
-                viewport={{ once: false, amount: 0.3 }}
-                className="bg-linear-to-b from-gray-50 via-white to-gray-100 py-20 border-t border-gray-200"
+                className="bg-linear-to-b from-gray-50 via-white to-gray-100
+                py-14 md:py-20 border-t border-gray-200"
             >
-                <div className="max-w-7xl mx-auto px-6 text-center">
-                    {/* 🏅 หัวข้อ */}
+                <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+
+                    {/* TITLE */}
                     <motion.h2
-                        className="text-4xl font-bold text-gray-800 mb-4"
                         variants={fadeUp}
+                        className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-3"
                     >
                         มาตรฐานและการรับรองคุณภาพ
                     </motion.h2>
 
                     <motion.p
-                        className="text-lg text-gray-600 mb-12 max-w-2xl mx-auto"
                         variants={fadeUp}
+                        className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto mb-10 md:mb-14"
                     >
-                        เราดำเนินธุรกิจด้วยมาตรฐานระดับสากล เพื่อให้มั่นใจว่าลูกค้าจะได้รับบริการ
-                        ที่มีคุณภาพ ความปลอดภัย และความเชื่อถือได้สูงสุด
+                        เราดำเนินธุรกิจตามมาตรฐานระดับสากล เพื่อให้ลูกค้าได้รับคุณภาพที่ดีที่สุด
+                        พร้อมความเชื่อถือได้สูงสุด
                     </motion.p>
 
-                    {/* 📜 รายการใบรับรอง */}
-                    <div className="grid md:grid-cols-2 gap-10">
+                    {/* CARDS */}
+                    <div
+                        className="
+                        grid gap-6 sm:gap-8 
+                        sm:grid-cols-2
+                        "
+                    >
                         {certs.map((cert, index) => (
                             <motion.div
                                 key={index}
-                                initial="hidden"
-                                whileInView="show"
-                                viewport={{ once: false, amount: 0.3 }}
                                 variants={fadeUp}
-                                transition={{ delay: index * 0.2 }}
+                                transition={{ delay: index * 0.15 }}
                                 whileHover={{
                                     scale: 1.03,
-                                    boxShadow: "8px 8px 0px rgba(212,175,55,0.4)",
+                                    boxShadow: "8px 8px 0px rgba(212,175,55,0.35)",
                                     transition: { duration: 0.3 },
                                 }}
-                                className="bg-white rounded-2xl border border-gray-200 shadow-[6px_6px_0px_rgba(180,180,180,0.3)] hover:shadow-[8px_8px_0px_rgba(212,175,55,0.3)] p-6 transition-all duration-500 cursor-pointer"
+                                className="
+                                    bg-white rounded-2xl border border-gray-200
+                                    shadow-[5px_5px_0px_rgba(180,180,180,0.25)]
+                                    hover:shadow-[8px_8px_0px_rgba(212,175,55,0.35)]
+                                    p-5 sm:p-6 lg:p-7 transition-all duration-500
+                                    cursor-pointer
+                                "
                                 onClick={() => setSelectedImage(cert.img)}
                             >
                                 <motion.img
                                     src={cert.img}
                                     alt={cert.title}
-                                    className="w-24 h-24 mx-auto mb-6 object-contain"
-                                    whileInView={{ scale: [0.9, 1] }}
-                                    transition={{ duration: 0.5 }}
+                                    className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-5 object-contain"
+                                    whileInView={{ scale: [0.92, 1] }}
+                                    transition={{ duration: 0.45 }}
                                 />
-                                <h3 className="text-xl font-semibold text-yellow-700 mb-2">
+
+                                <h3 className="text-lg sm:text-xl font-semibold text-yellow-700 mb-2">
                                     {cert.title}
                                 </h3>
-                                <p className="text-gray-600 leading-relaxed">{cert.desc}</p>
+
+                                <p className="text-gray-600 text-sm sm:text-base leading-relaxed">
+                                    {cert.desc}
+                                </p>
                             </motion.div>
                         ))}
                     </div>
                 </div>
             </motion.section>
 
-            {/* 🔍 Modal แสดงภาพใหญ่ */}
+            {/* MODAL */}
             <AnimatePresence>
                 {selectedImage && (
                     <motion.div
@@ -100,8 +120,8 @@ export default function CertificationsSection() {
                             className="max-w-[90vw] max-h-[85vh] rounded-lg shadow-2xl"
                             initial={{ scale: 0.7, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            exit={{ scale: 0.8, opacity: 0 }}
-                            transition={{ duration: 0.3 }}
+                            exit={{ scale: 0.85, opacity: 0 }}
+                            transition={{ duration: 0.25 }}
                         />
                     </motion.div>
                 )}

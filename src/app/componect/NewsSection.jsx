@@ -33,45 +33,35 @@ export default function NewsSlider() {
             date: "12 พ.ย. 2025",
             image: "/images/news1.jpg",
         },
-        {
-            id: 5,
-            title: "ขยายคลังสินค้าเพิ่ม",
-            desc: "รองรับการจัดส่งรวดเร็วทั่วประเทศมากขึ้น",
-            date: "3 พ.ย. 2025",
-            image: "/images/news2.jpg",
-        },
-        {
-            id: 6,
-            title: "โปรโมชั่นพิเศษปลายปี",
-            desc: "ลดสูงสุด 30% สำหรับลูกค้าองค์กร",
-            date: "27 ต.ค. 2025",
-            image: "/images/news3.jpg",
-        }
     ];
 
     const scroll = (direction) => {
         if (!containerRef.current) return;
-        const amount = 350;
-        containerRef.current.scrollBy({
-            left: direction === "left" ? -amount : amount,
+        const el = containerRef.current;
+
+        const cardWidth = el.querySelector(".news-card")?.clientWidth || 350;
+
+        el.scrollBy({
+            left: direction === "left" ? -cardWidth : cardWidth,
             behavior: "smooth",
         });
     };
 
-    // Auto slide
+    // Auto Slide
     useEffect(() => {
         const interval = setInterval(() => {
             const el = containerRef.current;
             if (!el) return;
 
+            const cardWidth = el.querySelector(".news-card")?.clientWidth || 350;
             const maxScroll = el.scrollWidth - el.clientWidth;
 
-            if (el.scrollLeft + 350 >= maxScroll) {
+            if (el.scrollLeft + cardWidth >= maxScroll) {
                 el.scrollTo({ left: 0, behavior: "smooth" });
             } else {
-                el.scrollBy({ left: 350, behavior: "smooth" });
+                el.scrollBy({ left: cardWidth, behavior: "smooth" });
             }
-        }, 2000);
+        }, 2800);
 
         return () => clearInterval(interval);
     }, []);
@@ -79,58 +69,64 @@ export default function NewsSlider() {
     return (
         <section className="w-full py-16 bg-white">
             <style>{`
-                /* ซ่อน Scrollbar แบบแท้จริง */
-                .no-scrollbar::-webkit-scrollbar {
-                    display: none;
-                }
-                .no-scrollbar {
-                    scrollbar-width: none;
-                }
+                .no-scrollbar::-webkit-scrollbar { display: none; }
+                .no-scrollbar { scrollbar-width: none; }
             `}</style>
 
-            <div className="max-w-6xl mx-auto px-6 relative">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
 
                 <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
                     ข่าวสารบริษัท
                 </h2>
 
-                {/* ปุ่มซ้าย */}
+                {/* LEFT */}
                 <button
                     onClick={() => scroll("left")}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 
-                    bg-linear-to-br from-gray-200 to-gray-100 
-                    text-yellow-700 border border-yellow-500 
-                    shadow-md p-3 rounded-full z-20 hover:bg-yellow-50"
+                    className="
+                        absolute top-1/2 -translate-y-1/2 sm:flex hidden
+                        left-0 z-20 bg-white/90 backdrop-blur
+                        border border-gray-300 shadow p-3 rounded-full
+                    "
                 >
                     {"<"}
                 </button>
 
-                {/* ปุ่มขวา */}
+                {/* RIGHT */}
                 <button
                     onClick={() => scroll("right")}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 
-                    bg-linear-to-br from-gray-200 to-gray-100 
-                    text-yellow-700 border border-yellow-500 
-                    shadow-md p-3 rounded-full z-20 hover:bg-yellow-50"
+                    className="
+                        absolute top-1/2 -translate-y-1/2 sm:flex hidden
+                        right-0 z-20 bg-white/90 backdrop-blur
+                        border border-gray-300 shadow p-3 rounded-full
+                    "
                 >
                     {">"}
                 </button>
 
-                {/* slider */}
+                {/* SLIDER */}
                 <div
                     ref={containerRef}
-                    className="flex gap-6 overflow-x-auto no-scrollbar"
+                    className="
+                        flex gap-4 overflow-x-auto no-scrollbar pb-3
+                        snap-x snap-mandatory
+                    "
                     style={{ scrollBehavior: "smooth" }}
                 >
                     {news.map((n) => (
                         <div
                             key={n.id}
-                            className="min-w-[300px] bg-white border border-gray-200 
-                            rounded-2xl shadow-md overflow-hidden"
+                            className="
+                                news-card snap-start
+                                bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden
+                                w-full min-w-full                 /* Mobile = 1 card */
+                                sm:min-w-[50%] sm:w-[50%]             /* Tablet = 2 card */
+                                lg:min-w-[33.33%] lg:w-[33.33%]       /* Desktop = 3 card */
+                                transition-all duration-300
+                            "
                         >
                             <img
                                 src={n.image}
-                                className="w-full h-40 object-cover"
+                                className="w-full h-48 sm:h-44 object-cover"
                                 alt={n.title}
                             />
 
@@ -139,7 +135,7 @@ export default function NewsSlider() {
                                     {n.date}
                                 </p>
 
-                                <h3 className="text-lg font-semibold text-gray-900 mt-1">
+                                <h3 className="text-xl sm:text-lg font-semibold text-gray-900 mt-1">
                                     {n.title}
                                 </h3>
 

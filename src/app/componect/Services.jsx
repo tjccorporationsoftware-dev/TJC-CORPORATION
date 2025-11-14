@@ -6,22 +6,22 @@ export default function Services() {
   const services = [
     {
       title: "จัดส่งสินค้า",
-      desc: "บริการจัดส่งรวดเร็ว ปลอดภัยทั่วประเทศ ด้วยระบบติดตามเรียลไทม์",
+      desc: "บริการจัดส่งสินค้าอย่างรวดเร็ว ปลอดภัย",
       images: "/images/delivery.png",
     },
     {
       title: "บริการติดตั้ง",
-      desc: "ทีมช่างมืออาชีพ พร้อมให้บริการติดตั้งอุปกรณ์ครบวงจรถึงที่",
+      desc: "ให้บริการติดตั้งอุปกรณ์ทุกประเภทโดยทีมช่างผู้เชี่ยวชาญ มาตรฐานมืออาชีพ",
       images: "/images/install.png",
     },
     {
       title: "ตรวจเช็กการทำงาน",
-      desc: "ดูแลลูกค้าตลอดอายุการใช้งาน พร้อมให้คำปรึกษาโดยผู้เชี่ยวชาญ",
+      desc: "ตรวจสอบประสิทธิภาพอุปกรณ์ พร้อมดูแลหลังการขายโดยผู้เชี่ยวชาญ",
       images: "/images/After-sales service.png",
     },
     {
       title: "รับประกันสินค้า",
-      desc: "มั่นใจได้กับการรับประกันสินค้าทุกชิ้น พร้อมบริการเปลี่ยนทดแทน",
+      desc: "รับประกันสินค้าทุกชิ้น พร้อมบริการดูแล เปลี่ยน หรือซ่อมแซม",
       images: "/images/Productguarantee.png",
     },
   ];
@@ -32,7 +32,7 @@ export default function Services() {
   };
 
   const item = {
-    hidden: { opacity: 0, y: 60, scale: 0.95 },
+    hidden: { opacity: 0, y: 55, scale: 0.95 },
     show: {
       opacity: 1,
       y: 0,
@@ -42,94 +42,104 @@ export default function Services() {
   };
 
   return (
-    <section id="services" className="relative py-20 bg-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 lg:px-12">
+    <section
+      id="services"
+      className="relative py-12 sm:py-16 md:py-20 bg-white overflow-hidden"
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          viewport={{ once: false, amount: 0.2 }}
-          className="text-center mb-16"
+          viewport={{ once: false, amount: 0.25 }}
+          className="text-center mb-10 md:mb-16"
         >
           <motion.h2
-            className="text-4xl font-bold text-gray-900 mb-4"
+            className="text-xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-3"
             initial={{ scale: 0.9 }}
             whileInView={{ scale: 1 }}
             transition={{ duration: 0.5 }}
           >
             บริการของเรา
           </motion.h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            ครบวงจรด้านอุปกรณ์คอมพิวเตอร์ ตั้งแต่การจำหน่าย การติดตั้ง ไปจนถึงการบริการหลังการขาย
+
+          <p className="text-sm sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            ครบวงจรด้านอุปกรณ์คอมพิวเตอร์ ตั้งแต่จำหน่าย ติดตั้ง ไปจนถึงบริการหลังการขาย
           </p>
+
           <motion.div
-            className="w-20 h-1 bg-yellow-500 mx-auto mt-6 rounded-full"
+            className="w-14 sm:w-20 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"
             initial={{ width: 0 }}
             whileInView={{ width: 80 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
           />
         </motion.div>
 
-        {/* Services Grid */}
+        {/* Grid */}
         <motion.div
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: false, amount: 0.3 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+          className="
+            grid gap-4 sm:gap-8
+            grid-cols-1 
+            md:grid-cols-2 
+            lg:grid-cols-4
+            place-items-center
+          "
         >
           {services.map((service) => (
             <motion.div
               key={service.title}
               variants={item}
               whileHover={{
-                y: -8,
+                y: -6,
                 boxShadow:
-                  "6px 6px 0px rgba(0,0,0,0.25), -3px -3px 0px rgba(255,255,255,0.6)",
+                  "6px 6px 0px rgba(0,0,0,0.25), -3px -3px 0px rgba(255,255,255,0.5)",
               }}
               transition={{ duration: 0.3 }}
-              className="group bg-white rounded-2xl p-6 border-l-4 border-b-3 border-yellow-500 shadow-[5px_5px_5px_rgba(0,0,0,0.25),-3px_-3px_0px_rgba(255,255,255,0.7)] transition-all duration-300"
+              className="
+                group bg-white rounded-2xl
+                p-4 sm:p-6 lg:p-7
+                border-l-4 border-b-4 border-yellow-500
+                shadow-[5px_5px_5px_rgba(0,0,0,0.20)]
+                transition-all duration-300
+
+                max-w-[260px] w-full    /* ทำให้เล็กลงเฉพาะมือถือ */
+                sm:max-w-full           /* จอใหญ่กลับไปปกติ */
+              "
             >
               {/* Image */}
               <motion.div
-                whileHover={{ scale: 1.05, rotate: 1 }}
+                whileHover={{ scale: 1.07, rotate: 1 }}
                 transition={{ duration: 0.3 }}
-                className="mb-6 flex justify-center"
+                className="mb-3 sm:mb-6 flex justify-center"
               >
                 <img
                   src={service.images}
                   alt={service.title}
-                  className="w-40 h-40 object-contain drop-shadow-[2px_3px_3px_rgba(0,0,0,0.3)]"
+                  className="
+                    w-20 h-20
+                    sm:w-32 sm:h-32 
+                    lg:w-40 lg:h-40 
+                    object-contain 
+                    drop-shadow-[2px_3px_3px_rgba(0,0,0,0.3)]
+                  "
                 />
               </motion.div>
 
-              {/* Content */}
+              {/* Text */}
               <div className="text-center">
-                <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors">
+                <h3 className="text-base sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2 group-hover:text-yellow-600 transition">
                   {service.title}
                 </h3>
-                <p className="text-sm text-gray-600 leading-relaxed mb-4">
+
+                <p className="text-xs sm:text-base text-gray-600 leading-relaxed mb-2 sm:mb-3">
                   {service.desc}
                 </p>
-
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="text-yellow-600 hover:text-yellow-700 font-semibold text-sm flex items-center gap-1 mx-auto group/btn"
-                >
-                  <span>เรียนรู้เพิ่มเติม</span>
-                  <motion.span
-                    animate={{ x: [0, 5, 0] }}
-                    transition={{
-                      repeat: Infinity,
-                      repeatType: "loop",
-                      duration: 2,
-                    }}
-                  >
-                    →
-                  </motion.span>
-                </motion.button>
               </div>
             </motion.div>
           ))}

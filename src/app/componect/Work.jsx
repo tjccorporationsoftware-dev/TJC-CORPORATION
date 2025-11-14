@@ -1,9 +1,31 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 export default function Work() {
     const shouldReduceMotion = useReducedMotion();
+
+    const [isMobile, setIsMobile] = useState(false);
+
+    // ✔ ตรวจขนาดจอแบบปลอดภัย (ไม่มี window error)
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 640);
+        };
+
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    // ✔ ใช้ useMemo เพื่อลดการคำนวณทุก render → animation เนียนขึ้น
+    const animationConfig = useMemo(() => {
+        return {
+            distance: isMobile ? 80 : 120,
+            duration: isMobile ? 0.65 : 0.9,
+            scaleEnd: isMobile ? 1 : 1,
+        };
+    }, [isMobile]);
 
     const products = [
         {
@@ -30,7 +52,6 @@ export default function Work() {
             image: "/images/SMEGP.png",
             desc: "ครุภัณฑ์สำหรับสถานศึกษาและสำนักงาน เน้นความทนทาน ใช้งานได้ยาวนาน พร้อมรองรับการใช้งานหลากหลายรูปแบบ",
         },
-
     ];
 
     const container = {
@@ -41,14 +62,21 @@ export default function Work() {
         },
     };
 
-    // 👇 เพิ่มแรงขึ้น: y ±120 และ duration 0.9
+    // ✔ อนิเมชันแบบลื่นขึ้น ใช้ค่า config ที่คงที่ (ไม่คำนวณซ้ำ)
     const getItemVariant = (index) => ({
-        hidden: { opacity: 0, y: index % 2 === 0 ? 120 : -120, scale: 0.95 },
+        hidden: {
+            opacity: 0,
+            y: index % 2 === 0 ? animationConfig.distance : -animationConfig.distance,
+            scale: 0.95,
+        },
         show: {
             opacity: 1,
             y: 0,
-            scale: 1,
-            transition: { duration: 0.9, ease: [0.25, 0.1, 0.25, 1] },
+            scale: animationConfig.scaleEnd,
+            transition: {
+                duration: animationConfig.duration,
+                ease: [0.25, 0.1, 0.25, 1],
+            },
         },
     });
 
@@ -58,13 +86,13 @@ export default function Work() {
             aria-labelledby="work-heading"
             className="relative bg-linear-to-b from-white via-gray-50 to-white py-20 overflow-hidden"
         >
-            {/* soft gold glow */}
             <div
                 aria-hidden="true"
                 className="pointer-events-none absolute -top-24 -right-24 w-[380px] h-[380px] rounded-full bg-yellow-200/20 blur-3xl"
             />
 
-            <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
                 {/* Header */}
                 <motion.div
                     initial={shouldReduceMotion ? {} : { opacity: 0, y: 50 }}
@@ -93,16 +121,20 @@ export default function Work() {
                     whileInView="show"
                     viewport={{ once: false, amount: 0.3 }}
                     variants={container}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10"
                 >
                     {products.map((p, index) => (
                         <motion.article
                             key={p.id}
                             variants={getItemVariant(index)}
-                            whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                            whileHover={{
+                                y: -10,
+                                transition: { duration: 0.3 },
+                            }}
                             className="relative group rounded-2xl bg-white border border-gray-200 overflow-hidden"
                             aria-labelledby={`product-${p.id}-title`}
                         >
+                            {/* Border effect */}
                             <div
                                 className="absolute inset-0 rounded-2xl pointer-events-none"
                                 style={{
@@ -110,18 +142,21 @@ export default function Work() {
                                         "inset 0 0 0 1.5px rgba(212,175,55,0.18), inset -6px -6px 20px rgba(255,255,255,0.6)",
                                 }}
                             />
+
                             <div className="relative z-10 flex flex-col h-full">
-                                <div className="h-48 sm:h-44 md:h-48 overflow-hidden bg-gray-50">
+
+                                {/* Image */}
+                                <div className="h-40 sm:h-44 md:h-48 overflow-hidden bg-gray-50">
                                     <motion.img
                                         src={p.image}
                                         alt={p.name}
                                         className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
                                         loading="lazy"
                                     />
-                                    <div className="absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                                 </div>
 
-                                <div className="p-6 flex-1 flex flex-col justify-between">
+                                {/* Content */}
+                                <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
                                     <div>
                                         <h3
                                             id={`product-${p.id}-title`}
@@ -140,10 +175,7 @@ export default function Work() {
                                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-yellow-700 border border-yellow-200 bg-yellow-50 hover:bg-yellow-100 transition"
                                         >
                                             ดูรายละเอียด
-                                            <span
-                                                aria-hidden="true"
-                                                className="transform transition-transform group-hover:translate-x-1"
-                                            >
+                                            <span className="transition-transform group-hover:translate-x-1">
                                                 →
                                             </span>
                                         </a>
@@ -154,6 +186,7 @@ export default function Work() {
                                 </div>
                             </div>
 
+                            {/* Bottom shadow */}
                             <div
                                 aria-hidden="true"
                                 className="absolute -bottom-4 -left-4 w-[85%] h-10 rounded-2xl"
@@ -167,7 +200,7 @@ export default function Work() {
                 </motion.div>
             </div>
 
-            {/* background glow */}
+            {/* background glow moving */}
             <motion.div
                 aria-hidden="true"
                 className="absolute -bottom-32 left-1/2 transform -translate-x-1/2 w-[700px] h-[420px] rounded-full blur-3xl bg-yellow-100/30 pointer-events-none"

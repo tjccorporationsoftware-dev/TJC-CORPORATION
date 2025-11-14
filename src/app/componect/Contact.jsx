@@ -79,7 +79,7 @@ export default function Contact() {
                             <div>
                                 <p className="text-sm text-gray-500">เวลาทำการ</p>
                                 <p className="font-semibold">
-                                    จันทร์ - ศุกร์ 08.00 - 17.00 น.
+                                    จันทร์ - ศุกร์ ิพ08.00 - 17.00 น.
                                 </p>
                             </div>
                         </div>

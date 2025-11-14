@@ -21,10 +21,9 @@ export default function CompanyLandingPage() {
 
       <Navbar />
 
-      <main className="" >
+      <main className="  " >
         <Hero />
         <AboutHeader />
-        
         <CoreValues />
         <TeamSection />
         <CertificationsSection />
