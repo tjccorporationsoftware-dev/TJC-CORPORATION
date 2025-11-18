@@ -4,10 +4,10 @@ import React, { useEffect, useRef, useState } from "react";
 export default function NewsSlider() {
     const trackRef = useRef(null);
 
-    const [isPaused, setIsPaused] = useState(false);
     const [dragging, setDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [translateX, setTranslateX] = useState(0);
+    const [cardWidth, setCardWidth] = useState(0);
 
     const news = [
         { id: 1, title: "ร่วมสนับสนุนแข่งขันกีฬา", desc: "Smart Installation", date: "12 พ.ย. 2025", image: "/images/05.jpg" },
@@ -18,23 +18,39 @@ export default function NewsSlider() {
 
     const loopNews = [...news, ...news, ...news];
 
-    // --------------------------------
-    // Auto Slide แบบทีละกล่อง
-    // --------------------------------
+    // ------------------------------
+    // วัดขนาดการ์ดทุกหน้าจอ (Responsive จริง)
+    // ------------------------------
+    const updateCardWidth = () => {
+        const track = trackRef.current;
+        if (!track) return;
+
+        const firstCard = track.querySelector(".slide-card");
+        if (firstCard) {
+            const style = window.getComputedStyle(firstCard);
+            const gap = 20;
+            setCardWidth(firstCard.clientWidth + gap);
+        }
+    };
+
     useEffect(() => {
-        if (isPaused || dragging) return;
+        updateCardWidth();
+        window.addEventListener("resize", updateCardWidth);
+        return () => window.removeEventListener("resize", updateCardWidth);
+    }, []);
+
+    // ------------------------------
+    // Auto Slide (ทีละใบแบบเป็นจังหวะ)
+    // ------------------------------
+    useEffect(() => {
+        if (dragging || cardWidth === 0) return;
 
         const track = trackRef.current;
         if (!track) return;
 
         const interval = setInterval(() => {
-            const card = track.querySelector(".slide-card");
-            if (!card) return;
-
-            const cardWidth = card.clientWidth + 20; // + gap
             let newPos = translateX - cardWidth;
 
-            // ถ้าถึงท้าย → รีเซ็ต
             const limit = -(track.scrollWidth / 3);
             if (newPos <= limit) newPos = 0;
 
@@ -42,22 +58,21 @@ export default function NewsSlider() {
         }, 2500);
 
         return () => clearInterval(interval);
-    }, [translateX, isPaused, dragging]);
+    }, [translateX, dragging, cardWidth]);
 
-    // อัปเดตตำแหน่ง transform
+    // อัปเดตตำแหน่งแทร็ก
     useEffect(() => {
         const track = trackRef.current;
-        if (!track) return;
-
-        track.style.transform = `translateX(${translateX}px)`;
+        if (track) {
+            track.style.transform = `translateX(${translateX}px)`;
+        }
     }, [translateX]);
 
-    // --------------------------------
-    // Drag / Swipe
-    // --------------------------------
+    // ------------------------------
+    // Drag ลื่น + Snap ทีละใบ
+    // ------------------------------
     const handleStart = (e) => {
         setDragging(true);
-        setIsPaused(true);
         setStartX(e.clientX || e.touches?.[0]?.clientX);
     };
 
@@ -79,10 +94,11 @@ export default function NewsSlider() {
 
         const newPos = translateX + delta;
 
-        setTranslateX(newPos);
-        setDragging(false);
+        // Snap ทีละการ์ด: แม่นยำทุกหน้าจอ
+        const snap = Math.round(newPos / cardWidth) * cardWidth;
 
-        setTimeout(() => setIsPaused(false), 300);
+        setTranslateX(snap);
+        setDragging(false);
     };
 
     return (
@@ -93,17 +109,10 @@ export default function NewsSlider() {
                     ข่าวสารบริษัท
                 </h2>
 
-                {/* CLICK = Pause / Play */}
-                <div
-                    onClick={() => {
-                        if (!dragging) setIsPaused(!isPaused);
-                    }}
-                    className="cursor-pointer select-none overflow-hidden w-full"
-                >
+                <div className="select-none overflow-hidden w-full">
                     <div
                         ref={trackRef}
                         className="flex gap-5 transition-transform duration-500"
-                        style={{ whiteSpace: "nowrap" }}
 
                         onPointerDown={handleStart}
                         onPointerMove={handleMove}
@@ -120,11 +129,11 @@ export default function NewsSlider() {
                                 className="
                                     slide-card bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden
                                     inline-block
-                                    min-w-[85%] max-w-[85%]
-                                    sm:min-w-[55%] sm:max-w-[55%]
-                                    md:min-w-[45%] md:max-w-[45%]
-                                    lg:min-w-[30%] lg:max-w-[30%]
-                                    xl:min-w-[25%] xl:max-w-[25%]
+                                    min-w-[90%] max-w-[90%]          /* mobile */
+                                    sm:min-w-[60%] sm:max-w-[60%]   /* small tablet */
+                                    md:min-w-[45%] md:max-w-[45%]   /* tablet */
+                                    lg:min-w-[30%] lg:max-w-[30%]   /* laptop */
+                                    xl:min-w-[25%] xl:max-w-[25%]   /* desktop */
                                 "
                             >
                                 <img
@@ -136,16 +145,13 @@ export default function NewsSlider() {
                                 <div className="p-5">
                                     <p className="text-sm text-yellow-700 font-medium">{n.date}</p>
                                     <h3 className="text-lg md:text-xl font-semibold text-gray-900 mt-1">{n.title}</h3>
-                                    <p className="text-gray-600 mt-2 text-sm md:text-base">{n.desc}</p>
+                                    {/* <p className="text-gray-600 mt-2 text-sm md:text-base">{n.desc}</p> */}
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                <p className="text-center text-gray-500 mt-3 text-sm">
-                    (คลิกเพื่อ {isPaused ? "เล่นต่อ" : "หยุด"} / ลากเพื่อเลื่อนเอง)
-                </p>
             </div>
         </section>
     );

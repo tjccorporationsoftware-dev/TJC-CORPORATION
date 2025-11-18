@@ -165,18 +165,7 @@ export default function Work() {
                                         </p>
                                     </div>
 
-                                    <div className="flex items-center justify-between mt-4">
-                                        <a
-                                            href="#"
-                                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium text-yellow-700 border border-yellow-200 bg-yellow-50 hover:bg-yellow-100 transition"
-                                        >
-                                            ดูรายละเอียด
-                                            <span className="transition-transform group-hover:translate-x-1">
-                                                →
-                                            </span>
-                                        </a>
-                                        <div className="text-xs text-gray-400">SKU: {1000 + p.id}</div>
-                                    </div>
+                                    
                                 </div>
                             </div>
 

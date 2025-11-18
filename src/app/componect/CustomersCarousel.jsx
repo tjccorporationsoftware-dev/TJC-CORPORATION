@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { motion, useAnimation } from "framer-motion";
 
 export default function CustomersCarousel({
@@ -15,102 +15,68 @@ export default function CustomersCarousel({
         "/images/customers/c09-removebg-preview.png",
         "/images/customers/c010-removebg-preview.png",
         "/images/customers/c11-removebg-preview.png",
-        "/images/customers/c01.png",
+        "/images/customers/c12.png",
     ],
-    height = 120,
-    duration = 22,
+    duration = 50,
 }) {
     const controls = useAnimation();
-    const [paused, setPaused] = useState(false);
-    const loopLogos = [...logos, ...logos];
+    const trackRef = useRef(null);
 
-    // ฟังก์ชันสั่งให้ Slide เล่นต่อ
-    const startSlide = () => {
+    const loopLogos = [...logos, ...logos]; // duplicated
+
+    useEffect(() => {
+        const track = trackRef.current;
+        if (!track) return;
+
+        const totalWidth = track.scrollWidth;       // ความกว้างจริง
+        const halfWidth = totalWidth / 2;           // สไลด์ครึ่งหนึ่งพอดี
+
         controls.start({
-            x: ["0%", "-50%"],
+            x: [0, -halfWidth],
             transition: {
-                repeat: Infinity,
-                repeatType: "loop",
                 duration,
                 ease: "linear",
+                repeat: Infinity,
             },
         });
-    };
-
-    // เริ่ม Slide อัตโนมัติ
-    useEffect(() => {
-        startSlide();
     }, []);
 
-    // คลิก = หยุด / เล่นต่อ
-    const togglePause = () => {
-        if (paused) {
-            startSlide(); // เล่นต่อ
-        } else {
-            controls.stop(); // หยุด
-        }
-        setPaused(!paused);
-    };
-
     return (
-        <section className="py-16 bg-white relative">
+        <section className="py-16 bg-white overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4 text-center">
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
-                <h3 className="text-center text-3xl sm:text-4xl font-extrabold tracking-wide text-black mb-10">
+                <h3 className="text-3xl sm:text-4xl font-bold mb-10">
                     ลูกค้าที่ไว้วางใจเรา
                 </h3>
 
                 <div className="relative overflow-hidden">
 
-                    {/* motion div: Hover จะไม่หยุด, คลิกแทน */}
                     <motion.div
-                        className="flex items-center gap-10 cursor-pointer"
+                        ref={trackRef}
+                        className="flex items-center gap-6 sm:gap-10"
                         animate={controls}
-                        onClick={togglePause}
                     >
                         {loopLogos.map((src, idx) => (
                             <div
                                 key={idx}
-                                className="
-                                    shrink-0 
-                                    flex items-center justify-center 
-                                    bg-white 
-                                    rounded-xl 
-                                    shadow-md 
-                                    hover:shadow-xl
-                                    transition-all 
-                                    duration-300 
-                                    p-4 
-                                    border border-transparent
-                                    hover:border-[#d5b14b]/60
-                                "
+                                className="flex items-center justify-center bg-white rounded-xl shadow p-4 shrink-0"
                                 style={{
-                                    width: 180,
-                                    height: height,
+                                    width: 150,     // ❗ ใช้ px เพื่อให้รวมกว้างแน่นอน
+                                    height: 80,
                                 }}
                             >
                                 <img
                                     src={src}
-                                    alt={`ลูกค้า ${idx}`}
-                                    className="
-                                        w-full h-full 
-                                        object-contain 
-                                        opacity-90 
-                                        hover:opacity-100
-                                        hover:scale-[1.08]
-                                        transition-all 
-                                        duration-300
-                                    "
+                                    className="w-full h-full object-contain"
                                     loading="lazy"
                                 />
                             </div>
                         ))}
                     </motion.div>
 
-                    {/* Fade ซ้าย–ขวา */}
-                    <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-linear-to-r from-white via-white/70 to-transparent" />
-                    <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-linear-to-l from-white via-white/70 to-transparent" />
+                    {/* Fade overlays */}
+                    <div className="pointer-events-none absolute top-0 left-0 w-20 h-full bg-gradient-to-r from-white to-transparent" />
+                    <div className="pointer-events-none absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-white to-transparent" />
                 </div>
             </div>
         </section>

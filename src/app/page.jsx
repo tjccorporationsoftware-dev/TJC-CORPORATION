@@ -15,6 +15,9 @@ import ReviewsSection from "./componect/ReviewsSection";
 import NewsSection from "./componect/NewsSection";
 import CustomersCarousel from "./componect/CustomersCarousel";
 
+
+
+
 export default function CompanyLandingPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-slate-900 antialiased">
