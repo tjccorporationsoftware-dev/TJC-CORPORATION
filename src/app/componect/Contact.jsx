@@ -5,35 +5,7 @@ import Link from "next/link";
 
 export default function Contact() {
 
-    // ------------------ Popup Survey States ------------------
-    const [openSurvey, setOpenSurvey] = useState(false);
-    const [rating, setRating] = useState(0);
-    const [hover, setHover] = useState(0);
-    const [name, setName] = useState("");
-    const [message, setMessage] = useState("");
-    const [success, setSuccess] = useState(false);
-    const [error, setError] = useState(false);
-
-    async function handleSubmit(e) {
-        e.preventDefault();
-        if (!rating) return alert("กรุณาให้คะแนน");
-
-        const res = await fetch("http://localhost:4000/api/survey", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, comment: message, rating }),
-        });
-
-        if (res.ok) {
-            setSuccess(true);
-
-            setName("");
-            setMessage("");
-            setRating(0);
-        } else {
-            setError(true);
-        }
-    }
+    
 
     // ------------------ Animation ------------------
     const fadeUp = {
@@ -63,7 +35,7 @@ export default function Contact() {
                         "
                     >
                         <div>
-                            <h2 className="text-3xl font-bold text-[#bfa334] tracking-wide">
+                            <h2 className="text-3xl font-bold tracking-wide">
                                 ติดต่อเรา
                             </h2>
                             <p className="mt-2 text-gray-700 leading-relaxed text-[16px]">
@@ -161,13 +133,6 @@ export default function Contact() {
                                 </div>
                             </div>
 
-                            {/* ปุ่มทำแบบประเมิน */}
-                            <button
-                                onClick={() => setOpenSurvey(true)}
-                                className="bg-[#d4af37] text-white w-52 px-2 py-3 rounded-lg font-semibold hover:bg-[#b99730] transition"
-                            >
-                                แบบประเมินความพึงพอใจ
-                            </button>
 
                         </div>
                     </motion.div>
@@ -178,7 +143,7 @@ export default function Contact() {
                         transition={{ delay: 0.2 }}
                         className="space-y-5"
                     >
-                        <h3 className="text-3xl font-bold text-[#bfa334] tracking-wide">
+                        <h3 className="text-3xl font-bold  tracking-wide">
                             ตำแหน่งที่ตั้งสำนักงาน
                         </h3>
 
@@ -198,100 +163,7 @@ export default function Contact() {
                 </div>
             </motion.section>
 
-            {/* ---------------------- Popup Survey ---------------------- */}
-            {openSurvey && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-9999">
-                    <motion.div
-                        initial={{ scale: 0.8, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 0.25 }}
-                        className="w-full max-w-xl bg-white shadow-xl rounded-2xl p-8 border border-gray-200 relative"
-                    >
-
-                        {/* ปุ่มปิด */}
-                        <button
-                            onClick={() => setOpenSurvey(false)}
-                            className="absolute right-4 top-4 text-gray-500 hover:text-gray-700 text-2xl"
-                        >
-                            ×
-                        </button>
-
-                        <h1 className="text-2xl font-bold text-gray-700 text-center">
-                            แบบประเมินความพึงพอใจ
-                        </h1>
-
-                        {/* Stars */}
-                        <div className="mt-6">
-                            <p className="font-medium text-gray-600 mb-2">ให้คะแนน:</p>
-                            <div className="flex gap-3 text-4xl justify-center">
-                                {[1, 2, 3, 4, 5].map((i) => (
-                                    <button
-                                        key={i}
-                                        type="button"
-                                        className={`${(hover || rating) >= i
-                                            ? "text-[#d4af37]"
-                                            : "text-gray-300"
-                                            } transition-transform hover:scale-110`}
-                                        onMouseEnter={() => setHover(i)}
-                                        onMouseLeave={() => setHover(0)}
-                                        onClick={() => setRating(i)}
-                                    >
-                                        ★
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Form */}
-                        <form onSubmit={handleSubmit} className="mt-6 space-y-5">
-                            <div>
-                                <label className="block text-gray-600 font-medium">
-                                    ชื่อผู้ประเมิน
-                                </label>
-                                <input
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="w-full border rounded-lg px-3 py-2 mt-1 bg-white text-gray-700
-                                    focus:outline-none focus:border-[#d4af37]"
-                                    placeholder="ใส่ชื่อของคุณ"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-gray-600 font-medium">ความคิดเห็น</label>
-                                <textarea
-                                    value={message}
-                                    onChange={(e) => setMessage(e.target.value)}
-                                    className="w-full border rounded-lg px-3 py-2 mt-1 bg-white text-gray-700
-                                    focus:outline-none focus:border-[#d4af37] min-h-[100px]"
-                                    placeholder="บอกเราเพิ่มเติม..."
-                                />
-                            </div>
-
-                            <button
-                                type="submit"
-                                className="w-full bg-[#d4af37] text-white py-3 rounded-lg font-semibold hover:bg-[#b99730] transition"
-                            >
-                                ส่งแบบประเมิน
-                            </button>
-                        </form>
-
-                        {success && (
-                            <div className="mt-4 p-3 rounded-lg bg-green-50 border border-green-300 text-green-700 text-center shadow-sm">
-                                ✔ ขอบคุณสำหรับการประเมินของคุณ ระบบได้รับข้อมูลเรียบร้อยแล้ว
-                            </div>
-                        )}
-
-                        {error && (
-                            <div className="mt-4 p-3 rounded-lg bg-red-50 border border-red-300 text-red-700 text-center shadow-sm">
-                                ✖ คุณได้ทำการประเมิณไปแล้ว ไม่สามารถประเมินซ้ำได้
-                            </div>
-                        )}
-
-
-                    </motion.div>
-                </div>
-            )}
+           
         </>
     );
 }

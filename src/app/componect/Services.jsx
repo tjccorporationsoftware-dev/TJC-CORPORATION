@@ -66,7 +66,7 @@ export default function Services() {
           <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
             ครบวงจรด้านอุปกรณ์คอมพิวเตอร์ ตั้งแต่จำหน่าย ติดตั้ง ไปจนถึงบริการหลังการขาย
           </p>
-        </motion.div>
+        </motion.div> 
 
         {/* Grid */}
         <motion.div
@@ -120,25 +120,47 @@ export default function Services() {
             >
               {/* Image Container - Fixed Height */}
               <motion.div
-                whileHover={{ scale: 1.05, rotate: -2 }}
-                transition={{ duration: 0.3 }}
-                className="mb-6 flex justify-center items-center relative z-10 h-40"
+                whileHover={{ scale: 1.04, rotate: -1 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+                className="
+    relative 
+    w-full 
+    h-44 sm:h-48 
+    rounded-2xl 
+    overflow-hidden 
+    shadow-lg 
+    bg-gray-100
+  "
               >
+                {/* Golden highlight on hover */}
+                <motion.div
+                  className="absolute inset-0 bg-linear-to-br from-yellow-300/20 to-transparent opacity-0"
+                  whileHover={{ opacity: 1 }}
+                  transition={{ duration: 0.4 }}
+                />
+
+                {/* Image full box */}
                 <img
                   src={service.images}
                   alt={service.title}
                   className="
-                    w-32 h-32
-                    object-contain 
-                    drop-shadow-[3px_4px_6px_rgba(0,0,0,0.2)]
-                    group-hover:drop-shadow-[4px_6px_8px_rgba(234,179,8,0.3)]
-                    transition-all duration-300
-                  "
+                              w-full 
+                              h-full 
+                              object-cover 
+                              transition-transform 
+                              duration-500 
+                              group-hover:scale-110 
+                              group-hover:rotate-2
+                            "
                 />
+
+                {/* Soft shadow overlay */}
+                <div className="absolute inset-0 bg-black/5 mix-blend-soft-light" />
               </motion.div>
 
+
               {/* Text Container - Flexible Height */}
-              <div className="text-center relative z-10 flex-1 flex flex-col">
+              <div className="text-center mt-3 relative z-10 flex-1 flex flex-col">
                 <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors duration-300">
                   {service.title}
                 </h3>
@@ -148,7 +170,7 @@ export default function Services() {
                 </p>
 
                 {/* Decorative line */}
-                <motion.div 
+                <motion.div
                   className="w-16 h-1 bg-yellow-500 mx-auto mt-4 rounded-full"
                   initial={{ width: 0 }}
                   whileInView={{ width: 64 }}

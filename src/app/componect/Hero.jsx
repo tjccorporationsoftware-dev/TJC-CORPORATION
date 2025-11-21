@@ -112,8 +112,8 @@ export default function Hero() {
                                 "
                             >
                                 {[
-                                    { num: "999+", label: "ลูกค้าที่ไว้วางใจ" },
-                                    { num: "999+", label: "โปรเจกต์สำเร็จ" },
+                                    { num: "99+", label: "ลูกค้าที่ไว้วางใจ" },
+                                    { num: "99+", label: "โปรเจกต์สำเร็จ" },
                                     { num: "10+ ปี", label: "ประสบการณ์ในวงการ" },
                                 ].map((item, index) => (
                                     <div

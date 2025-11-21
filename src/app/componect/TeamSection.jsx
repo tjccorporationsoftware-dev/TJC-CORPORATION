@@ -8,7 +8,7 @@ export default function TeamSection() {
   const members = [
     { name: "นายสนั่น สุตัญตั้งใจ", role: "ประธานบริษัท", img: "/images/executive01.jpg" },
     { name: "นางประนอม สุตัญตั้งใจ", role: "รองประธานบริษัท", img: "/images/executive02.jpg" },
-    { name: "นายอรรถสิทธิ์ สุตัญตั้งใจ", role: "ประธานเจ้าหน้าที่บริหาร", img: "/images/executive03.jpg" },
+    // { name: "นายอรรถสิทธิ์ สุตัญตั้งใจ", role: "ประธานเจ้าหน้าที่บริหาร", img: "/images/executive03.jpg" },
   ];
 
   const fadeUp = {

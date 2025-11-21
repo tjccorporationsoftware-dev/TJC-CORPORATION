@@ -21,7 +21,6 @@ export default function CustomersCarousel({
 }) {
     const controls = useAnimation();
     const trackRef = useRef(null);
-
     const loopLogos = [...logos, ...logos]; // duplicated
 
     useEffect(() => {
@@ -75,8 +74,8 @@ export default function CustomersCarousel({
                     </motion.div>
 
                     {/* Fade overlays */}
-                    <div className="pointer-events-none absolute top-0 left-0 w-20 h-full bg-gradient-to-r from-white to-transparent" />
-                    <div className="pointer-events-none absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-white to-transparent" />
+                    <div className="pointer-events-none absolute top-0 left-0 w-20 h-full bg-linear-to-r from-white to-transparent" />
+                    <div className="pointer-events-none absolute top-0 right-0 w-20 h-full bg-linear-to-l from-white to-transparent" />
                 </div>
             </div>
         </section>
