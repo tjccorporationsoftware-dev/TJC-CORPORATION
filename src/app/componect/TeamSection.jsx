@@ -62,7 +62,7 @@ export default function TeamSection() {
             className="relative group rounded-3xl overflow-hidden shadow-[10px_10px_30px_rgba(0,0,0,0.08)] border border-gray-200"
           >
             <img
-              src="/images/tjc.jpg"
+              src="/images/tjc02.jpg"
               className="w-full h-[280px] sm:h-[340px] md:h-[420px] lg:h-[480px] object-cover rounded-3xl transition-transform duration-1000 group-hover:scale-110 cursor-pointer"
               onClick={() => setPreviewImg("/images/tjc.jpg")}
             />
