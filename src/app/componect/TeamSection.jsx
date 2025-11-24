@@ -81,7 +81,7 @@ export default function TeamSection() {
                   key={i}
                   ref={(el) => (staggerRefs.current[i] = el)}
                   onClick={() => setPreviewImg(m.img)}
-                  className="opacity-0 translate-x-10 cursor-pointer backdrop-blur-lg bg-white/70 border border-gray-200 rounded-3xl shadow-md hover:shadow-xl transition-all p-6 flex gap-6 hover:-translate-y-1"
+                  className="opacity-0  cursor-pointer backdrop-blur-lg bg-white/70 border border-gray-200 rounded-3xl shadow-md hover:shadow-xl transition-all p-6 flex gap-6 hover:-translate-y-1"
                 >
                   <img
                     src={m.img}
