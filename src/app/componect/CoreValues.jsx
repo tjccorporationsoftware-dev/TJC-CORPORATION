@@ -57,7 +57,7 @@ export default function CoreValues() {
             <div
               key={i}
               ref={(el) => (cardRefs.current[i] = el)}
-              className="opacity-0 scale-90 translate-y-10 bg-white border border-gray-200 rounded-3xl shadow p-8 md:p-10 lg:p-12 text-center transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-yellow-50/80 cursor-pointer"
+              className="opacity-0 scale-90 translate-y-10 bg-white border border-gray-200 rounded-3xl shadow p-5 md:p-10 lg:px-5 text-center transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-yellow-50/80 cursor-pointer"
             >
               <h4 className="text-xl md:text-2xl lg:text-3xl font-semibold text-yellow-700 mb-4">
                 {item.title}
