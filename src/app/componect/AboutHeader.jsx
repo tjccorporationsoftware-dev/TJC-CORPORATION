@@ -1,11 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function AboutHeader() {
-  const [isReadyToHover, setIsReadyToHover] = useState(false);
-
   const items = [
     {
       title: "วิสัยทัศน์",
@@ -17,122 +14,129 @@ export default function AboutHeader() {
     },
   ];
 
-  /* ------- Responsive check ------- */
-  const useScreen = (width) => {
-    const [isMatch, setIsMatch] = useState(false);
-    useEffect(() => {
-      const media = window.matchMedia(`(max-width: ${width}px)`);
-      const listener = () => setIsMatch(media.matches);
-      listener();
-      media.addEventListener("change", listener);
-      return () => media.removeEventListener("change", listener);
-    }, [width]);
-    return isMatch;
-  };
+  /* ------------------- Animation System ------------------- */
+  const fadeRefs = useRef([]);
+  const cardRefs = useRef([]);
 
-  const isMobile = useScreen(640);
+  useEffect(() => {
+    const animate = (el, className) => {
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add(className);
+              observer.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.3 }
+      );
+      observer.observe(el);
+    };
 
-  /* ------- Improve Animation (Soft Floating + Blur + Scale) ------- */
-  const fadeSoft = {
-    hidden: { opacity: 0, y: 35, scale: 0.96, filter: "blur(6px)" },
-    show: {
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      filter: "blur(0px)",
-      transition: { duration: 0.85, ease: "easeOut" },
-    },
-  };
-
-  const cardAnim = {
-    hidden: { opacity: 0, y: 45, scale: 0.97, filter: "blur(6px)" },
-    show: (i) => ({
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      filter: "blur(0px)",
-      transition: {
-        duration: 0.75,
-        ease: "easeOut",
-        delay: i * 0.18,     // สไลด์ทีละใบแบบ stagger
-      },
-    }),
-  };
+    fadeRefs.current.forEach((el) => animate(el, "fade-up-big"));
+    cardRefs.current.forEach((el, i) => {
+      if (el) el.style.animationDelay = `${i * 0.25}s`;
+      animate(el, "card-pop-big");
+    });
+  }, []);
 
   return (
-    <div id="about" className="bg-white">
+    <div className="bg-white">
 
-      {/* ---------------- HEADER ---------------- */}
-      <motion.section
-        variants={fadeSoft}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.25 }}
-        className="relative py-12 md:py-16 bg-linear-to-b from-gray-50 to-white overflow-hidden"
-      >
+      {/* -------- HEADER -------- */}
+      <section className="relative py-16 md:py-10 overflow-hidden">
 
-        {/* Soft Glow */}
-        <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-44 h-44 bg-yellow-300/20 blur-[120px]" />
-
-        <motion.h2
-          variants={fadeSoft}
-          className="text-center text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-800 tracking-wide"
+        <div
+          ref={(el) => (fadeRefs.current[0] = el)}
+          className="opacity-0 translate-y-10"
         >
-          เกี่ยวกับบริษัท
-        </motion.h2>
+          <h2 className="text-center text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-800">
+            เกี่ยวกับบริษัท
+          </h2>
 
-        <motion.p
-          variants={fadeSoft}
-          className="text-center text-gray-600 text-sm sm:text-base md:text-lg max-w-2xl mx-auto mt-4 px-4 leading-relaxed"
-        >
-          บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด ให้บริการด้านจัดจำหน่าย
-          และจัดซื้อจัดจ้างสำหรับหน่วยงานภาครัฐและเอกชน
-          พร้อมนำเสนอเทคโนโลยีคุณภาพสู่ลูกค้าทั่วประเทศ
-        </motion.p>
-      </motion.section>
+          <p className="text-center text-gray-600 text-lg sm:text-xl max-w-3xl mx-auto mt-6 px-4 leading-relaxed">
+            บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด ให้บริการด้านจัดจำหน่าย
+            และจัดซื้อจัดจ้างสำหรับหน่วยงานภาครัฐและเอกชน
+            พร้อมนำเสนอเทคโนโลยีคุณภาพสู่ลูกค้าทั่วประเทศ
+          </p>
+        </div>
+      </section>
 
-      {/* ---------------- VISION / MISSION CARDS ---------------- */}
-      <section
-        className="max-w-6xl mx-auto px-4 sm:px-6 py-10 md:py-14 grid grid-cols-1 md:grid-cols-2 gap-6"
-      >
-        {items.map((item, index) => (
-          <motion.div
-            key={index}
-            custom={index}
-            variants={cardAnim}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.35 }}
-            onAnimationComplete={() => setIsReadyToHover(true)}
-            whileHover={
-              isReadyToHover
-                ? {
-                  scale: isMobile ? 1.02 : 1.045,
-                  y: isMobile ? -2 : -4,
-                  transition: { type: "spring", stiffness: 160, damping: 14 },
-                  boxShadow: "0 18px 35px rgba(212,175,55,0.22)",
-                }
-                : {}
-            }
+      {/* -------- CARDS -------- */}
+      <section className="max-w-6xl mx-auto px-6 py-14 grid grid-cols-1 md:grid-cols-2 gap-10">
+
+        {items.map((item, i) => (
+          <div
+            key={i}
+            ref={(el) => (cardRefs.current[i] = el)}
             className="
-              bg-white border border-gray-200 rounded-2xl
-              px-6 py-7 shadow-[0_3px_10px_rgba(0,0,0,0.05)]
-              transition-all duration-300 hover:border-yellow-500/60
+              opacity-0 translate-y-10 scale-[0.9]
+              bg-white border border-gray-200 rounded-3xl
+              px-10 py-10 shadow-xl
+              hover:scale-[1.05] hover:border-yellow-500 transition-all duration-300
             "
           >
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-2.5 h-2.5 rounded-full bg-linear-to-br from-yellow-400 to-yellow-600" />
-              <h3 className="text-lg sm:text-xl font-semibold text-gray-800 tracking-wide">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-4 h-4 rounded-full bg-yellow-500 shadow-lg" />
+              <h3 className="text-2xl font-semibold text-gray-800">
                 {item.title}
               </h3>
             </div>
 
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-[15px]">
+            <p className="text-gray-700 leading-relaxed text-lg">
               {item.desc}
             </p>
-          </motion.div>
+          </div>
         ))}
+
       </section>
+
+      <style>{`
+                    /* -------- BIG FADE UP -------- */
+            .fade-up-big {
+              opacity: 1 !important;
+              transform: translateY(0) scale(1) !important;
+              filter: blur(0) !important;
+              animation: fadeUpBig 1s ease-out;
+            }
+
+            @keyframes fadeUpBig {
+              0% {
+                opacity: 0;
+                transform: translateY(60px) scale(0.92);
+                filter: blur(8px);
+              }
+              100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+              }
+            }
+
+            /* -------- CARD POP STRONG -------- */
+            .card-pop-big {
+              animation: cardPopBig 1.1s ease-out forwards;
+            }
+
+            @keyframes cardPopBig {
+              0% {
+                opacity: 0;
+                transform: translateY(80px) scale(0.85);
+                filter: blur(12px);
+              }
+              70% {
+                transform: translateY(-8px) scale(1.06);
+              }
+              100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+              }
+            }
+
+      `}</style>
     </div>
   );
 }

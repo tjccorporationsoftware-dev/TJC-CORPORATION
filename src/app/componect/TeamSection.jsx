@@ -1,156 +1,117 @@
 "use client";
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 
 export default function TeamSection() {
   const [previewImg, setPreviewImg] = useState(null);
 
+  const fadeRef = useRef(null);
+  const leftRef = useRef(null);
+  const rightRef = useRef(null);
+  const staggerRefs = useRef([]);
+
   const members = [
     { name: "นายสนั่น สุตัญตั้งใจ", role: "ประธานบริษัท", img: "/images/executive01.jpg" },
     { name: "นางประนอม สุตัญตั้งใจ", role: "รองประธานบริษัท", img: "/images/executive02.jpg" },
-    // { name: "นายอรรถสิทธิ์ สุตัญตั้งใจ", role: "ประธานเจ้าหน้าที่บริหาร", img: "/images/executive03.jpg" },
   ];
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: 50 },
-    show: { opacity: 1, y: 0 },
-  };
+  useEffect(() => {
+    const observe = (element, className) => {
+      if (!element) return;
 
-  // ⭐ มาแบบต่อกันจากขวา → ซ้าย
-  const staggerRight = {
-    hidden: { opacity: 0, x: 80 },
-    show: (i) => ({
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.7,
-        ease: "easeOut",
-        delay: i * 0.2,
-      },
-    }),
-  };
+      const ob = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add(className);
+              ob.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.3 }
+      );
 
-  const slideLeft = {
-    hidden: { opacity: 0, x: -70 },
-    show: { opacity: 1, x: 0 },
-  };
+      ob.observe(element);
+    };
 
-  const slideRight = {
-    hidden: { opacity: 0, x: 70 },
-    show: { opacity: 1, x: 0 },
-  };
+    observe(fadeRef.current, "anim-fade-up");
+    observe(leftRef.current, "anim-slide-left");
+    observe(rightRef.current, "anim-slide-right");
+
+    staggerRefs.current.forEach((el, i) => {
+      if (!el) return;
+      el.style.animationDelay = `${i * 0.3}s`;
+      observe(el, "anim-stagger");
+    });
+  }, []);
 
   return (
     <>
-      <motion.section
-        variants={fadeUp}
-        initial="hidden"
-        whileInView="show"
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.9, ease: "easeOut" }}
-        className="bg-linear-to-br from-white via-gray-50 to-gray-100 py-14 md:py-20 border-t border-gray-200"
+      {/* SECTION */}
+      <section
+        ref={fadeRef}
+        className="opacity-0 py-20 bg-linear-to-br from-gray-50 to-gray-200"
       >
-        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-center">
+        <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
           {/* LEFT IMAGE */}
-          <motion.div
-            variants={slideLeft}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
-            className="relative group rounded-3xl overflow-hidden shadow-[10px_10px_30px_rgba(0,0,0,0.08)] border border-gray-200"
-          >
-            <img
-              src="/images/tjc02.jpg"
-              className="w-full h-[280px] sm:h-[340px] md:h-[420px] lg:h-[480px] object-cover rounded-3xl transition-transform duration-1000 group-hover:scale-110 cursor-pointer"
-              onClick={() => setPreviewImg("/images/tjc.jpg")}
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-gray-900/50 via-gray-900/10 to-transparent rounded-3xl" />
-            <div className="absolute inset-0 border-[3px] border-yellow-500/40 rounded-3xl" />
-          </motion.div>
+          <div ref={leftRef} className="opacity-0">
+            <div className="rounded-4xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-700">
+              <img
+                src="/images/tjc02.jpg"
+                className="w-full h-[340px] md:h-[450px] object-cover"
+                onClick={() => setPreviewImg("/images/tjc.jpg")}
+              />
+            </div>
+          </div>
 
-          {/* RIGHT TEXT + MEMBERS */}
-          <motion.div
-            variants={slideRight}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true }}
-            transition={{ duration: 0.9, ease: "easeOut" }}
-            className="text-center md:text-left"
-          >
-            <h3 className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-gray-800 mb-5 tracking-wide">
+          {/* RIGHT CONTENT */}
+          <div ref={rightRef} className="opacity-0">
+            <h3 className="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
               ทีมผู้บริหารของเรา
             </h3>
 
-            <p className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg mb-8 max-w-2xl mx-auto md:mx-0">
-              ทีมผู้บริหารของเราประกอบด้วยผู้เชี่ยวชาญในหลากหลายสาขา
-              ทั้งเทคโนโลยี การตลาด และการบริหารจัดการ
-              มุ่งมั่นสร้างองค์กรที่เติบโตอย่างมั่นคงและยั่งยืน
+            <p className="text-gray-600 text-lg leading-relaxed mb-10 border-l-4 border-yellow-500 pl-4">
+              ทีมผู้บริหารที่มุ่งมั่นขับเคลื่อนองค์กรด้วยความเชี่ยวชาญ
+              และประสบการณ์ในหลายสาขา เพื่อสร้างมาตรฐานงานที่ดีที่สุดให้ลูกค้า
             </p>
 
-            {/* Members List — slide จากขวาทีละคน */}
-            <div className="space-y-5 sm:space-y-6">
+            <div className="space-y-6">
               {members.map((m, i) => (
-                <motion.div
+                <div
                   key={i}
-                  custom={i}
-                  variants={staggerRight}
-                  initial="hidden"
-                  whileInView="show"
-                  viewport={{ once: true, amount: 0.3 }}
-                  className="
-                    flex items-center gap-4 sm:gap-5 
-                    bg-white rounded-2xl 
-                    border border-gray-200 
-                    shadow-[6px_6px_0px_rgba(180,180,180,0.22)]
-                    p-4 sm:p-5 md:p-6 
-                    transition-all cursor-pointer
-                  "
-                  whileHover={{
-                    scale: 1.03,
-                    boxShadow: "0 6px 20px rgba(212,175,55,0.28)",
-                    backgroundColor: "rgba(255,255,255,0.95)",
-                    transition: { duration: 0.18 },
-                  }}
+                  ref={(el) => (staggerRefs.current[i] = el)}
                   onClick={() => setPreviewImg(m.img)}
+                  className="opacity-0 translate-x-10 cursor-pointer backdrop-blur-lg bg-white/70 border border-gray-200 rounded-3xl shadow-md hover:shadow-xl transition-all p-6 flex gap-6 hover:-translate-y-1"
                 >
                   <img
                     src={m.img}
-                    className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 rounded-full object-cover border-2 border-yellow-500 shadow-md object-top"
+                    className="w-20 h-20 rounded-full object-cover object-top border-2 border-yellow-500 shadow"
                   />
-                  <div className="text-left">
-                    <h4 className="text-base sm:text-lg md:text-xl font-semibold text-gray-800">{m.name}</h4>
-                    <p className="text-yellow-700 text-xs sm:text-sm md:text-base font-medium">{m.role}</p>
+
+                  <div className="flex flex-col justify-center">
+                    <h4 className="text-xl font-semibold text-gray-900">{m.name}</h4>
+                    <p className="text-yellow-700 font-medium">{m.role}</p>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
-          </motion.div>
+          </div>
+
         </div>
-      </motion.section>
+      </section>
 
       {/* LIGHTBOX */}
-      <AnimatePresence>
-        {previewImg && (
-          <motion.div
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setPreviewImg(null)}
-          >
-            <motion.img
-              src={previewImg}
-              initial={{ scale: 0.7, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.6, opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="max-w-[90%] max-h-[85%] rounded-2xl shadow-2xl object-contain border-4 border-white"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {previewImg && (
+        <div
+          onClick={() => setPreviewImg(null)}
+          className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center z-50"
+        >
+          <img
+            src={previewImg}
+            className="animate-scale-in max-w-[90%] max-h-[85%] rounded-3xl shadow-2xl border-4 border-white/80"
+          />
+        </div>
+      )}
     </>
   );
 }

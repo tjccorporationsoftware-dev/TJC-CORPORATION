@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 export default function CoreValues() {
   const values = [
@@ -8,82 +8,93 @@ export default function CoreValues() {
     { title: "คุณภาพ", desc: "มุ่งมั่นสร้างงานคุณภาพและมาตรฐานระดับสูง" },
   ];
 
+  const sectionRef = useRef(null);
+  const cardRefs = useRef([]);
+  const titleRef = useRef(null);
+
+  useEffect(() => {
+    const animate = (el, animation) => {
+      if (!el) return;
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              el.classList.add(animation);
+              observer.unobserve(el);
+            }
+          });
+        },
+        { threshold: 0.3 }
+      );
+      observer.observe(el);
+    };
+
+    animate(sectionRef.current, "fade-up-big");
+    animate(titleRef.current, "fade-up-mid");
+
+    cardRefs.current.forEach((el, i) => {
+      if (!el) return;
+      el.style.animationDelay = `${i * 0.25}s`;
+      animate(el, "card-anim");
+    });
+  }, []);
+
   return (
-    <motion.section
-      initial={{ opacity: 0, y: 60 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      viewport={{ once: true, amount: 0.25 }}
-      className="bg-linear-to-r from-white via-gray-50 to-gray-100 py-12 sm:py-16 md:py-20 lg:py-24 border-t border-gray-200"
+    <section
+      ref={sectionRef}
       id="core-values"
+      className="opacity-0 bg-linear-to-r from-white via-gray-50 to-gray-100 py-16 md:py-20 lg:py-24 border-t border-gray-200"
     >
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-12">
-
-        {/* Header */}
-        <div className="text-center mb-10 sm:mb-14">
-          <motion.h3
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            viewport={{ once: true }}
-            className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 tracking-wide"
-          >
+        <div ref={titleRef} className="opacity-0 text-center mb-14">
+          <h3 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 tracking-wide">
             ค่านิยมองค์กร
-          </motion.h3>
+          </h3>
         </div>
 
-        {/* Values Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 md:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {values.map((item, i) => (
-            <motion.div
+            <div
               key={i}
-              initial={{
-                opacity: 0,
-                x: i === 0 ? -50 : i === 2 ? 50 : 0,
-                scale: 0.92,
-              }}
-              whileInView={{
-                opacity: 1,
-                x: 0,
-                scale: 1,
-              }}
-              transition={{
-                duration: 0.7,
-                ease: "easeOut",
-                bounce: 0.15,
-              }}
-              whileHover={{
-                scale: 1.05,
-                backgroundColor: "rgba(255,255,240,0.97)",
-                boxShadow: "0px 4px 22px rgba(212,175,55,0.25)",
-                transition: { duration: 0.25 },
-              }}
-              viewport={{ once: true }}
-              className="bg-white border border-gray-200 rounded-2xl shadow-sm p-6 sm:p-7 md:p-8 lg:p-10 text-center transition-all duration-300"
+              ref={(el) => (cardRefs.current[i] = el)}
+              className="opacity-0 scale-90 translate-y-10 bg-white border border-gray-200 rounded-3xl shadow p-8 md:p-10 lg:p-12 text-center transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-yellow-50/80 cursor-pointer"
             >
-              <motion.h4
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                viewport={{ once: true }}
-                className="text-lg sm:text-xl md:text-2xl font-semibold text-yellow-700 mb-3"
-              >
+              <h4 className="text-xl md:text-2xl lg:text-3xl font-semibold text-yellow-700 mb-4">
                 {item.title}
-              </motion.h4>
-
-              <motion.p
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.1 }}
-                viewport={{ once: true }}
-                className="text-gray-700 leading-relaxed text-sm sm:text-base md:text-lg"
-              >
+              </h4>
+              <p className="text-gray-700  leading-relaxed text-base md:text-lg lg:text-xl">
                 {item.desc}
-              </motion.p>
-            </motion.div>
+              </p>
+            </div>
           ))}
         </div>
       </div>
-    </motion.section>
+
+      {/* CSS ANIMATIONS */}
+      <style>{`
+        .fade-up-big {
+          animation: fadeUpBig 1s ease-out forwards;
+        }
+        .fade-up-mid {
+          animation: fadeUpMid 0.9s ease-out forwards;
+        }
+        .card-anim {
+          animation: cardFade 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes fadeUpBig {
+          0% { opacity: 0; transform: translateY(80px) scale(0.9); filter: blur(8px); }
+          100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+        @keyframes fadeUpMid {
+          0% { opacity: 0; transform: translateY(50px) scale(0.95); }
+          100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes cardFade {
+          0% { opacity: 0; transform: translateY(60px) scale(0.85) rotateX(8deg); }
+          100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); }
+        }
+      `}</style>
+    </section>
   );
 }
