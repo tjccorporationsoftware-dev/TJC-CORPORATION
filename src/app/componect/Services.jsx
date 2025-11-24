@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 
-export default function Services3D() {
+export default function Services3DResponsive() {
   const services = [
     {
       title: "จัดส่งสินค้า",
@@ -55,22 +55,22 @@ export default function Services3D() {
       <section
         id="services"
         ref={sectionRef}
-        className="services-section opacity-0 py-20 sm:py-28 md:py-32 bg-linear-to-b from-gray-50 to-white overflow-hidden"
+        className="services-section opacity-0 py-16 sm:py-20 md:py-28 bg-linear-to-b from-gray-50 to-white overflow-hidden"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
 
           {/* Header */}
-          <div className="text-center mb-5 md:mb-5 opacity-0 fade-up" style={{ transitionDelay: "0.1s" }}>
-            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-gray-900 mb-4 tracking-tight">
+          <div className="text-center mb-10 md:mb-12 opacity-0 fade-up" style={{ transitionDelay: "0.1s" }}>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-3 tracking-tight">
               บริการของเรา
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
               ครบวงจรด้านอุปกรณ์คอมพิวเตอร์ ตั้งแต่จำหน่าย ติดตั้ง ไปจนถึงบริการหลังการขาย
             </p>
           </div>
 
           {/* Grid */}
-          <div className="grid gap-10 sm:gap-12 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-6 sm:gap-8 md:gap-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {services.map((service, index) => (
               <div
                 key={service.title}
@@ -78,15 +78,15 @@ export default function Services3D() {
                 className="service-card group opacity-0 transform translate-y-12 scale-95 transition-all duration-700 ease-out cursor-pointer hover:z-10"
                 style={{ transitionDelay: `${0.15 * index}s` }}
               >
-                {/* 3D Card ครอบทั้งรูปและข้อความ */}
-                <div className="relative rounded-3xl w-76 overflow-hidden bg-white shadow-[0_10px_25px_rgba(0,0,0,0.15),0_4px_10px_rgba(0,0,0,0.1)] border-l-4 border-b-4 border-yellow-500 transform transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-105 group-hover:shadow-[0_20px_40px_rgba(212,175,55,0.25),0_8px_20px_rgba(0,0,0,0.15)] p-6 sm:p-8 flex flex-col h-full">
+                {/* 3D Card */}
+                <div className="relative rounded-3xl w-full overflow-hidden bg-white shadow-[0_10px_25px_rgba(0,0,0,0.15),0_4px_10px_rgba(0,0,0,0.1)] border-l-4 border-b-4 border-yellow-500 transform transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-105 group-hover:shadow-[0_20px_40px_rgba(212,175,55,0.25),0_8px_20px_rgba(0,0,0,0.15)] p-5 sm:p-6 md:p-8 flex flex-col h-full">
 
                   {/* Image */}
-                  <div className="relative w-full h-44 sm:h-48 rounded-2xl overflow-hidden shadow-lg bg-gray-100 mb-6">
+                  <div className="relative w-full h-36 sm:h-44 md:h-48 rounded-2xl overflow-hidden shadow-lg bg-gray-100 mb-5 sm:mb-6 md:mb-8">
                     <img
                       src={service.images}
                       alt={service.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:rotate-2"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:rotate-1"
                     />
                     <div className="absolute inset-0 bg-linear-to-br from-yellow-300/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-400 rounded-2xl" />
                     <div className="absolute inset-0 bg-black/5 mix-blend-soft-light rounded-2xl" />
@@ -94,13 +94,13 @@ export default function Services3D() {
 
                   {/* Text */}
                   <div className="text-center flex-1 flex flex-col">
-                    <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 group-hover:text-yellow-600 transition-colors duration-300">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4 group-hover:text-yellow-600 transition-colors duration-300">
                       {service.title}
                     </h3>
-                    <p className="text-base sm:text-lg text-gray-700 leading-relaxed flex-1">
+                    <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed flex-1">
                       {service.desc}
                     </p>
-                    <div className="w-24 h-1 bg-yellow-500 mx-auto mt-6 rounded-full transition-all duration-700" />
+                    <div className="w-20 sm:w-24 md:w-28 h-1 bg-yellow-500 mx-auto mt-4 sm:mt-5 md:mt-6 rounded-full transition-all duration-700" />
                   </div>
 
                 </div>
