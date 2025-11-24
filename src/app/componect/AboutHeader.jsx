@@ -43,7 +43,7 @@ export default function AboutHeader() {
   }, []);
 
   return (
-    <div className="bg-white">
+    <div id="about" className="bg-white">
 
       {/* -------- HEADER -------- */}
       <section className="relative py-16 md:py-10 overflow-hidden">

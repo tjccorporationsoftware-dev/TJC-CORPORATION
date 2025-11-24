@@ -1,33 +1,40 @@
 "use client";
-import React, { useEffect, useState, useMemo } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
 
-export default function Work() {
-    const shouldReduceMotion = useReducedMotion();
+export default function WorkJSFast() {
+  const productRefs = useRef([]);
+  productRefs.current = [];
+  const addToRefs = (el) => { if (el && !productRefs.current.includes(el)) productRefs.current.push(el); };
 
-    const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-    // ตรวจขนาดจอแบบปลอดภัย
-    useEffect(() => {
-        const handleResize = () => {
-            setIsMobile(window.innerWidth < 640);
-        };
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-        handleResize();
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("animate-show");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.25 });
 
-    // ใช้ useMemo เพื่อลดการคำนวณทุก render → animation เนียนขึ้น
-    const animationConfig = useMemo(() => {
-        return {
-            distance: isMobile ? 80 : 120,
-            duration: isMobile ? 0.65 : 0.9,
-            scaleEnd: isMobile ? 1 : 1,
-        };
-    }, [isMobile]);
+    productRefs.current.forEach((el, i) => {
+      const distance = isMobile ? 40 : 80; // ขยับเร็วขึ้น
+      el.style.opacity = 0;
+      el.style.transform = `translateY(${i % 2 === 0 ? distance : -distance}px) scale(0.95)`;
+      el.style.transition = `all 0.5s ease-out ${(i * 0.1).toFixed(2)}s`; // duration สั้นลง, stagger เร็วขึ้น
+      observer.observe(el);
+    });
+  }, [isMobile]);
 
-    const products = [
+  const products = [
         {
             id: 1,
             name: "อุปกรณ์วิทยาศาสตร์และเครื่องมือทดลองทางการศึกษา",
@@ -54,143 +61,45 @@ export default function Work() {
         },
     ];
 
-    const container = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: { staggerChildren: 0.2, when: "beforeChildren" },
-        },
-    };
+  return (
+    <section id="work" className="relative bg-linear-to-b from-white via-gray-50 to-white py-20 overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-800">สินค้าและโซลูชันของเรา</h2>
+          <p className="mt-3 text-gray-600 max-w-3xl mx-auto">
+            เราเลือกสรรสินค้าที่เน้นคุณภาพ ทนทาน และตอบโจทย์การใช้งานจริงสำหรับองค์กร
+          </p>
+        </div>
 
-    const getItemVariant = (index) => ({
-        hidden: {
-            opacity: 0,
-            y: index % 2 === 0 ? animationConfig.distance : -animationConfig.distance,
-            scale: 0.95,
-        },
-        show: {
-            opacity: 1,
-            y: 0,
-            scale: animationConfig.scaleEnd,
-            transition: {
-                duration: animationConfig.duration,
-                ease: [0.25, 0.1, 0.25, 1],
-            },
-        },
-    });
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
+          {products.map((p, i) => (
+            <article
+              key={p.id}
+              ref={addToRefs}
+              className="relative group rounded-2xl bg-white border border-gray-200 overflow-hidden hover:-translate-y-1 hover:scale-105 hover:shadow-xl"
+            >
+              <div className="h-44 sm:h-48 md:h-52 overflow-hidden bg-gray-50">
+                <img
+                  src={p.image}
+                  alt={p.name}
+                  className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <div className="p-4 sm:p-5 flex flex-col">
+                <h3 className="text-lg font-semibold text-gray-800">{p.name}</h3>
+                <p className="text-sm text-gray-500 leading-relaxed">{p.desc}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
 
-    return (
-        <section
-            id="work"
-            aria-labelledby="work-heading"
-            className="relative bg-linear-to-b from-white via-gray-50 to-white py-20 overflow-hidden"
-        >
-            <div
-                aria-hidden="true"
-                className="pointer-events-none absolute -top-24 -right-24 w-[380px] h-[380px] rounded-full bg-yellow-200/20 blur-3xl"
-            />
-
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                {/* Header */}
-                <motion.div
-                    initial={shouldReduceMotion ? {} : { opacity: 0, y: 50 }}
-                    whileInView={shouldReduceMotion ? {} : { opacity: 1, y: 0 }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                    viewport={{ once: true, amount: 0.4 }} // <-- เล่นแค่ครั้งเดียว
-                    className="text-center mb-12"
-                >
-                    <h2
-                        id="work-heading"
-                        className="text-3xl md:text-4xl font-extrabold text-gray-800"
-                    >
-                        สินค้าและโซลูชันของเรา
-                    </h2>
-                    <p className="mt-3 text-gray-600 max-w-3xl mx-auto">
-                        เราเลือกสรรสินค้าที่เน้นคุณภาพ ทนทาน และตอบโจทย์การใช้งานจริงสำหรับองค์กร
-                        สถาบันการศึกษา และธุรกิจ
-                    </p>
-                    
-                </motion.div>
-
-                {/* Grid */}
-                <motion.div
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true, amount: 0.3 }} // <-- เล่นแค่ครั้งเดียว
-                    variants={container}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10"
-                >
-                    {products.map((p, index) => (
-                        <motion.article
-                            key={p.id}
-                            variants={getItemVariant(index)}
-                            whileHover={{
-                                y: -10,
-                                transition: { duration: 0.3 },
-                            }}
-                            className="relative group rounded-2xl bg-white border border-gray-200 overflow-hidden"
-                            aria-labelledby={`product-${p.id}-title`}
-                        >
-                            {/* Border effect */}
-                            <div
-                                className="absolute inset-0 rounded-2xl pointer-events-none"
-                                style={{
-                                    boxShadow:
-                                        "inset 0 0 0 1.5px rgba(212,175,55,0.18), inset -6px -6px 20px rgba(255,255,255,0.6)",
-                                }}
-                            />
-
-                            <div className="relative z-10 flex flex-col h-full">
-                                {/* Image */}
-                                <div className="h-40 sm:h-44 md:h-48 overflow-hidden bg-gray-50">
-                                    <motion.img
-                                        src={p.image}
-                                        alt={p.name}
-                                        className="w-full h-full object-cover transform transition-transform duration-700 group-hover:scale-105"
-                                        loading="lazy"
-                                    />
-                                </div>
-
-                                {/* Content */}
-                                <div className="p-5 sm:p-6 flex-1 flex flex-col justify-between">
-                                    <div>
-                                        <h3
-                                            id={`product-${p.id}-title`}
-                                            className="text-lg font-semibold text-gray-800 mb-2"
-                                        >
-                                            {p.name}
-                                        </h3>
-                                        <p className="text-sm text-gray-500 mb-4 leading-relaxed">
-                                            {p.desc}
-                                        </p>
-                                    </div>
-
-                                    
-                                </div>
-                            </div>
-
-                            {/* Bottom shadow */}
-                            <div
-                                aria-hidden="true"
-                                className="absolute -bottom-4 -left-4 w-[85%] h-10 rounded-2xl"
-                                style={{
-                                    boxShadow:
-                                        "8px 8px 30px rgba(0,0,0,0.08), -8px -8px 20px rgba(255,255,255,0.7)",
-                                }}
-                            />
-                        </motion.article>
-                    ))}
-                </motion.div>
-            </div>
-
-            {/* background glow moving */}
-            <motion.div
-                aria-hidden="true"
-                className="absolute -bottom-32 left-1/2 transform -translate-x-1/2 w-[700px] h-[420px] rounded-full blur-3xl bg-yellow-100/30 pointer-events-none"
-                initial={shouldReduceMotion ? {} : { opacity: 0.08, x: -200 }}
-                animate={shouldReduceMotion ? {} : { opacity: 0.18, x: [-200, 200, -200] }}
-                transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-            />
-        </section>
-    );
+      <style jsx>{`
+        .animate-show {
+          transform: translateY(0) scale(1) !important;
+          opacity: 1 !important;
+        }
+      `}</style>
+    </section>
+  );
 }
