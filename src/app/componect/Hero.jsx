@@ -71,21 +71,21 @@ export default function Hero() {
                         {/* DESCRIPTION */}
                         <motion.p
                             className="
-                                text-base
-                                sm:text-lg
-                                md:text-xl
-                                leading-relaxed
-                                max-w-2xl
-                                mx-auto md:mx-0
-                                text-gray-200
-                                mb-8
-                            "
+                                        text-base
+                                        sm:text-lg
+                                        md:text-xl
+                                        leading-relaxed
+                                        max-w-2xl
+                                        mx-auto md:mx-0
+                                        text-gray-200
+                                        mb-8
+                                    "
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.6 }}
                         >
-                            ผู้ให้บริการขาย ติดตั้ง และจัดส่งอุปกรณ์คอมพิวเตอร์และสำนักงานครบวงจร
-                            รวมถึงครุภัณฑ์ทางการศึกษา ด้วยมาตรฐานคุณภาพระดับมืออาชีพ
+                            ผู้จัดจำหน่ายคอมพิวเตอร์และอุปกรณ์ไอทีครบวงจร
+                            พร้อมบริการติดตั้งและดูแลด้วยมาตรฐานระดับมืออาชีพ
                         </motion.p>
 
                         {/* CTA BUTTONS */}
