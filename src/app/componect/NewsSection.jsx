@@ -161,7 +161,7 @@ export default function NewsSlider() {
         <section className="w-full py-16 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 overflow-hidden">
                 <div className="justify-items-center ">
-                    <h2 className="text-2xl md:text-3xl text-center font-extrabold bg-gradient-to-r from-yellow-500 to-gray-700 bg-clip-text text-transparent drop-shadow-sm leading-tight mb-10">
+                    <h2 className="text-2xl md:text-3xl text-center font-extrabold bg-linear-to-r from-yellow-500 to-gray-700 bg-clip-text text-transparent drop-shadow-sm leading-tight mb-10">
                         ข่าวสารบริษัท
                     </h2>
                 </div>

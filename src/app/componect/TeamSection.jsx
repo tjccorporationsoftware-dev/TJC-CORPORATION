@@ -97,7 +97,7 @@ export default function TeamSection() {
                       <div className="absolute inset-0 bg-linear-to-br from-amber-400 to-yellow-600 rounded-full blur-md opacity-50 group-hover:opacity-70 transition-opacity" />
                       <img
                         src={m.img}
-                        className="relative w-20 h-20 rounded-full object-cover object-top border-3 border-amber-500 shadow-lg"
+                        className="relative w-24 h-24 rounded-full object-cover object-top border-3 border-amber-500 shadow-lg"
                         alt={m.name}
                       />
                     </div>
