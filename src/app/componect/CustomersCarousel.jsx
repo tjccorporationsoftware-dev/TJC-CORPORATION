@@ -44,9 +44,11 @@ export default function CustomersCarousel({
         <section className="py-16 bg-white overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 text-center">
 
-                <h3 className="text-3xl sm:text-4xl font-bold mb-10">
+               <div className=" justify-items-center " >
+                 <h3 className="text-2xl md:text-3xl mb-10 font-extrabold bg-linear-to-r from-yellow-500 to-gray-700 bg-clip-text text-transparent drop-shadow-sm leading-tight">
                     ลูกค้าที่ไว้วางใจเรา
                 </h3>
+               </div>
 
                 <div className="relative overflow-hidden">
 
@@ -60,8 +62,8 @@ export default function CustomersCarousel({
                                 key={idx}
                                 className="flex items-center justify-center bg-white rounded-xl shadow p-4 shrink-0"
                                 style={{
-                                    width: 150,     // ❗ ใช้ px เพื่อให้รวมกว้างแน่นอน
-                                    height: 80,
+                                    width: 200,     // ❗ ใช้ px เพื่อให้รวมกว้างแน่นอน
+                                    height: 130,
                                 }}
                             >
                                 <img

@@ -17,9 +17,63 @@ export default function NewsSlider() {
 
     const loopNews = [...news, ...news, ...news];
 
-    // ------------------------------
-    // วัดขนาดการ์ดทุกหน้าจอ
-    // ------------------------------
+    // -------------------------------------------------------
+    // CSS Animation + Stagger
+    // -------------------------------------------------------
+    useEffect(() => {
+        const style = document.createElement("style");
+        style.innerHTML = `
+            .slide-hidden {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            .slide-show {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        `;
+        document.head.appendChild(style);
+        return () => document.head.removeChild(style);
+    }, []);
+
+    // -------------------------------------------------------
+    // IntersectionObserver + Stagger Animation
+    // -------------------------------------------------------
+    useEffect(() => {
+        const cards = document.querySelectorAll(".slide-card");
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        const index = Array.from(cards).indexOf(entry.target);
+
+                        entry.target.style.transition = `
+                            opacity 0.8s ease-out ${index * 0.12}s,
+                            transform 0.8s ease-out ${index * 0.12}s
+                        `;
+
+                        entry.target.classList.add("slide-show");
+                        entry.target.classList.remove("slide-hidden");
+
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.2 }
+        );
+
+        cards.forEach((card) => {
+            card.classList.add("slide-hidden");
+            observer.observe(card);
+        });
+
+        return () => observer.disconnect();
+    }, []);
+
+    // -------------------------------------------------------
+    // Resize Card Width
+    // -------------------------------------------------------
     const updateCardWidth = () => {
         const track = trackRef.current;
         if (!track) return;
@@ -36,25 +90,28 @@ export default function NewsSlider() {
         return () => window.removeEventListener("resize", updateCardWidth);
     }, []);
 
-    // ------------------------------
-    // Auto Slide (ทีละใบ)
-    // ------------------------------
+    // -------------------------------------------------------
+    // Auto Slide
+    // -------------------------------------------------------
     useEffect(() => {
         if (dragging || cardWidth === 0) return;
+
         const interval = setInterval(() => {
             let newPos = translateX - cardWidth;
             const track = trackRef.current;
+
             const limit = -(track.scrollWidth / 3);
             if (newPos <= limit) newPos = 0;
+
             setTranslateX(newPos);
         }, 2500);
 
         return () => clearInterval(interval);
     }, [translateX, dragging, cardWidth]);
 
-    // ------------------------------
-    // Update transform
-    // ------------------------------
+    // -------------------------------------------------------
+    // Apply Transform
+    // -------------------------------------------------------
     useEffect(() => {
         const track = trackRef.current;
         if (track) {
@@ -62,9 +119,9 @@ export default function NewsSlider() {
         }
     }, [translateX]);
 
-    // ------------------------------
-    // Drag ลื่น + Snap
-    // ------------------------------
+    // -------------------------------------------------------
+    // Dragging
+    // -------------------------------------------------------
     const handleStart = (clientX) => {
         setDragging(true);
         setStartX(clientX);
@@ -79,29 +136,35 @@ export default function NewsSlider() {
 
     const handleEnd = (clientX) => {
         if (!dragging) return;
+
         const delta = clientX - startX;
         const newPos = translateX + delta;
+
         const snap = Math.round(newPos / cardWidth) * cardWidth;
+
         setTranslateX(snap);
         setDragging(false);
     };
 
-    // ------------------------------
-    // Event Handlers (รองรับ Desktop + Mobile)
-    // ------------------------------
+    // -------------------------------------------------------
+    // Event Handler
+    // -------------------------------------------------------
     const onPointerDown = (e) => handleStart(e.clientX || e.touches?.[0]?.clientX);
     const onPointerMove = (e) => {
-        if (dragging) e.preventDefault(); // ป้องกัน scroll
+        if (dragging) e.preventDefault();
         handleMove(e.clientX || e.touches?.[0]?.clientX);
     };
     const onPointerUp = (e) => handleEnd(e.clientX || e.changedTouches?.[0]?.clientX);
 
+
     return (
         <section className="w-full py-16 bg-white">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 overflow-hidden">
-                <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">
-                    ข่าวสารบริษัท
-                </h2>
+                <div className="justify-items-center ">
+                    <h2 className="text-2xl md:text-3xl text-center font-extrabold bg-gradient-to-r from-yellow-500 to-gray-700 bg-clip-text text-transparent drop-shadow-sm leading-tight mb-10">
+                        ข่าวสารบริษัท
+                    </h2>
+                </div>
 
                 <div className="select-none overflow-hidden w-full">
                     <div
@@ -120,7 +183,8 @@ export default function NewsSlider() {
                             <div
                                 key={i}
                                 className="
-                                    slide-card bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden
+                                    slide-card slide-hidden
+                                    bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden
                                     inline-block
                                     min-w-[90%] max-w-[90%]
                                     sm:min-w-[60%] sm:max-w-[60%]
@@ -136,12 +200,15 @@ export default function NewsSlider() {
                                 />
                                 <div className="p-5">
                                     <p className="text-sm text-yellow-700 font-medium">{n.date}</p>
-                                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 mt-1">{n.title}</h3>
+                                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 mt-1">
+                                        {n.title}
+                                    </h3>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
+
             </div>
         </section>
     );

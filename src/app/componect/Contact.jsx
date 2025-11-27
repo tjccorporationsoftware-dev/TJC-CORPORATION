@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function Contact() {
 
-    
+
 
     // ------------------ Animation ------------------
     const fadeUp = {
@@ -35,9 +35,11 @@ export default function Contact() {
                         "
                     >
                         <div>
-                            <h2 className="text-3xl font-bold tracking-wide">
+
+                            <h2 className="text-2xl md:text-3xl font-extrabold bg-linear-to-r from-yellow-500 to-gray-700 bg-clip-text text-transparent drop-shadow-sm leading-tight mb-10">
                                 ติดต่อเรา
                             </h2>
+
                             <p className="mt-2 text-gray-700 leading-relaxed text-[16px]">
                                 สอบถามข้อมูล ขอใบเสนอราคา หรือติดต่อทีมงานของเราได้ทุกเวลา
                                 เรายินดีให้บริการด้วยความเป็นมืออาชีพ
@@ -143,7 +145,7 @@ export default function Contact() {
                         transition={{ delay: 0.2 }}
                         className="space-y-5"
                     >
-                        <h3 className="text-3xl font-bold  tracking-wide">
+                        <h3 className="text-2xl md:text-3xl font-extrabold bg-linear-to-r from-yellow-500 to-gray-700 bg-clip-text text-transparent drop-shadow-sm leading-tight mb-10">
                             ตำแหน่งที่ตั้งสำนักงาน
                         </h3>
 
@@ -163,7 +165,7 @@ export default function Contact() {
                 </div>
             </motion.section>
 
-           
+
         </>
     );
 }

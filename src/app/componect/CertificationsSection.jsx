@@ -83,7 +83,7 @@ export default function CertificationsSection() {
         cursor-pointer
         transition-all duration-500 ease-out
         w-full h-full
-        [backface-visibility:hidden]
+        backface-hidden
         will-change-transform
       "
               >
