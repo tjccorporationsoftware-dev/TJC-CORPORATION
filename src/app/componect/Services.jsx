@@ -1,37 +1,19 @@
 "use client";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-export default function Services3DResponsive() {
+export default function ServicesSection() {
+  const [activeCard, setActiveCard] = useState(null);
+
   const services = [
-    {
-      title: "จัดส่งสินค้า",
-      desc: "บริการจัดส่งสินค้าอย่างรวดเร็ว ปลอดภัย",
-      images: "/images/delivery.png",
-    },
-    {
-      title: "บริการติดตั้ง",
-      desc: "ให้บริการติดตั้งอุปกรณ์ทุกประเภทโดยทีมช่างผู้เชี่ยวชาญ มาตรฐานมืออาชีพ",
-      images: "/images/install.png",
-    },
-    {
-      title: "ตรวจเช็กการทำงาน",
-      desc: "ตรวจสอบประสิทธิภาพอุปกรณ์ พร้อมดูแลหลังการขายโดยผู้เชี่ยวชาญ",
-      images: "/images/After-sales service.png",
-    },
-    {
-      title: "รับประกันสินค้า",
-      desc: "รับประกันสินค้าทุกชิ้น พร้อมบริการดูแล เปลี่ยน หรือซ่อมแซม",
-      images: "/images/Productguarantee.png",
-    },
+    { title: "จัดส่งสินค้า", desc: "บริการจัดส่งสินค้าอย่างรวดเร็ว ปลอดภัย ตรงเวลา ทั่วทุกภูมิภาค", images: "/images/delivery.png" },
+    { title: "บริการติดตั้ง", desc: "ให้บริการติดตั้งอุปกรณ์ทุกประเภทโดยทีมช่างผู้เชี่ยวชาญ มาตรฐานมืออาชีพ", images: "/images/install.png" },
+    { title: "ตรวจเช็กการทำงาน", desc: "ตรวจสอบประสิทธิภาพอุปกรณ์ พร้อมดูแลหลังการขายโดยผู้เชี่ยวชาญ", images: "/images/After-sales service.png" },
+    { title: "รับประกันสินค้า", desc: "รับประกันสินค้า พร้อมบริการดูแล เปลี่ยน หรือซ่อมแซมตลอดอายุการใช้งาน", images: "/images/Productguarantee.png" }
   ];
 
   const sectionRef = useRef(null);
+  const headerRef = useRef(null);
   const cardsRef = useRef([]);
-  cardsRef.current = [];
-
-  const addToRefs = (el) => {
-    if (el && !cardsRef.current.includes(el)) cardsRef.current.push(el);
-  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -43,79 +25,76 @@ export default function Services3DResponsive() {
           }
         });
       },
-      { threshold: 0.25 }
+      { threshold: 0.12 }
     );
 
     if (sectionRef.current) observer.observe(sectionRef.current);
-    cardsRef.current.forEach((card) => observer.observe(card));
+    if (headerRef.current) observer.observe(headerRef.current);
+    cardsRef.current.forEach((card, i) => {
+      if (card) {
+        card.style.animationDelay = `${i * 0.12}s`;
+        observer.observe(card);
+      }
+    });
+
+    return () => observer.disconnect();
   }, []);
 
   return (
-    <>
-      <section
-        id="services"
-        ref={sectionRef}
-        className="services-section opacity-0 py-16 sm:py-20 md:py-28 bg-linear-to-b from-gray-50 to-white overflow-hidden"
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-10">
+    <section id="services" ref={sectionRef} className="relative py-24 bg-gray-50 overflow-hidden">
+      {/* Subtle Gold Light Shapes */}
+      <div className="absolute top-0 left-1/4 w-60 h-60 bg-yellow-300/15 blur-[100px] rounded-full rotate-12"></div>
+      <div className="absolute top-1/2 right-1/4 w-72 h-72 bg-yellow-200/10 blur-[140px] rounded-full -rotate-6"></div>
+      <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-yellow-300/12 blur-[120px] rounded-full rotate-45"></div>
 
-          {/* Header */}
-          <div className="text-center mb-10 md:mb-12 opacity-0 fade-up" style={{ transitionDelay: "0.1s" }}>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 mb-3 tracking-tight">
-              บริการของเรา
-            </h2>
-            <p className="text-base sm:text-lg md:text-xl text-gray-600 max-w-3xl mx-auto">
-              ครบวงจรด้านอุปกรณ์คอมพิวเตอร์ ตั้งแต่จำหน่าย ติดตั้ง ไปจนถึงบริการหลังการขาย
-            </p>
-          </div>
-
-          {/* Grid */}
-          <div className="grid gap-6 sm:gap-8 md:gap-0 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            {services.map((service, index) => (
-              <div
-                key={service.title}
-                ref={addToRefs}
-                className="service-card group opacity-0 transform translate-y-12 scale-95 transition-all duration-700 ease-out cursor-pointer hover:z-10"
-                style={{ transitionDelay: `${0.15 * index}s` }}
-              >
-                {/* 3D Card */}
-                <div className="relative rounded-3xl w-full overflow-hidden bg-white shadow-[0_10px_25px_rgba(0,0,0,0.15),0_4px_10px_rgba(0,0,0,0.1)] border-l-4 border-b-4 border-yellow-500 transform transition-all duration-500 group-hover:-translate-y-3 group-hover:scale-105 group-hover:shadow-[0_20px_40px_rgba(212,175,55,0.25),0_8px_20px_rgba(0,0,0,0.15)] p-5 sm:p-6 md:p-8 flex flex-col h-full">
-
-                  {/* Image */}
-                  <div className="relative w-full h-36 sm:h-44 md:h-48 rounded-2xl overflow-hidden shadow-lg bg-gray-100 mb-5 sm:mb-6 md:mb-8">
-                    <img
-                      src={service.images}
-                      alt={service.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 group-hover:rotate-1"
-                    />
-                    <div className="absolute inset-0 bg-linear-to-br from-yellow-300/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-400 rounded-2xl" />
-                    <div className="absolute inset-0 bg-black/5 mix-blend-soft-light rounded-2xl" />
-                  </div>
-
-                  {/* Text */}
-                  <div className="text-center flex-1 flex flex-col">
-                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2 sm:mb-3 md:mb-4 group-hover:text-yellow-600 transition-colors duration-300">
-                      {service.title}
-                    </h3>
-                    <p className="text-sm sm:text-base md:text-lg text-gray-700 leading-relaxed flex-1">
-                      {service.desc}
-                    </p>
-                    <div className="w-20 sm:w-24 md:w-28 h-1 bg-yellow-500 mx-auto mt-4 sm:mt-5 md:mt-6 rounded-full transition-all duration-700" />
-                  </div>
-
-                </div>
-              </div>
-            ))}
-          </div>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div ref={headerRef} className="text-center mb-16 opacity-0 justify-items-center ">
+          <h2 className="text-4xl md:text-5xl font-extrabold bg-linear-to-r from-yellow-500 to-gray-700 bg-clip-text text-transparent drop-shadow-sm leading-tight py-2">
+            บริการของเรา
+          </h2>
+          <p className="mt-4 text-gray-600 max-w-2xl mx-auto text-lg">
+            ครบวงจรด้านอุปกรณ์คอมพิวเตอร์ ตั้งแต่จำหน่าย ติดตั้ง ไปจนถึงบริการหลังการขาย
+          </p>
         </div>
-      </section>
+
+        {/* Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+          {services.map((service, index) => (
+            <div key={index} ref={(el) => (cardsRef.current[index] = el)} onMouseEnter={() => setActiveCard(index)} onMouseLeave={() => setActiveCard(null)} className="group relative bg-white/90 backdrop-blur-sm rounded-2xl border border-gray-200 shadow-xl hover:shadow-2xl transition-all duration-500 overflow-hidden flex flex-col h-full opacity-0">
+
+              {/* Image */}
+              <div className="relative h-48 w-full overflow-hidden">
+                <img src={service.images} alt={service.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              </div>
+
+              {/* Text */}
+              <div className="px-5 py-6 flex flex-col grow text-center">
+                <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-yellow-600 transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-sm text-gray-500 leading-relaxed mb-4 grow">
+                  {service.desc}
+                </p>
+                
+              </div>
+
+              {/* Bottom bar */}
+              <div className="absolute bottom-0 left-0 w-full h-2 bg-linear-to-r from-amber-400 via-yellow-500 to-amber-400 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-left" />
+            </div>
+          ))}
+        </div>
+      </div>
 
       <style jsx>{`
+        @keyframes fadeUp {
+          from { opacity: 0; transform: translateY(60px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
         .fade-up {
-          opacity: 1 !important;
-          transform: translateY(0) scale(1) !important;
+          animation: fadeUp 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
         }
       `}</style>
-    </>
+    </section>
   );
 }

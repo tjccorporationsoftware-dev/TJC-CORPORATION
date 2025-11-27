@@ -14,6 +14,7 @@ import CertificationsSection from "./componect/CertificationsSection";
 import ReviewsSection from "./componect/ReviewsSection";
 import NewsSection from "./componect/NewsSection";
 import CustomersCarousel from "./componect/CustomersCarousel";
+import QuotationBuilder from "./componect/QuotationBuilder";
 
 
 
@@ -28,7 +29,6 @@ export default function CompanyLandingPage() {
       <main className="  " >
         <Hero />
         <AboutHeader />
-        <CoreValues />
         <TeamSection />
         <CertificationsSection />
         <Services />
@@ -36,8 +36,8 @@ export default function CompanyLandingPage() {
         <NewsSection />
         <Content />
         <CustomersCarousel />
-        {/* <ReviewsSection /> */}
         <Footer />
+        
 
 
       </main>

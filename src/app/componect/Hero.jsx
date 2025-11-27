@@ -14,12 +14,12 @@ export default function Hero() {
     }, []);
 
     return (
-        <div id="hero" className="mt-14 sm:mt-16">
+        <div id="hero" className="mt-18">
             <section
                 className="
                 relative overflow-hidden 
-                min-h-[88vh] 
-                md:min-h-[92vh] 
+                min-h-[85vh]
+                md:min-h-[90vh] 
                 flex items-center 
                 text-white
             "
@@ -35,40 +35,35 @@ export default function Hero() {
                     <source src="/video/1112.mp4" type="video/mp4" />
                 </video>
 
-                <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/50 to-transparent"></div>
+                <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/60 to-black/40"></div>
 
                 <div
                     className="
                     relative z-10 w-full
-                    px-5 sm:px-8 md:px-12
-                    lg:ml-[60px]
-                    mt-16 sm:mt-20 md:mt-10
+                    px-6 sm:px-8 md:px-12
+                    lg:ml-16
                 "
                 >
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1.2 }}
-                        className="max-w-2xl mx-auto md:mx-0 text-center md:text-left"
+                        transition={{ duration: 1 }}
+                        className="max-w-4xl mx-auto md:mx-0 text-center md:text-left"
                     >
                         {/* TITLE */}
                         <motion.h1
                             className="
-                                font-extrabold leading-tight tracking-tight
-                                text-white drop-shadow-[0_5px_12px_rgba(0,0,0,0.9)]
-                                bg-linear-to-r from-white via-gray-200 to-[#d4af37]
-                                bg-clip-text
-
-                                text-[26px]
-                                sm:text-[32px]
-                                md:text-[38px]
-                                lg:text-[44px]
-                                xl:text-[48px]
-                                2xl:text-[52px]
+                                font-bold leading-tight tracking-tight
+                                text-white drop-shadow-2xl
+                                text-3xl
+                                sm:text-4xl
+                                md:text-5xl
+                                lg:text-6xl
+                                mb-6
                             "
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
+                            transition={{ delay: 0.4 }}
                         >
                             บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด
                         </motion.h1>
@@ -76,73 +71,101 @@ export default function Hero() {
                         {/* DESCRIPTION */}
                         <motion.p
                             className="
-                                mt-4 sm:mt-5
-                                text-[14px]
-                                sm:text-[16px]
-                                md:text-[18px]
-                                lg:text-[20px]
+                                text-base
+                                sm:text-lg
+                                md:text-xl
                                 leading-relaxed
-                                max-w-[95%] md:max-w-[620px]
+                                max-w-2xl
                                 mx-auto md:mx-0
-                                text-gray-100
+                                text-gray-200
+                                mb-8
                             "
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             transition={{ delay: 0.6 }}
                         >
                             ผู้ให้บริการขาย ติดตั้ง และจัดส่งอุปกรณ์คอมพิวเตอร์และสำนักงานครบวงจร
-                            รวมถึงครุภัณฑ์ทางการศึกษา ด้วยมาตรฐานคุณภาพและบริการระดับมืออาชีพ
+                            รวมถึงครุภัณฑ์ทางการศึกษา ด้วยมาตรฐานคุณภาพระดับมืออาชีพ
                         </motion.p>
+
+                        {/* CTA BUTTONS */}
+                        <motion.div
+                            className="flex flex-wrap gap-4 justify-center md:justify-start"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.8 }}
+                        >
+                            <a
+                                href="#contact"
+                                className="
+                                    px-8 py-3 
+                                    bg-amber-600 hover:bg-amber-700
+                                    text-white font-semibold rounded-lg
+                                    shadow-lg hover:shadow-xl
+                                    transition-all duration-300
+                                    hover:scale-105
+                                    flex items-center gap-2
+                                "
+                            >
+                                <i className='bx bxs-phone'></i>
+                                ติดต่อเรา
+                            </a>
+                            <a
+                                href="#services"
+                                className="
+                                    px-8 py-3
+                                    bg-white/10 backdrop-blur-md hover:bg-white/20
+                                    text-white font-semibold rounded-lg
+                                    border border-white/30
+                                    transition-all duration-300
+                                    hover:scale-105
+                                    flex items-center gap-2
+                                "
+                            >
+                                <i className='bx bx-info-circle'></i>
+                                เรียนรู้เพิ่มเติม
+                            </a>
+                        </motion.div>
 
                         {/* STATS */}
                         <motion.div
-                            className="mt-10 border-t border-gray-300/40 pt-8"
+                            className="mt-16 pt-8 border-t border-white/20"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 1.3 }}
+                            transition={{ delay: 1.2 }}
                         >
                             <div
                                 className="
                                     grid
-                                    grid-cols-1
-                                    xxs:grid-cols-2
-                                    sm:grid-cols-3
-                                    gap-5 sm:gap-6
+                                    grid-cols-3
+                                    gap-6 sm:gap-8
                                     text-center
                                 "
                             >
                                 {[
-                                    { num: "99+", label: "ลูกค้าที่ไว้วางใจ" },
-                                    { num: "99+", label: "โปรเจกต์สำเร็จ" },
-                                    { num: "10+ ปี", label: "ประสบการณ์ในวงการ" },
+                                    { num: "300+", label: "ลูกค้าที่ไว้วางใจ", icon: "bx-group" },
+                                    { num: "500+", label: "โปรเจกต์สำเร็จ", icon: "bx-check-circle" },
+                                    { num: "10+ ปี", label: "ประสบการณ์", icon: "bx-time-five" },
                                 ].map((item, index) => (
-                                    <div
-                                        key={index}
-                                        className="
-                                            p-5 rounded-xl 
-                                            bg-linear-to-br from-gray-800/70 to-gray-700/40 
-                                            shadow-lg backdrop-blur-md
-                                        "
-                                    >
+                                    <div key={index}>
+                                        <i className={`bx ${item.icon} text-4xl text-amber-400 mb-2`}></i>
                                         <h3
                                             className="
-                                                font-bold text-[#d4af37]
-                                                text-[30px]
-                                                sm:text-[24px]
-                                                md:text-[28px]
-                                                lg:text-[32px]
-                                                xl:text-[36px]
+                                                font-bold text-amber-400
+                                                text-2xl
+                                                sm:text-3xl
+                                                md:text-4xl
+                                                mb-1
                                             "
                                         >
                                             {item.num}
                                         </h3>
                                         <p
                                             className="
-                                                text-white 
-                                                text-[12px]
-                                                sm:text-[14px]
-                                                md:text-[15px]
-                                                lg:text-[16px]
+                                                text-white/90
+                                                text-xs
+                                                sm:text-sm
+                                                md:text-base
                                             "
                                         >
                                             {item.label}
