@@ -22,11 +22,7 @@ import QuotationBuilder from "./componect/QuotationBuilder";
 export default function CompanyLandingPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-slate-900 antialiased">
-
-
-      <Navbar />
-
-      <main className="  " >
+        <Navbar />
         <Hero />
         <AboutHeader />
         <TeamSection />
@@ -37,10 +33,6 @@ export default function CompanyLandingPage() {
         <Content />
         <CustomersCarousel />
         <Footer />
-        
-
-
-      </main>
     </div>
   );
 }

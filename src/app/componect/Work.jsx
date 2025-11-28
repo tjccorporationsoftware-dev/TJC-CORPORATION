@@ -43,8 +43,22 @@ export default function WorkJSFast() {
   const products = [
     { id: 1, category: "Visual", name: "โปรเจคเตอร์ (Projectors)", image: "/images/product/01.png", desc: "อุปกรณ์ฉายภาพคุณภาพสูง เหมาะสำหรับห้องเรียน ห้องประชุม และงานนำเสนอทุกรูปแบบ" },
     { id: 2, category: "Display", name: "จอโปรเจคเตอร์ไฟฟ้า (Electric Projector Screen)", image: "/images/product/10.png", desc: "จอโปรเจคเตอร์แบบควบคุมไฟฟ้า ให้ภาพคมชัด รองรับการใช้งานร่วมกับโปรเจคเตอร์ทุกประเภท" },
-    { id: 3, category: "Computer", name: "คอมพิวเตอร์ตั้งโต๊ะ (PC Desktop)", image: "/images/product/03.png", desc: "คอมพิวเตอร์ประสิทธิภาพสูง เหมาะสำหรับงานสำนักงาน เรียนออนไลน์ และงานกราฟิก" },
-    { id: 4, category: "Infrastructure", name: "เมาส์ (Mouse) และ คีย์บอร์ด (Keyboard)", image: "/images/product/pd3.jpg", desc: "อุปกรณ์ควบคุมการใช้งานคอมพิวเตอร์ เช่น เมาส์และคีย์บอร์ด ใช้งานได้กับระบบคอมพิวเตอร์ทุกรูปแบบ" }
+    {
+      id: 3,
+      category: "Computer",
+      name: "คอมพิวเตอร์ตั้งโต๊ะ (PC Desktop)",
+      image: "/images/product/pd301.png",
+      desc: "คอมพิวเตอร์ประสิทธิภาพสูง เหมาะสำหรับงานสำนักงาน เรียนออนไลน์ และงานกราฟิก"
+    },
+
+    {
+      id: 4,
+      category: "Computer",
+      name: "คอมพิวเตอร์ออลอินวัน (All-in-One PC)",
+      image: "/images/product/03.png",
+      desc: "คอมพิวเตอร์แบบออลอินวัน รวมจอและตัวเครื่องไว้ด้วยกัน ประหยัดพื้นที่ ใช้งานสะดวก"
+    }
+
   ];
 
   return (

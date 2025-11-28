@@ -14,12 +14,12 @@ export default function Hero() {
     }, []);
 
     return (
-        <div id="hero" className="mt-18">
+        <div id="hero" className="mt-15">
             <section
                 className="
                 relative overflow-hidden 
-                min-h-[85vh]
-                md:min-h-[90vh] 
+                min-h-[95vh]
+                md:min-h-[92vh] 
                 flex items-center 
                 text-white
             "

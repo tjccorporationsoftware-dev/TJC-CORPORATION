@@ -166,50 +166,85 @@ export default function NewsSlider() {
                     </h2>
                 </div>
 
-                <div className="select-none overflow-hidden w-full">
-                    <div
-                        ref={trackRef}
-                        className="flex gap-5 transition-transform duration-500"
-                        onMouseDown={onPointerDown}
-                        onMouseMove={onPointerMove}
-                        onMouseUp={onPointerUp}
-                        onMouseLeave={onPointerUp}
-                        onTouchStart={onPointerDown}
-                        onTouchMove={onPointerMove}
-                        onTouchEnd={onPointerUp}
-                        onTouchCancel={onPointerUp}
+                {/* 🔥 ปุ่มเลื่อน */}
+                <div className="relative w-full">
+
+                    {/* ปุ่มย้อนกลับ */}
+                    <button
+                        onClick={() => setTranslateX((prev) => prev + cardWidth)}
+                        className="
+                    absolute left-0 top-1/2 -translate-y-1/2
+                    bg-white shadow-lg w-10 h-10 rounded-full
+                    flex items-center justify-center
+                    border border-gray-300
+                    hover:bg-gray-100 active:scale-95
+                    z-10
+                "
                     >
-                        {loopNews.map((n, i) => (
-                            <div
-                                key={i}
-                                className="
-                                    slide-card slide-hidden
-                                    bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden
-                                    inline-block
-                                    min-w-[90%] max-w-[90%]
-                                    sm:min-w-[60%] sm:max-w-[60%]
-                                    md:min-w-[45%] md:max-w-[45%]
-                                    lg:min-w-[30%] lg:max-w-[30%]
-                                    xl:min-w-[25%] xl:max-w-[25%]
-                                "
-                            >
-                                <img
-                                    src={n.image}
-                                    className="w-full h-48 sm:h-56 md:h-60 object-cover"
-                                    alt={n.title}
-                                />
-                                <div className="p-5">
-                                    <p className="text-sm text-yellow-700 font-medium">{n.date}</p>
-                                    <h3 className="text-lg md:text-xl font-semibold text-gray-900 mt-1">
-                                        {n.title}
-                                    </h3>
+                        ‹
+                    </button>
+
+                    {/* ปุ่มถัดไป */}
+                    <button
+                        onClick={() => setTranslateX((prev) => prev - cardWidth)}
+                        className="
+                    absolute right-0 top-1/2 -translate-y-1/2
+                    bg-white shadow-lg w-10 h-10 rounded-full
+                    flex items-center justify-center
+                    border border-gray-300
+                    hover:bg-gray-100 active:scale-95
+                    z-10
+                "
+                    >
+                        ›
+                    </button>
+
+                    {/* แถบสไลด์ */}
+                    <div className="select-none overflow-hidden w-full">
+                        <div
+                            ref={trackRef}
+                            className="flex gap-5 transition-transform duration-500"
+                            onMouseDown={onPointerDown}
+                            onMouseMove={onPointerMove}
+                            onMouseUp={onPointerUp}
+                            onMouseLeave={onPointerUp}
+                            onTouchStart={onPointerDown}
+                            onTouchMove={onPointerMove}
+                            onTouchEnd={onPointerUp}
+                            onTouchCancel={onPointerUp}
+                        >
+                            {loopNews.map((n, i) => (
+                                <div
+                                    key={i}
+                                    className="
+                                slide-card slide-hidden
+                                bg-white border border-gray-200 shadow-md rounded-2xl overflow-hidden
+                                inline-block
+                                min-w-[90%] max-w-[90%]
+                                sm:min-w-[60%] sm:max-w-[60%]
+                                md:min-w-[45%] md:max-w-[45%]
+                                lg:min-w-[30%] lg:max-w-[30%]
+                                xl:min-w-[25%] xl:max-w-[25%]
+                            "
+                                >
+                                    <img
+                                        src={n.image}
+                                        className="w-full h-48 sm:h-56 md:h-60 object-cover"
+                                        alt={n.title}
+                                    />
+                                    <div className="p-5">
+                                        <p className="text-sm text-yellow-700 font-medium">{n.date}</p>
+                                        <h3 className="text-lg md:text-xl font-semibold text-gray-900 mt-1">
+                                            {n.title}
+                                        </h3>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
                 </div>
-
             </div>
         </section>
+
     );
 }
