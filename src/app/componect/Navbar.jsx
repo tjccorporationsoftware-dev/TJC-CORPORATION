@@ -32,7 +32,7 @@ export default function Navbar() {
                 <div className="flex items-center justify-between h-[60px] sm:h-16 md:h-[70px] flex-nowrap">
 
                     {/* LOGO */}
-                    <Link href="/" className="flex items-center gap-3 flex-shrink-0">
+                    <Link href="/" className="flex items-center gap-3 shrink-0">
                         <img
                             src="/images/logo.png"
                             alt="TJC"
@@ -94,7 +94,7 @@ export default function Navbar() {
                         ))}
 
                         {/* SOCIAL Icons */}
-                        <div className="flex items-center gap-4 text-[20px] text-gray-600 flex-shrink-0">
+                        <div className="flex items-center gap-4 text-[20px] text-gray-600 shrink-0">
                             {[
                                 {
                                     href: "https://line.me/",
@@ -102,7 +102,7 @@ export default function Navbar() {
                                     delay: 500
                                 },
                                 {
-                                    href: "https://facebook.com/",
+                                    href: "https://www.youtube.com/watch?v=Hc4OrO4LRWw&list=RDHc4OrO4LRWw&start_radio=1",
                                     icon: <SiFacebook className="text-blue-600" />,
                                     delay: 600
                                 },
