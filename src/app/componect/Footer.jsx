@@ -12,11 +12,6 @@ export default function Footer() {
                         <p className="text-sm text-gray-500">© {new Date().getFullYear()} TJC Corporation. All rights reserved.</p>
                     </div>
                 </div>
-
-                <nav className="flex gap-6 text-sm text-gray-600 font-medium">
-                    <a href="#privacy" className="hover:text-[#bfa334] transition-colors">นโยบายความเป็นส่วนตัว</a>
-                    <a href="#terms" className="hover:text-[#bfa334] transition-colors">เงื่อนไขการใช้งาน</a>
-                </nav>
             </div>
         </footer>
     );
