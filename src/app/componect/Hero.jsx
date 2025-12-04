@@ -143,8 +143,8 @@ export default function Hero() {
                                 "
                             >
                                 {[
-                                    { num: "300+", label: "ลูกค้าที่ไว้วางใจ", icon: "bx-group" },
-                                    { num: "500+", label: "โปรเจกต์สำเร็จ", icon: "bx-check-circle" },
+                                    { num: "3000+", label: "ลูกค้าที่ไว้วางใจ", icon: "bx-group" },
+                                    { num: "5000+", label: "โปรเจกต์สำเร็จ", icon: "bx-check-circle" },
                                     { num: "10+ ปี", label: "ประสบการณ์", icon: "bx-time-five" },
                                 ].map((item, index) => (
                                     <div key={index}>
