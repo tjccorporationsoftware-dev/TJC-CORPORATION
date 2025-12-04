@@ -96,7 +96,7 @@ export default function WorkJSFast() {
               <span className="text-xs font-semibold tracking-wider text-gray-500 uppercase">{p.category}</span>
               <h3 className="mt-2 text-lg font-bold text-gray-800 group-hover:text-yellow-600 transition-colors">{p.name}</h3>
               <p className="text-sm text-gray-500 mt-2 leading-relaxed">{p.desc}</p>
-              <a href="https://line.me/R/ti/p/~yourlineid" target="_blank" className="mt-auto inline-block w-full text-center bg-linear-to-r from-yellow-500 to-yellow-600 text-white font-semibold py-2 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.03] transition-all">สอบถามเพิ่มเติม</a>
+              <a href="https://lin.ee/twVZIGO" target="_blank" className="mt-auto inline-block w-full text-center bg-linear-to-r from-yellow-500 to-yellow-600 text-white font-semibold py-2 rounded-xl shadow-md hover:shadow-lg hover:scale-[1.03] transition-all">สอบถามเพิ่มเติม</a>
             </div>
           </div>
         ))}
