@@ -64,7 +64,7 @@ export default function Contact() {
                             </div>
 
                             {/* Phone */}
-                            <Link href="tel:0994132744">
+                            <Link href="tel:0804748917">
                                 <div className="flex items-start gap-4 cursor-pointer">
                                     <div className="w-8 text-center">
                                         <i className="bx bx-phone-call text-[#bfa334] text-2xl"></i>
@@ -72,29 +72,14 @@ export default function Contact() {
                                     <div>
                                         <p className="text-sm text-gray-500">โทรศัพท์</p>
                                         <p className="font-semibold hover:text-[#bfa334] transition">
-                                            099-413-2744
-                                        </p>
-                                    </div>
-                                </div>
-                            </Link>
-
-                            {/* HR Phone */}
-                            <Link href="tel:0804746169">
-                                <div className="flex items-start gap-4 cursor-pointer">
-                                    <div className="w-8 text-center">
-                                        <i className="bx bx-phone-call text-[#bfa334] text-2xl"></i>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm text-gray-500">เบอร์กลางบริษัท HR</p>
-                                        <p className="font-semibold hover:text-[#bfa334] transition">
-                                            080-474-6169
+                                           080-474-8917
                                         </p>
                                     </div>
                                 </div>
                             </Link>
 
                             {/* Line OA */}
-                            <Link href="https://line.me/ti/p/dGpNTpUUdq" target="_blank">
+                            <Link href="https://lin.ee/twVZIGO" target="_blank">
                                 <div className="flex items-start gap-4 cursor-pointer">
                                     <div className="w-8 text-center">
                                         <img src="/images/line2.png" className="w-7 mx-auto" />

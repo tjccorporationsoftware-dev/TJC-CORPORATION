@@ -97,7 +97,7 @@ export default function Navbar() {
                         <div className="flex items-center gap-4 text-[20px] text-gray-600 shrink-0">
                             {[
                                 {
-                                    href: "https://line.me/",
+                                    href: "https://lin.ee/twVZIGO",
                                     icon: <SiLine className="text-green-500" />,
                                     delay: 500
                                 },
@@ -153,7 +153,7 @@ export default function Navbar() {
                     ))}
 
                     <div className="flex items-center gap-5 pt-3 text-[22px] text-gray-700">
-                        <a href=""><SiLine className="text-green-500" /></a>
+                        <a href="https://lin.ee/twVZIGO"><SiLine className="text-green-500" /></a>
                         <a href="https://www.facebook.com/profile.php?id=61573753956246"><SiFacebook className="text-blue-600" /></a>
                     </div>
                 </nav>
