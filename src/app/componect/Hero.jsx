@@ -1,16 +1,24 @@
 "use client";
-import React, { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useRef, useState } from "react";
 
 export default function Hero() {
     const videoRef = useRef(null);
+    const [isVisible, setIsVisible] = useState(false); // state สำหรับคุม animation
 
     useEffect(() => {
+        // จัดการ Video
         const video = videoRef.current;
         if (video) {
             video.currentTime = 0;
             video.play().catch((err) => console.log("Video play error:", err));
         }
+
+        // Trigger Animation หลังจาก mount Component แล้วเล็กน้อย
+        const timer = setTimeout(() => {
+            setIsVisible(true);
+        }, 100); // delay เล็กน้อยเพื่อให้มั่นใจว่า render ครั้งแรกเสร็จแล้ว
+
+        return () => clearTimeout(timer);
     }, []);
 
     return (
@@ -44,15 +52,18 @@ export default function Hero() {
                     lg:ml-16
                 "
                 >
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 1 }}
-                        className="max-w-4xl mx-auto md:mx-0 text-center md:text-left"
+                    {/* Main Container Wrapper */}
+                    <div
+                        className={`
+                            max-w-4xl mx-auto md:mx-0 text-center md:text-left
+                            transition-all duration-1000 ease-out transform
+                            ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
+                        `}
                     >
                         {/* TITLE */}
-                        <motion.h1
-                            className="
+                        {/* Delay 0.4s (400ms) | Slide from y: -20 to y: 0 */}
+                        <h1
+                            className={`
                                 font-bold leading-tight tracking-tight
                                 text-white drop-shadow-2xl
                                 text-3xl
@@ -60,40 +71,41 @@ export default function Hero() {
                                 md:text-5xl
                                 lg:text-6xl
                                 mb-6
-                            "
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.4 }}
+                                transition-all duration-1000 ease-out delay-400 transform
+                                ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"}
+                            `}
                         >
                             บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด
-                        </motion.h1>
+                        </h1>
 
                         {/* DESCRIPTION */}
-                        <motion.p
-                            className="
-                                        text-base
-                                        sm:text-lg
-                                        md:text-xl
-                                        leading-relaxed
-                                        max-w-2xl
-                                        mx-auto md:mx-0
-                                        text-gray-200
-                                        mb-8
-                                    "
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.6 }}
+                        {/* Delay 0.6s (600ms) */}
+                        <p
+                            className={`
+                                text-base
+                                sm:text-lg
+                                md:text-xl
+                                leading-relaxed
+                                max-w-2xl
+                                mx-auto md:mx-0
+                                text-gray-200
+                                mb-8
+                                transition-all duration-1000 ease-out delay-600
+                                ${isVisible ? "opacity-100" : "opacity-0"}
+                            `}
                         >
                             ผู้จัดจำหน่ายคอมพิวเตอร์และอุปกรณ์ไอทีครบวงจร
                             พร้อมบริการติดตั้งและดูแลด้วยมาตรฐานระดับมืออาชีพ
-                        </motion.p>
+                        </p>
 
                         {/* CTA BUTTONS */}
-                        <motion.div
-                            className="flex flex-wrap gap-4 justify-center md:justify-start"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.8 }}
+                        {/* Delay 0.8s (800ms) */}
+                        <div
+                            className={`
+                                flex flex-wrap gap-4 justify-center md:justify-start
+                                transition-all duration-1000 ease-out delay-800
+                                ${isVisible ? "opacity-100" : "opacity-0"}
+                            `}
                         >
                             <a
                                 href="#contact"
@@ -125,14 +137,16 @@ export default function Hero() {
                                 <i className='bx bx-info-circle'></i>
                                 เรียนรู้เพิ่มเติม
                             </a>
-                        </motion.div>
+                        </div>
 
                         {/* STATS */}
-                        <motion.div
-                            className="mt-16 pt-8 border-t border-white/20"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 1.2 }}
+                        {/* Delay 1.2s (1200ms) */}
+                        <div
+                            className={`
+                                mt-16 pt-8 border-t border-white/20
+                                transition-all duration-1000 ease-out delay-1200
+                                ${isVisible ? "opacity-100" : "opacity-0"}
+                            `}
                         >
                             <div
                                 className="
@@ -173,8 +187,8 @@ export default function Hero() {
                                     </div>
                                 ))}
                             </div>
-                        </motion.div>
-                    </motion.div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </div>
