@@ -101,7 +101,7 @@ export default function Contact() {
                                 <div>
                                     <p className="text-sm text-gray-500">ที่อยู่</p>
                                     <p className="font-semibold leading-relaxed">
-                                        311/1 ม.4 ต.คำน้ำแซบ <br />
+                                        311/1 ม.4 ต.คำน้ำแซ่บ <br />
                                         อ.วารินชำราบ จ.อุบลราชธานี 34190
                                     </p>
                                 </div>
