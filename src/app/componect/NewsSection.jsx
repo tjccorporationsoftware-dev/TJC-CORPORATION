@@ -224,7 +224,7 @@ export default function NewsSlider() {
                 <h2 className="
                     text-3xl md:text-4xl font-extrabold mb-10 
                     border-l-8 border-yellow-500 pl-4 
-                    bg-gradient-to-r from-yellow-500 to-black bg-clip-text text-transparent
+                    bg-linear-to-r from-yellow-500 to-black bg-clip-text text-transparent
                 ">
                     ข่าวประชาสัมพันธ์
                 </h2>
@@ -244,7 +244,7 @@ export default function NewsSlider() {
                                             : latestNews.image
                                     }
                                     alt={latestNews.title}
-                                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:scale-105 transition-transform"
+                                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:scale-105"
                                 />
                                 {latestNews.gallery && latestNews.gallery.length > 1 && (
                                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
@@ -286,7 +286,7 @@ export default function NewsSlider() {
                 <div className="w-full mt-12">
                     <h4 className="
                         text-xl font-bold mb-6 px-2
-                        bg-gradient-to-r from-yellow-500 to-black bg-clip-text text-transparent
+                        bg-linear-to-r from-yellow-500 to-black bg-clip-text text-transparent
                     ">
                         ข่าวสารทั้งหมด
                     </h4>
