@@ -3,32 +3,65 @@ import React, { useEffect, useRef, useState } from "react";
 
 export default function NewsSlider() {
     const trackRef = useRef(null);
-    // State สำหรับสไลด์ด้านล่าง
+
+    // State สำหรับสไลด์
     const [dragging, setDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [translateX, setTranslateX] = useState(0);
     const [cardWidth, setCardWidth] = useState(0);
 
-    // State สำหรับรูปภาพข่าวใหม่ (Highlight)
+    // State สำหรับรูปภาพข่าว Highlight (Auto Change)
     const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-    // ข้อมูลข่าว
+    // State สำหรับ Popup (Modal)
+    const [selectedNews, setSelectedNews] = useState(null);
+    const [modalImageIndex, setModalImageIndex] = useState(0);
+
+    // ข้อมูลข่าว (เรียงจาก ใหม่สุด -> เก่าสุด ให้แล้วครับ)
     const news = [
         {
-            id: 1,
-            title: "เปิดตัวโครงการสนับสนุนกีฬาประจำปี 2025",
-            desc: "บริษัทร่วมมือกับสมาคมกีฬาเพื่อพัฒนาศักยภาพเยาวชน มุ่งเน้นการสร้างรากฐานที่มั่นคงและส่งเสริมสุขภาพที่ดี",
-            date: "12 พ.ย. 2025",
-            image: "/images/05.jpg",
-            isNew: false
+            id: 8,
+            title: "บริษัท ทีเจซี คอร์ปอเรชั่น จำกัดและบริษัทในเครือทีเจซีกรุ๊ปได้มอบอุปกรณ์การเรียนการสอนให้นักเรียนระดับอนุบาล",
+            desc: "\nเมื่อวันที่ 9 ธันวาคม 2568 เวลา11.00 น. นายสนั่น สุตัญตั้งใจ ประธานบริษัท ทีเจซี คอร์ปอเรชั่น จำกัดและบริษัทในเครือทีเจซีกรุ๊ป พร้อมด้วย นายวีระพงษ์ ไตรศิวะกุล ที่ปรึกษาบริษัท และคณะ ได้มอบอุปกรณ์การเรียนการสอนให้นักเรียนระดับอนุบาล โรงเรียนเขื่องในเจริญราษฎร์ อ. เขื่องใน จ. อุบลราชธานี โดยมีนายสุริยา โทนุการ ผู้อำนวยการโรงเรียนและคณะ เป็นผู้รับมอบ  ",
+            desc2: "",
+            date: "อังคาร 9 ธ.ค. 2568",
+            image: "/images/211077.jpg",
+            isNew: true,
+            gallery: []
         },
         {
-            id: 2,
-            title: "ประกาศผลประกวดราคาอิเล็กทรอนิกส์",
-            desc: "รายละเอียดการจัดซื้อจัดจ้างประจำไตรมาสที่ 2",
-            date: "6 มิ.ย. 2567",
-            image: "/images/3.jpg",
-            isNew: false
+            id: 7,
+            title: "บริษัททีเจซี คอร์ปอเรชั่น จำกัด และบริษัทในเครือทีเจซีกรุ๊ป มอบเงินช่วยเหลือและน้ำดื่มเหตุไฟไหม้บ้าน",
+            desc: "\nวันที่ 8 ธันวาคม 2568 นาย สนั่น สุตัญตั้งใจ ประธานบริษัททีเจซี คอร์ปอเรชั่น จำกัด และบริษัทในเครือทีเจซีกรุ๊ป ได้มอบเงินช่วยเหลือและน้ำดื่มแก่ครอบครัวของ นางสาวกัญญารัตน์ วงษ์แก้ว (ไอเดีย) พนักงานบัญชีและการเงิน ที่ประสบเหตุไฟไหม้บ้านจนทรัพย์สินเสียหายทั้งหมด ณ บ้านเลขที่ 54 หมู่ที่ 10 ตำบลเขิน อำเภอน้ำเกลี้ยง จังหวัดศรีสะเกษ บริษัทขอเป็นกำลังใจให้ครอบครัวผ่านพ้นเหตุการณ์ครั้งนี้ไปได้โดยเร็วค่ะ",
+            desc2: "",
+            date: "จันทร์ 8 ธ.ค. 2568",
+            image: "/images/208574.jpg",
+            isNew: false,
+            gallery: []
+        },
+        {
+            id: 6,
+            title: "กิจกรรมเลี้ยงอาหารกลางวันพนักงาน ทีเจซีกรุ๊ป",
+            desc: "\nเมื่อวันศุกร์ที่ 5 ธันวาคม 2568 ที่ผ่านมา  บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด และบริษัทในเครือ ขอขอบคุณพ่อสนั่น (ประธานบริษัท) เป็นอย่างยิ่ง ที่ได้จัดกิจกรรมเลี้ยงอาหารกลางวันสุดพิเศษให้กับพนักงานทุกคน ณ อาคาร 2 ชั้น 1",
+            desc2: "",
+            date: "ศุกร์ 5 ธ.ค. 2568",
+            image: "/images/206821.jpg",
+            isNew: false,
+            gallery: []
+        },
+        {
+            id: 5,
+            title: "\nกิจกรรมเลี้ยงอาหารกลางวันพนักงาน ทีเจซีกรุ๊ป",
+            desc: "บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด และบริษัทในเครือ ขอขอบพระคุณอาจารย์วีรพงษ์  ไตรศิวะกุล  ที่ปรึกษาบริษัทฯ เป็นอย่างยิ่ง ที่ได้จัดกิจกรรมเลี้ยงอาหารกลางวันสุดพิเศษให้กับพนักงานทุกคน ณ อาคาร 2 ชั้น 1 ",
+            desc2: "กิจกรรมนี้จัดขึ้นเมื่อ วันพฤหัสบดีที่ 4 ธันวาคม 2568 ณ อาคาร 2 ชั้น 1 โดยมีวัตถุประสงค์เพื่อตอบแทนความทุ่มเทของพนักงานทุกท่าน และเป็นโอกาสอันดีที่ผู้บริหารและพนักงานจะได้ร่วมรับประทานอาหารอร่อย ๆ และพูดคุยกันอย่างอบอุ่นและเป็นกันเอง",
+            date: "พฤหัสบดี 4 ธ.ค. 2025",
+            image: "/images/1241.jpg",
+            isNew: false,
+            gallery: [
+                "/images/1241.jpg",
+                "/images/1242.jpg",
+                "/images/1243.jpg",
+            ]
         },
         {
             id: 3,
@@ -36,6 +69,14 @@ export default function NewsSlider() {
             desc: "ลงนามบันทึกข้อตกลงร่วมกับมหาวิทยาลัยชั้นนำ",
             date: "14 พ.ย. 2568",
             image: "/images/04.jpg",
+            isNew: false
+        },
+        {
+            id: 1,
+            title: "เปิดตัวโครงการสนับสนุนกีฬาประจำปี 2025",
+            desc: "บริษัทร่วมมือกับสมาคมกีฬาเพื่อพัฒนาศักยภาพเยาวชน มุ่งเน้นการสร้างรากฐานที่มั่นคงและส่งเสริมสุขภาพที่ดี",
+            date: "12 พ.ย. 2025",
+            image: "/images/05.jpg",
             isNew: false
         },
         {
@@ -47,53 +88,33 @@ export default function NewsSlider() {
             isNew: false
         },
         {
-            id: 5,
-            title: "\nกิจกรรมเลี้ยงอาหารกลางวันพนักงาน ทีเจซีกรุ๊ป",
-            desc: "บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด และบริษัทในเครือ ขอขอบพระคุณอาจารย์วีรพงษ์  ไตรศิวะกุล  ที่ปรึกษาบริษัทฯ เป็นอย่างยิ่ง ที่ได้จัดกิจกรรมเลี้ยงอาหารกลางวันสุดพิเศษให้กับพนักงานทุกคน ณ อาคาร 2 ชั้น 1 ",
-            desc2: "กิจกรรมนี้จัดขึ้นเมื่อ วันพฤหัสบดีที่ 4 ธันวาคม 2568 ณ อาคาร 2 ชั้น 1 โดยมีวัตถุประสงค์เพื่อตอบแทนความทุ่มเทของพนักงานทุกท่าน และเป็นโอกาสอันดีที่ผู้บริหารและพนักงานจะได้ร่วมรับประทานอาหารอร่อย ๆ และพูดคุยกันอย่างอบอุ่นและเป็นกันเอง",
-            date: "พฤหัสบดี 4 ธ.ค. 2025",
-            image: "/images/1241.jpg",
-            isNew: false,
-            // 🔥 เพิ่ม gallery ตรงนี้: ใส่รูปที่ต้องการให้วนลูป (เอารูปอื่นมาใส่ลองดูก่อนได้ครับ)
-            gallery: [
-                "/images/1241.jpg",  // รูปที่ 1
-                "/images/1242.jpg",    // รูปที่ 2
-                "/images/1243.jpg",
-                // รูปที่ 3
-            ]
-        },
-        {
-            id: 6,
-            title: "กิจกรรมเลี้ยงอาหารกลางวันพนักงาน ทีเจซีกรุ๊ป",
-            desc: "\nเมื่อวันศุกร์ที่ 5 ธันวาคม 2568 ที่ผ่านมา  บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด และบริษัทในเครือ ขอขอบคุณพ่อสนั่น (ประธานบริษัท) เป็นอย่างยิ่ง ที่ได้จัดกิจกรรมเลี้ยงอาหารกลางวันสุดพิเศษให้กับพนักงานทุกคน ณ อาคาร 2 ชั้น 1",
-            desc2: "",
-            date: "ศุกร์ 5 ธันวาคม 2568",
-            image: "/images/206821.jpg",
-            isNew: true,
-            gallery: [
-            ]
+            id: 2,
+            title: "ประกาศผลประกวดราคาอิเล็กทรอนิกส์",
+            desc: "รายละเอียดการจัดซื้อจัดจ้างประจำไตรมาสที่ 2",
+            date: "6 มิ.ย. 2567",
+            image: "/images/3.jpg",
+            isNew: false
         },
     ];
 
-    // Logic จัดการข้อมูล
-    const latestNews = news.find(n => n.isNew) || news[0];
-    const otherNews = news.filter(n => n.id !== latestNews.id);
-    const loopNews = [...otherNews, ...otherNews, ...otherNews];
+    // Logic จัดการข้อมูล (ดึงตัวแรกสุดเป็น Highlight, และใช้ List เดิมสำหรับ Slider เพราะเรียงมาแล้ว)
+    const latestNews = news[0]; // ตัวแรกคือตัวใหม่สุด
+    const loopNews = news;      // Slider โชว์ทั้งหมด เรียงจากใหม่ไปเก่า
 
     // -------------------------------------------------------
-    // 🔥 Effect สำหรับเปลี่ยนรูป Highlight อัตโนมัติ
+    // 🔥 Effect เปลี่ยนรูป Highlight
     // -------------------------------------------------------
     useEffect(() => {
-        // เช็คว่าข่าวนั้นมี gallery ไหม ถ้ามีให้เริ่มจับเวลา
+        // รีเซ็ต index รูปเมื่อเปลี่ยนข่าวใหม่
+        setActiveImageIndex(0);
+
         if (latestNews.gallery && latestNews.gallery.length > 1) {
             const timer = setInterval(() => {
                 setActiveImageIndex((prev) => (prev + 1) % latestNews.gallery.length);
-            }, 3000); // เปลี่ยนรูปทุก 3 วินาที (3000ms)
-
+            }, 3000);
             return () => clearInterval(timer);
         }
     }, [latestNews]);
-
 
     // -------------------------------------------------------
     // Resize Card Width
@@ -112,23 +133,32 @@ export default function NewsSlider() {
     }, []);
 
     // -------------------------------------------------------
-    // Auto Slide Logic (ด้านล่าง)
+    // Auto Slide Logic (วิ่งสุดแล้วกลับมาเริ่มใหม่)
     // -------------------------------------------------------
     useEffect(() => {
-        if (dragging || cardWidth === 0) return;
+        if (dragging || cardWidth === 0 || selectedNews) return; // หยุดสไลด์ถ้าเปิด popup อยู่
+
         const interval = setInterval(() => {
-            let newPos = translateX - cardWidth;
             const track = trackRef.current;
             if (!track) return;
-            const limit = -(track.scrollWidth / 3);
-            if (newPos <= limit) newPos = 0;
-            setTranslateX(newPos);
+
+            const containerWidth = track.parentElement.clientWidth;
+            const contentWidth = track.scrollWidth;
+            let maxTranslate = -(contentWidth - containerWidth);
+            if (maxTranslate > 0) maxTranslate = 0;
+
+            setTranslateX((prev) => {
+                if (prev <= maxTranslate) return 0;
+                const nextPos = prev - cardWidth;
+                return nextPos < maxTranslate ? maxTranslate : nextPos;
+            });
+
         }, 3000);
         return () => clearInterval(interval);
-    }, [translateX, dragging, cardWidth]);
+    }, [translateX, dragging, cardWidth, selectedNews]);
 
     // -------------------------------------------------------
-    // Apply Transform & Drag Logic
+    // Drag Logic
     // -------------------------------------------------------
     useEffect(() => {
         const track = trackRef.current;
@@ -148,14 +178,44 @@ export default function NewsSlider() {
         if (!dragging) return;
         const track = trackRef.current;
         if (track) track.style.transition = 'transform 0.5s ease-out';
-        const newPos = translateX + (clientX - startX);
-        setTranslateX(Math.round(newPos / cardWidth) * cardWidth);
+
+        const moveDist = clientX - startX;
+        // ถ้าลากน้อยๆ ถือว่าเป็น click
+        if (Math.abs(moveDist) < 5) {
+            setDragging(false);
+            return;
+        }
+
+        let newPos = translateX + moveDist;
+        newPos = Math.round(newPos / cardWidth) * cardWidth;
+
+        const containerWidth = track.parentElement.clientWidth;
+        const contentWidth = track.scrollWidth;
+        let maxTranslate = -(contentWidth - containerWidth);
+        if (maxTranslate > 0) maxTranslate = 0;
+
+        if (newPos > 0) newPos = 0;
+        if (newPos < maxTranslate) newPos = maxTranslate;
+
+        setTranslateX(newPos);
         setDragging(false);
     };
 
     const onPointerDown = (e) => handleStart(e.clientX || e.touches?.[0]?.clientX);
     const onPointerMove = (e) => { if (dragging) e.preventDefault(); handleMove(e.clientX || e.touches?.[0]?.clientX); };
     const onPointerUp = (e) => handleEnd(e.clientX || e.changedTouches?.[0]?.clientX);
+
+    // -------------------------------------------------------
+    // 🟢 Function เปิด Popup
+    // -------------------------------------------------------
+    const openModal = (newsItem) => {
+        setModalImageIndex(0);
+        setSelectedNews(newsItem);
+    };
+
+    const closeModal = () => {
+        setSelectedNews(null);
+    };
 
     return (
         <section className="w-full py-16 bg-gray-50">
@@ -164,42 +224,42 @@ export default function NewsSlider() {
                 <h2 className="
                     text-3xl md:text-4xl font-extrabold mb-10 
                     border-l-8 border-yellow-500 pl-4 
-                    bg-linear-to-r from-yellow-500 to-black bg-clip-text text-transparent
+                    bg-gradient-to-r from-yellow-500 to-black bg-clip-text text-transparent
                 ">
                     ข่าวประชาสัมพันธ์
                 </h2>
 
-                {/* Highlight Section (ข่าวใหม่ด้านบน) */}
+                {/* Highlight Section (ข่าวล่าสุด - ตัวที่ 1 ใน Array) */}
                 <div className="mb-16">
-                    <div className="group relative bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100">
+                    <div
+                        className="group relative bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 cursor-pointer"
+                        onClick={() => openModal(latestNews)}
+                    >
                         <div className="grid md:grid-cols-2 h-full">
                             <div className="relative h-64 md:h-auto overflow-hidden bg-gray-100">
-
-                                {/* 🔥 ส่วนแสดงผลรูปภาพ Highlight แบบเปลี่ยนเอง */}
                                 <img
                                     src={
                                         latestNews.gallery && latestNews.gallery.length > 0
-                                            ? latestNews.gallery[activeImageIndex] // ถ้ามี gallery ใช้รูปตาม index
-                                            : latestNews.image // ถ้าไม่มี gallery ใช้รูปหลักรูปเดียว
+                                            ? latestNews.gallery[activeImageIndex]
+                                            : latestNews.image
                                     }
                                     alt={latestNews.title}
-                                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+                                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:scale-105 transition-transform"
                                 />
-
-                                {/* จุดไข่ปลาบอกตำแหน่งรูป (Optional: แสดงเฉพาะตอนมีหลายรูป) */}
                                 {latestNews.gallery && latestNews.gallery.length > 1 && (
                                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
                                         {latestNews.gallery.map((_, idx) => (
-                                            <div
-                                                key={idx}
-                                                className={`w-2 h-2 rounded-full transition-all ${idx === activeImageIndex ? 'bg-white w-4' : 'bg-white/50'}`}
-                                            ></div>
+                                            <div key={idx} className={`w-2 h-2 rounded-full transition-all ${idx === activeImageIndex ? 'bg-white w-4' : 'bg-white/50'}`}></div>
                                         ))}
                                     </div>
                                 )}
-
                                 <div className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10">
                                     ข่าวใหม่
+                                </div>
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                                    <span className="opacity-0 group-hover:opacity-100 bg-white/90 text-gray-800 px-4 py-2 rounded-full text-sm font-bold shadow-lg transition-opacity">
+                                        อ่านเพิ่มเติม
+                                    </span>
                                 </div>
                             </div>
 
@@ -208,48 +268,43 @@ export default function NewsSlider() {
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                                     <span>{latestNews.date}</span>
                                 </div>
-                                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
+                                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight group-hover:text-yellow-600 transition-colors">
                                     {latestNews.title}
                                 </h3>
-                                <p className="text-gray-600 text-base md:text-lg mb-3 leading-relaxed">
+                                <p className="text-gray-600 text-base md:text-lg mb-3 leading-relaxed line-clamp-3">
                                     {latestNews.desc}
                                 </p>
-                                <p className="text-gray-600 text-base md:text-lg mb-8 leading-relaxed">
-                                    {latestNews.desc2}
+                                <p className="text-gray-500 text-sm mt-auto flex items-center gap-1 group-hover:translate-x-2 transition-transform">
+                                    ดูรายละเอียด <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Other News Slider (สไลด์ด้านล่าง) */}
+                {/* Other News Slider (สไลด์ด้านล่าง - เรียงใหม่ไปเก่าทั้งหมด) */}
                 <div className="w-full mt-12">
                     <h4 className="
                         text-xl font-bold mb-6 px-2
-                        bg-linear-to-r from-yellow-500 to-black bg-clip-text text-transparent
+                        bg-gradient-to-r from-yellow-500 to-black bg-clip-text text-transparent
                     ">
-                        ข่าวสารย้อนหลัง
+                        ข่าวสารทั้งหมด
                     </h4>
 
-                    {/* Container สำหรับ Slider + ปุ่มข้างๆ */}
                     <div className="relative group">
                         {/* ปุ่มซ้าย */}
-                        <button
-                            onClick={() => setTranslateX(prev => prev + cardWidth)}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 -ml-4 md:-ml-6 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:scale-110 transition-all duration-200 focus:outline-none"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg>
-                        </button>
+                        <button onClick={() => setTranslateX(prev => Math.min(0, prev + cardWidth))} className="absolute left-0 top-1/2 -translate-y-1/2 z-10 -ml-4 md:-ml-6 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:scale-110 transition-all duration-200 focus:outline-none"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path></svg></button>
 
                         {/* ปุ่มขวา */}
-                        <button
-                            onClick={() => setTranslateX(prev => prev - cardWidth)}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 -mr-4 md:-mr-6 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:scale-110 transition-all duration-200 focus:outline-none"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg>
-                        </button>
+                        <button onClick={() => setTranslateX(prev => {
+                            const track = trackRef.current;
+                            if (!track) return prev;
+                            const maxTrans = -(track.scrollWidth - track.parentElement.clientWidth);
+                            const newPos = prev - cardWidth;
+                            return newPos < maxTrans ? maxTrans : newPos;
+                        })} className="absolute right-0 top-1/2 -translate-y-1/2 z-10 -mr-4 md:-mr-6 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:scale-110 transition-all duration-200 focus:outline-none"><svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path></svg></button>
 
-                        {/* ตัวรางสไลด์ */}
+                        {/* Slider Track */}
                         <div className="select-none overflow-hidden w-full py-4 px-1">
                             <div
                                 ref={trackRef}
@@ -260,14 +315,19 @@ export default function NewsSlider() {
                                 {loopNews.map((n, i) => (
                                     <div
                                         key={i}
+                                        onClick={() => !dragging && openModal(n)}
                                         className="slide-card bg-white border border-gray-100 shadow-md rounded-xl overflow-hidden inline-block min-w-[85%] sm:min-w-[50%] md:min-w-[40%] lg:min-w-[30%] group cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
                                     >
-                                        <div className="h-48 overflow-hidden">
+                                        <div className="h-48 overflow-hidden relative">
                                             <img src={n.image} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt={n.title} />
+                                            {/* Label New ถ้าเป็นข่าวเดียวกับข่าวล่าสุด */}
+                                            {n.id === latestNews.id && (
+                                                <div className="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">NEW</div>
+                                            )}
                                         </div>
                                         <div className="p-5">
                                             <span className="text-xs font-semibold text-yellow-600 bg-yellow-50 px-2 py-1 rounded-md">{n.date}</span>
-                                            <h3 className="text-lg font-bold text-gray-800 mt-3 mb-2 line-clamp-2">{n.title}</h3>
+                                            <h3 className="text-lg font-bold text-gray-800 mt-3 mb-2 line-clamp-2 group-hover:text-yellow-600 transition-colors">{n.title}</h3>
                                             <p className="text-gray-500 text-sm line-clamp-2">{n.desc}</p>
                                         </div>
                                     </div>
@@ -278,6 +338,92 @@ export default function NewsSlider() {
                 </div>
 
             </div>
+
+            {/* 🟢 Popup Modal */}
+            {selectedNews && (
+                <div
+                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
+                    onClick={closeModal}
+                >
+                    <div
+                        className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative animate-in fade-in zoom-in duration-200"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* ปุ่มปิด */}
+                        <button
+                            onClick={closeModal}
+                            className="absolute top-4 right-4 z-20 p-2 bg-white/80 hover:bg-white text-gray-600 hover:text-red-500 rounded-full shadow-md transition-all"
+                        >
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+
+                        <div className="flex flex-col md:flex-row">
+                            {/* ส่วนแสดงรูปภาพใน Modal */}
+                            <div className="md:w-1/2 bg-gray-100 relative min-h-[300px]">
+                                {selectedNews.gallery && selectedNews.gallery.length > 0 ? (
+                                    <>
+                                        <img
+                                            src={selectedNews.gallery[modalImageIndex] || selectedNews.image}
+                                            className="w-full h-full object-cover absolute inset-0"
+                                            alt="gallery"
+                                        />
+                                        {/* ปุ่มเลื่อนรูปใน Modal ถ้ามีหลายรูป */}
+                                        {selectedNews.gallery.length > 1 && (
+                                            <>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setModalImageIndex((prev) => (prev - 1 + selectedNews.gallery.length) % selectedNews.gallery.length);
+                                                    }}
+                                                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"
+                                                >
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" /></svg>
+                                                </button>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setModalImageIndex((prev) => (prev + 1) % selectedNews.gallery.length);
+                                                    }}
+                                                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"
+                                                >
+                                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" /></svg>
+                                                </button>
+                                                {/* Dots */}
+                                                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                                                    {selectedNews.gallery.map((_, i) => (
+                                                        <div key={i} className={`w-2 h-2 rounded-full shadow-sm ${i === modalImageIndex ? 'bg-white w-4' : 'bg-white/60'}`}></div>
+                                                    ))}
+                                                </div>
+                                            </>
+                                        )}
+                                    </>
+                                ) : (
+                                    <img
+                                        src={selectedNews.image}
+                                        className="w-full h-full object-cover absolute inset-0"
+                                        alt={selectedNews.title}
+                                    />
+                                )}
+                            </div>
+
+                            {/* ส่วนเนื้อหาใน Modal */}
+                            <div className="md:w-1/2 p-8 md:p-10">
+                                <span className="inline-block bg-yellow-100 text-yellow-800 text-sm px-3 py-1 rounded-full font-semibold mb-4">
+                                    {selectedNews.date}
+                                </span>
+                                <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-snug">
+                                    {selectedNews.title}
+                                </h3>
+                                <div className="space-y-4 text-gray-600 text-lg leading-relaxed max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                                    <p>{selectedNews.desc}</p>
+                                    {selectedNews.desc2 && <p>{selectedNews.desc2}</p>}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </section>
     );
 }
