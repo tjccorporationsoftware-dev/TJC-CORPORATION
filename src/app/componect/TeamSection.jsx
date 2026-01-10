@@ -10,7 +10,7 @@ export default function TeamSection() {
   const president = {
     name: "นายสนั่น สุตัญตั้งใจ",
     role: "ประธานบริษัท",
-    img: "/images/boss4.png", // รูป PNG พื้นหลังใส
+    img: "/images/4230.png", // รูป PNG พื้นหลังใส
     quote: "มุ่งมั่นสร้างสรรค์ผลงานคุณภาพ ด้วยความเป็นเลิศและความรับผิดชอบ"
   };
 
