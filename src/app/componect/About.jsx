@@ -117,7 +117,7 @@ export default function About() {
                 viewport={{ once: true, amount: 0.3 }}
                 className="relative bg-linear-to-br from-white via-gray-50 to-gray-100 py-24 border-t border-gray-200 overflow-hidden"
             >
-                <div className="absolute -top-20 -right-20 w-[400px] h-[400px] bg-yellow-300/25 blur-[160px] rounded-full pointer-events-none"></div>
+                <div className="absolute -top-20 -right-20 w-100 h-100 bg-yellow-300/25 blur-[160px] rounded-full pointer-events-none"></div>
 
                 <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-14 items-center relative z-10">
                     {/* 📸 ภาพบริษัท */}

@@ -41,7 +41,7 @@ export default function TeamSection() {
   return (
     <>
       {/* section ยังคงสูง 750px เท่าเดิม */}
-      <section ref={fadeRef} className="relative h-[750px] flex items-end overflow-hidden opacity-0 transition-opacity duration-700">
+      <section ref={fadeRef} className="relative h-187.5 flex items-end overflow-hidden opacity-0 transition-opacity duration-700">
 
         {/* --- ส่วนพื้นหลัง (Background) --- */}
         <div className="absolute inset-0 z-0">
@@ -93,7 +93,7 @@ export default function TeamSection() {
             </div>
 
             {/* ส่วนรูปคน (ขวา) */}
-            <div ref={imageRef} className="lg:col-span-5 relative h-[500px] lg:h-full w-full flex items-end justify-center lg:justify-end opacity-0 transform translate-y-20">
+            <div ref={imageRef} className="lg:col-span-5 relative h-125 lg:h-full w-full flex items-end justify-center lg:justify-end opacity-0 transform translate-y-20">
 
               {/* แสงสีทองด้านหลังคน */}
               <div className="absolute bottom-0 w-[120%] h-2/3 bg-linear-to-t from-white via-amber-100/40 to-transparent blur-2xl rounded-full"></div>
