@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from "react"; // 1. เพิ่ม useState
+import React from "react";
 import Navbar from "./componect/Navbar";
 import Hero from "./componect/Hero";
 import Services from "./componect/Services";
@@ -18,26 +16,14 @@ import NewsSection from "./componect/NewsSection";
 import CustomersCarousel from "./componect/CustomersCarousel";
 import QuotationBuilder from "./componect/QuotationBuilder";
 import FloatingPotato from "./componect/FloatingPotato";
-import WelcomeLoader from "./componect/WelcomeLoader"; // 2. import ตัว Loader เข้ามา
+
+
+
 
 export default function CompanyLandingPage() {
-  // 3. สร้าง state เพื่อควบคุมการแสดงผล (เริ่มต้นเป็น true คือกำลังโหลด)
-  const [isLoading, setIsLoading] = useState(true);
-
   return (
-    <>
-      {/* 4. ใส่ Loader ไว้บนสุด เช็คว่าถ้า isLoading เป็น true ให้แสดง Loader */}
-      {isLoading && (
-        <WelcomeLoader onFinished={() => setIsLoading(false)} />
-      )}
-
-      {/* 5. ส่วนเนื้อหาหลัก (ซ่อนไว้ก่อน หรือแสดงแต่จะถูก Loader ทับอยู่) */}
-      {/* ใช้ className เพื่อทำ Transition ให้เนื้อหาค่อยๆ ปรากฏขึ้นมาเมื่อโหลดเสร็จ */}
-      <div
-        className={`min-h-screen bg-gray-50 text-slate-900 antialiased transition-opacity duration-1000 ${isLoading ? 'opacity-0 h-0 overflow-hidden' : 'opacity-100'
-          }`}
-      >
-        <FloatingPotato />
+    <div className="min-h-screen bg-gray-50 text-slate-900 antialiased">
+      
         <Navbar />
         <Hero />
         <AboutHeader />
@@ -49,7 +35,6 @@ export default function CompanyLandingPage() {
         <Content />
         <CustomersCarousel />
         <Footer />
-      </div>
-    </>
+    </div>
   );
 }
