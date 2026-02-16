@@ -38,11 +38,11 @@ export default function WelcomeLoader({ onFinished }) {
                         }`}
                 >
                     <Image
-                        src="/images/tjc-team.png"
+                        src="/images/ChatGPT.png"
                         alt="TJC Corporation Team"
                         fill
                         priority
-                        className="object-cover object-center" // object-cover จะทำให้ภาพเต็มพื้นที่เสมอโดยไม่เสียสัดส่วน
+                        className="object-cover object-top" // object-cover จะทำให้ภาพเต็มพื้นที่เสมอโดยไม่เสียสัดส่วน
                         sizes="100vw"
                     />
                 </div>

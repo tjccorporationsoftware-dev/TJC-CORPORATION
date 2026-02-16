@@ -32,7 +32,6 @@ function safeParseJson(s, fallback) {
 }
 
 /* ------------------ date helpers ------------------ */
-// แปลง YYYY-MM-DD -> ข้อความไทย (พ.ศ.)
 function toThaiDateLabel(iso) {
     if (!iso) return "";
     const d = new Date(`${iso}T00:00:00`);
@@ -45,20 +44,16 @@ function toThaiDateLabel(iso) {
         year: "numeric",
     });
 
-    // เช่น "วันศุกร์ที่ 9 ม.ค. 2569" หรือ "วันศุกร์ 9 ม.ค. 2569"
     const s = fmt.format(d);
     return s.replace(/^วัน/, "").trim();
 }
 
-// แปลง date_label ไทย (พ.ศ.) -> ISO YYYY-MM-DD (แก้ปัญหาแก้ไขแล้ววันที่หาย)
 function guessISOFromLabel(label) {
     if (!label) return "";
     const s = String(label).trim();
 
-    // ถ้าเป็น ISO อยู่แล้ว
     if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
 
-    // map เดือนภาษาไทย
     const monthMap = {
         "ม.ค.": 1, "ม.ค": 1, "มกราคม": 1,
         "ก.พ.": 2, "ก.พ": 2, "กุมภาพันธ์": 2,
@@ -74,15 +69,12 @@ function guessISOFromLabel(label) {
         "ธ.ค.": 12, "ธ.ค": 12, "ธันวาคม": 12,
     };
 
-    // ตัดคำขึ้นต้นที่มักเจอ เช่น "ศุกร์" หรือ "วันศุกร์ที่"
     const cleaned = s
         .replace(/^วัน/i, "")
         .replace(/ที่/gi, " ")
         .replace(/\s+/g, " ")
         .trim();
 
-    // หา pattern: <day> <month> <year>
-    // รองรับ: "9 ม.ค. 2569", "12 ธันวาคม 2568", "อังคาร 9 ธ.ค. 2568"
     const m = cleaned.match(/(\d{1,2})\s+([^\s]+)\s+(\d{4})/);
     if (!m) return "";
 
@@ -97,6 +89,19 @@ function guessISOFromLabel(label) {
     const mm = String(month).padStart(2, "0");
     const dd = String(day).padStart(2, "0");
     return `${yearCE}-${mm}-${dd}`;
+}
+
+/* ------------------ StatusBadge ------------------ */
+function StatusBadge({ active }) {
+    return (
+        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded text-xs font-medium border ${active
+            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+            : "bg-slate-50 text-slate-500 border-slate-200"
+            }`}>
+            <span className={`w-1.5 h-1.5 rounded-full ${active ? "bg-emerald-500" : "bg-slate-400"}`}></span>
+            {active ? "Published" : "Draft"}
+        </span>
+    );
 }
 
 /* ------------------ tiny UI: Toast + Confirm + Modal ------------------ */
@@ -126,117 +131,42 @@ function useToasts() {
 
 function ToastStack({ toasts, onClose }) {
     return (
-        <div className="fixed z-9999 top-4 right-4 space-y-3 w-[92vw] max-w-sm">
+        <div className="fixed z-9999 top-6 right-6 space-y-3 w-[92vw] max-w-sm">
             {toasts.map((t) => (
-                <div
-                    key={t.id}
-                    className="rounded-2xl border shadow-lg overflow-hidden backdrop-blur bg-white/90 animate-[toastIn_.18s_ease-out]"
-                >
+                <div key={t.id} className="rounded-lg border shadow-lg overflow-hidden bg-white border-slate-200 animate-in slide-in-from-right duration-300">
                     <div className="flex items-start gap-3 p-4">
-                        <div
-                            className={[
-                                "mt-0.5 h-9 w-9 rounded-xl flex items-center justify-center text-white shrink-0",
-                                t.type === "success"
-                                    ? "bg-emerald-600"
-                                    : t.type === "error"
-                                        ? "bg-rose-600"
-                                        : t.type === "warning"
-                                            ? "bg-amber-500"
-                                            : "bg-slate-700",
-                            ].join(" ")}
-                            aria-hidden
-                        >
+                        <div className={[
+                            "mt-0.5 h-5 w-5 rounded-full flex items-center justify-center text-white shrink-0 text-[10px] font-bold",
+                            t.type === "success" ? "bg-emerald-600" : t.type === "error" ? "bg-rose-600" : t.type === "warning" ? "bg-amber-500" : "bg-slate-600",
+                        ].join(" ")}>
                             {t.type === "success" ? "✓" : t.type === "error" ? "!" : "i"}
                         </div>
-
                         <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between gap-2">
-                                <p className="font-semibold text-slate-900 truncate">{t.title}</p>
-                                <button
-                                    onClick={() => onClose(t.id)}
-                                    className="rounded-full hover:bg-slate-100 p-1 text-slate-500"
-                                    type="button"
-                                    aria-label="Close toast"
-                                >
-                                    ✕
-                                </button>
+                                <p className="font-semibold text-slate-900 text-sm">{t.title}</p>
+                                <button onClick={() => onClose(t.id)} className="text-slate-400 hover:text-slate-600">✕</button>
                             </div>
-                            {t.message ? (
-                                <p className="text-sm text-slate-600 mt-1 leading-relaxed">{t.message}</p>
-                            ) : null}
+                            {t.message && <p className="text-xs text-slate-500 mt-1 leading-relaxed">{t.message}</p>}
                         </div>
                     </div>
                 </div>
             ))}
-
-            <style jsx global>{`
-        @keyframes toastIn {
-          from {
-            transform: translateY(-8px);
-            opacity: 0;
-          }
-          to {
-            transform: translateY(0px);
-            opacity: 1;
-          }
-        }
-      `}</style>
         </div>
     );
 }
 
-function ConfirmModal({
-    open,
-    title,
-    desc,
-    confirmText = "ยืนยัน",
-    cancelText = "ยกเลิก",
-    onConfirm,
-    onClose,
-    danger,
-}) {
-    useEffect(() => {
-        function onKey(e) {
-            if (e.key === "Escape") onClose?.();
-        }
-        if (open) window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
-    }, [open, onClose]);
-
+function ConfirmModal({ open, title, desc, confirmText = "ยืนยัน", cancelText = "ยกเลิก", onConfirm, onClose, danger }) {
     if (!open) return null;
-
     return (
-        <div
-            className="fixed inset-0 z-9998 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-            onMouseDown={onClose}
-        >
-            <div
-                className="w-full max-w-lg rounded-3xl bg-white shadow-2xl border border-slate-200 overflow-hidden"
-                onMouseDown={(e) => e.stopPropagation()}
-            >
-                <div className="p-6">
+        <div className="fixed inset-0 z-9998 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200" onMouseDown={onClose}>
+            <div className="w-full max-w-sm rounded-xl bg-white shadow-xl border border-slate-100 overflow-hidden p-6 animate-in zoom-in-95 duration-200" onMouseDown={(e) => e.stopPropagation()}>
+                <div className="text-center">
                     <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-                    {desc ? <p className="text-sm text-slate-600 mt-2 leading-relaxed">{desc}</p> : null}
+                    {desc && <p className="text-sm text-slate-500 mt-2 leading-relaxed">{desc}</p>}
                 </div>
-
-                <div className="px-6 pb-6 flex gap-3 justify-end">
-                    <button
-                        className="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 font-semibold text-sm"
-                        onClick={onClose}
-                        type="button"
-                    >
-                        {cancelText}
-                    </button>
-                    <button
-                        className={[
-                            "px-4 py-2 rounded-xl font-semibold text-sm text-white",
-                            danger ? "bg-rose-600 hover:bg-rose-700" : "bg-slate-900 hover:bg-slate-800",
-                        ].join(" ")}
-                        onClick={onConfirm}
-                        type="button"
-                    >
-                        {confirmText}
-                    </button>
+                <div className="mt-6 flex gap-3">
+                    <button className="flex-1 px-4 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 font-medium text-sm text-slate-700 transition-all" onClick={onClose}>{cancelText}</button>
+                    <button className={["flex-1 px-4 py-2 rounded-lg font-medium text-sm text-white shadow-sm transition-all active:scale-95", danger ? "bg-rose-600 hover:bg-rose-700" : "bg-slate-900 hover:bg-slate-800"].join(" ")} onClick={onConfirm}>{confirmText}</button>
                 </div>
             </div>
         </div>
@@ -244,102 +174,69 @@ function ConfirmModal({
 }
 
 function Modal({ open, title, subtitle, children, onClose }) {
-    useEffect(() => {
-        function onKey(e) {
-            if (e.key === "Escape") onClose?.();
-        }
-        if (open) window.addEventListener("keydown", onKey);
-        return () => window.removeEventListener("keydown", onKey);
-    }, [open, onClose]);
-
     if (!open) return null;
-
     return (
-        <div
-            className="fixed inset-0 z-9997 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
-            onMouseDown={onClose}
-        >
-            <div
-                className="w-full max-w-3xl rounded-3xl bg-white border border-slate-200 shadow-2xl overflow-hidden"
-                onMouseDown={(e) => e.stopPropagation()}
-            >
-                <div className="p-6 border-b border-slate-200 flex items-start justify-between gap-3">
+        <div className="fixed inset-0 z-9997 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200" onMouseDown={onClose}>
+            <div className="w-full max-w-5xl rounded-xl bg-white shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]" onMouseDown={(e) => e.stopPropagation()}>
+                <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white">
                     <div className="min-w-0">
-                        <h2 className="text-lg sm:text-xl font-extrabold text-slate-900">{title}</h2>
-                        {subtitle ? <p className="text-sm text-slate-600 mt-1">{subtitle}</p> : null}
+                        <h2 className="text-lg font-bold text-slate-900">{title}</h2>
+                        {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
                     </div>
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="rounded-full hover:bg-slate-100 p-2 text-slate-500"
-                        aria-label="Close"
-                    >
-                        ✕
-                    </button>
+                    <button onClick={onClose} className="rounded-lg hover:bg-slate-100 p-2 text-slate-400 hover:text-slate-600 transition-all">✕</button>
                 </div>
-                <div className="p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+                <div className="p-6 overflow-y-auto custom-scrollbar bg-slate-50/50">{children}</div>
             </div>
         </div>
     );
 }
 
-/* ------------------ Inputs ------------------ */
+/* ------------------ Inputs (Professional Style) ------------------ */
 function Input({ label, value, onChange, placeholder = "", type = "text", hint }) {
     return (
-        <label className="block">
+        <label className="block space-y-1.5">
             <span className="text-sm font-semibold text-slate-700">{label}</span>
             <input
                 type={type}
                 value={value ?? ""}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 shadow-sm
-                   focus:outline-none focus:ring-4 focus:ring-slate-200 focus:border-slate-300 transition"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-sm"
             />
-            {hint ? <p className="text-xs text-slate-500 mt-2">{hint}</p> : null}
+            {hint && <p className="text-xs text-slate-500">{hint}</p>}
         </label>
     );
 }
 
 function Textarea({ label, value, onChange, rows = 4, placeholder = "", hint }) {
     return (
-        <label className="block">
+        <label className="block space-y-1.5">
             <span className="text-sm font-semibold text-slate-700">{label}</span>
             <textarea
                 value={value ?? ""}
                 onChange={(e) => onChange(e.target.value)}
                 rows={rows}
                 placeholder={placeholder || label}
-                className="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 shadow-sm
-                   focus:outline-none focus:ring-4 focus:ring-slate-200 focus:border-slate-300 transition resize-none"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-sm resize-none"
             />
-            {hint ? <p className="text-xs text-slate-500 mt-2">{hint}</p> : null}
+            {hint && <p className="text-xs text-slate-500">{hint}</p>}
         </label>
     );
 }
 
 function Toggle({ label, checked, onChange, desc }) {
     return (
-        <div className="flex items-start justify-between gap-3 rounded-2xl border border-slate-200 p-4 bg-white">
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-slate-200 p-4 bg-white transition-all">
             <div className="min-w-0">
-                <p className="font-semibold text-slate-800">{label}</p>
-                {desc ? <p className="text-sm text-slate-500 mt-1">{desc}</p> : null}
+                <p className="font-semibold text-slate-900 text-sm">{label}</p>
+                {desc && <p className="text-xs text-slate-500 mt-0.5">{desc}</p>}
             </div>
             <button
                 type="button"
                 onClick={() => onChange(!checked)}
-                className={[
-                    "relative inline-flex h-7 w-12 items-center rounded-full transition",
-                    checked ? "bg-emerald-600" : "bg-slate-300",
-                ].join(" ")}
-                aria-pressed={checked}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${checked ? "bg-indigo-600" : "bg-slate-200"}`}
             >
-                <span
-                    className={[
-                        "inline-block h-5 w-5 transform rounded-full bg-white transition",
-                        checked ? "translate-x-6" : "translate-x-1",
-                    ].join(" ")}
-                />
+                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-all duration-200 shadow-sm ${checked ? "translate-x-6" : "translate-x-1"}`} />
             </button>
         </div>
     );
@@ -348,36 +245,16 @@ function Toggle({ label, checked, onChange, desc }) {
 function Dropzone({ title, subtitle, disabled, onPick, accept, multiple }) {
     const inputRef = useRef(null);
     return (
-        <div className="rounded-3xl border border-dashed border-slate-300 bg-linear-to-br from-white to-slate-50 p-5">
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <p className="font-semibold text-slate-900">{title}</p>
-                    <p className="text-sm text-slate-600 mt-1">{subtitle}</p>
-                </div>
-                <button
-                    type="button"
-                    disabled={disabled}
-                    onClick={() => inputRef.current?.click()}
-                    className={[
-                        "px-4 py-2 rounded-xl text-sm font-semibold shadow-sm border",
-                        disabled
-                            ? "bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed"
-                            : "bg-slate-900 text-white border-slate-900 hover:bg-slate-800",
-                    ].join(" ")}
-                >
-                    เลือกรูป
-                </button>
+        <div
+            onClick={() => !disabled && inputRef.current?.click()}
+            className="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:bg-white hover:border-indigo-500 transition-all p-6 flex flex-col items-center text-center cursor-pointer group"
+        >
+            <div className="mb-2 text-slate-400 group-hover:text-indigo-500 transition-colors">
+                <svg className="w-8 h-8 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             </div>
-
-            <input
-                ref={inputRef}
-                type="file"
-                accept={accept}
-                multiple={multiple}
-                onChange={onPick}
-                disabled={disabled}
-                className="hidden"
-            />
+            <p className="font-medium text-slate-700 text-sm group-hover:text-indigo-600 transition-colors">{title}</p>
+            <p className="text-xs text-slate-500 mt-1">{subtitle}</p>
+            <input ref={inputRef} type="file" accept={accept} multiple={multiple} onChange={onPick} disabled={disabled} className="hidden" />
         </div>
     );
 }
@@ -410,15 +287,15 @@ export default function AdminNewsPage() {
         title: "",
         desc1: "",
         desc2: "",
-        date_iso: "", // ✅ ใช้ปฏิทิน
-        date_label: "", // เก็บไว้ใน DB ตามเดิม
+        date_iso: "",
+        date_label: "",
         cover_image_url: "",
         gallery: [],
         is_active: true,
     };
     const [form, setForm] = useState(emptyForm);
 
-    // local order by ids (จัดลำดับจากรายการ)
+    // local order by ids
     const [orderIds, setOrderIds] = useState([]);
 
     useEffect(() => {
@@ -448,7 +325,6 @@ export default function AdminNewsPage() {
             const arr = Array.isArray(data) ? data : [];
             setItems(arr);
 
-            // ตั้งค่า orderIds จาก sort_order (มากก่อน) + id (มากก่อน)
             const sorted = [...arr].sort((a, b) => {
                 const sa = Number(a.sort_order || 0);
                 const sb = Number(b.sort_order || 0);
@@ -478,10 +354,8 @@ export default function AdminNewsPage() {
         return m;
     }, [items]);
 
-    // แสดงรายการตาม orderIds
     const orderedItems = useMemo(() => {
         const list = orderIds.map((id) => itemsById.get(id)).filter(Boolean);
-
         const qq = q.trim().toLowerCase();
         return list
             .filter((it) => (showOnlyActive ? !!it.is_active : true))
@@ -510,7 +384,6 @@ export default function AdminNewsPage() {
                     ? safeParseJson(row.gallery, [])
                     : [];
 
-        // ✅ สำคัญ: กู้ ISO จาก date_label ไทย (พ.ศ.) ได้จริง
         const iso = guessISOFromLabel(row.date_label || "");
 
         setForm({
@@ -518,7 +391,7 @@ export default function AdminNewsPage() {
             title: row.title || "",
             desc1: row.desc1 || "",
             desc2: row.desc2 || "",
-            date_iso: iso || "",              // ✅ ไม่หายแล้ว (ถ้า label อยู่ในรูปแบบที่รองรับ)
+            date_iso: iso || "",
             date_label: row.date_label || "",
             cover_image_url: row.cover_image_url || "",
             gallery,
@@ -640,7 +513,6 @@ export default function AdminNewsPage() {
                 return;
             }
 
-            // ✅ สร้าง date_label จาก date_iso แล้วส่งเก็บ DB เหมือนเดิม
             const date_label = toThaiDateLabel(form.date_iso) || form.date_iso;
 
             const payload = {
@@ -722,7 +594,6 @@ export default function AdminNewsPage() {
         }
     }
 
-    // ---- reorder actions (↑ ↓) ----
     function moveUp(id) {
         setOrderIds((prev) => {
             const idx = prev.indexOf(id);
@@ -742,7 +613,6 @@ export default function AdminNewsPage() {
         });
     }
 
-    // บันทึกลำดับ -> map เป็น sort_order สูงสุดก่อน
     async function saveOrder() {
         if (!token) {
             clearSession();
@@ -755,7 +625,6 @@ export default function AdminNewsPage() {
             setSavingOrder(true);
             push("info", "กำลังบันทึกลำดับ", "โปรดรอสักครู่...", 1500);
 
-            // ค่ามากอยู่บนสุด: 10000, 9999, ...
             const base = 10000;
             const updates = orderIds.map((id, index) => ({
                 id,
@@ -798,7 +667,7 @@ export default function AdminNewsPage() {
     }
 
     return (
-        <>
+        <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pb-32">
             <ToastStack toasts={toasts} onClose={remove} />
 
             <ConfirmModal
@@ -812,130 +681,111 @@ export default function AdminNewsPage() {
                 onConfirm={onDeleteConfirmed}
             />
 
-            {/* ✅ ฟอร์มเป็นป๊อปอัพ */}
             <Modal
                 open={editorOpen}
                 onClose={() => {
                     setEditorOpen(false);
                     setForm(emptyForm);
                 }}
-                title={form.id ? `แก้ไขข่าว #${form.id}` : "เพิ่มข่าวใหม่"}
-                subtitle="เลือกวันที่จากปฏิทิน + อัปโหลดรูป + บันทึก"
+                title={form.id ? "Edit Article" : "New Article"}
+                subtitle="จัดการข้อมูลข่าวสารและกิจกรรม"
             >
-                <div className="space-y-5">
-                    <Input
-                        label="วันที่ (ปฏิทิน)"
-                        type="date"
-                        value={form.date_iso}
-                        onChange={(v) => setField("date_iso", v)}
-                        hint={form.date_iso ? `แสดงบนเว็บเป็น: ${toThaiDateLabel(form.date_iso)}` : "เลือกวันที่จากปฏิทิน"}
-                    />
-
-                    <Textarea
-                        label="หัวข้อข่าว (title)"
-                        value={form.title}
-                        onChange={(v) => setField("title", v)}
-                        rows={2}
-                        placeholder="พาดหัวข่าว"
-                    />
-
-                    <div className="grid md:grid-cols-2 gap-4">
-                        <Textarea
-                            label="รายละเอียด (desc1)"
-                            value={form.desc1}
-                            onChange={(v) => setField("desc1", v)}
-                            rows={6}
-                            placeholder="รายละเอียดหลัก"
+                <div className="space-y-6 bg-white rounded-lg p-2">
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <Input
+                            label="วันที่ประชาสัมพันธ์"
+                            type="date"
+                            value={form.date_iso}
+                            onChange={(v) => setField("date_iso", v)}
+                            hint={form.date_iso ? `แสดงผล: ${toThaiDateLabel(form.date_iso)}` : "เลือกวันที่เพื่อคำนวณ พ.ศ. อัตโนมัติ"}
                         />
-                        <Textarea
-                            label="รายละเอียดเพิ่มเติม (desc2)"
-                            value={form.desc2}
-                            onChange={(v) => setField("desc2", v)}
-                            rows={6}
-                            placeholder="ถ้ามีหลายย่อหน้า ใส่เพิ่มได้"
+                        <Input
+                            label="หัวข้อข่าว"
+                            value={form.title}
+                            onChange={(v) => setField("title", v)}
+                            placeholder="พาดหัวข่าวสั้นๆ ได้ใจความ..."
                         />
                     </div>
 
-                    {/* cover */}
-                    <div className="grid md:grid-cols-[0.9fr_1.1fr] gap-4">
-                        <div className="rounded-3xl border border-slate-200 bg-slate-50 overflow-hidden">
-                            <div className="aspect-16/10 w-full bg-slate-100">
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <Textarea
+                            label="เนื้อหา (ส่วนที่ 1)"
+                            value={form.desc1}
+                            onChange={(v) => setField("desc1", v)}
+                            rows={6}
+                            placeholder="เนื้อหาหลักของข่าว..."
+                        />
+                        <Textarea
+                            label="เนื้อหา (ส่วนที่ 2)"
+                            value={form.desc2}
+                            onChange={(v) => setField("desc2", v)}
+                            rows={6}
+                            placeholder="เนื้อหาเพิ่มเติม (ถ้ามี)..."
+                        />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8 items-start border-t border-slate-100 pt-6">
+                        <div className="space-y-3">
+                            <span className="text-sm font-semibold text-slate-700 block">รูปภาพปก (Cover Image)</span>
+                            <div className="aspect-video rounded-lg border border-slate-200 bg-slate-50 overflow-hidden flex items-center justify-center">
                                 {form.cover_image_url ? (
                                     <img src={resolveUrl(form.cover_image_url)} alt="cover" className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-sm text-slate-400">
-                                        ยังไม่มีรูปปก
+                                    <div className="flex flex-col items-center justify-center text-slate-300">
+                                        <svg className="w-8 h-8 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                        <span className="text-xs font-medium">No Image</span>
                                     </div>
                                 )}
                             </div>
-                            <div className="p-4">
-                                <p className="text-sm font-semibold text-slate-800">รูปปก</p>
-                                <p className="text-xs text-slate-500 mt-1">แนะนำ 1200×800 หรือใกล้เคียง</p>
-                            </div>
-                        </div>
-
-                        <div className="space-y-3">
                             <Dropzone
-                                title="อัปโหลดรูปปก"
-                                subtitle="ไฟล์ .jpg/.png — ระบบคืนค่า /uploads/xxx.jpg"
+                                title="เปลี่ยนรูปปก"
+                                subtitle="ไฟล์ .jpg, .png ขนาดแนะนำ 1200x800px"
                                 disabled={uploading}
                                 accept="image/*"
                                 multiple={false}
                                 onPick={onUploadCover}
                             />
-                            <Input
-                                label="หรือใส่ URL รูปปกเอง"
-                                value={form.cover_image_url}
-                                onChange={(v) => setField("cover_image_url", v)}
-                                placeholder="/uploads/xxx.png หรือ https://..."
-                            />
                         </div>
-                    </div>
 
-                    {/* gallery */}
-                    <div className="space-y-3">
-                        <Dropzone
-                            title="อัปโหลด Gallery (หลายรูป)"
-                            subtitle="เลือกได้หลายรูป ระบบจะเก็บเป็น array ใน DB"
-                            disabled={uploading}
-                            accept="image/*"
-                            multiple
-                            onPick={onUploadGallery}
-                        />
-
-                        {Array.isArray(form.gallery) && form.gallery.length > 0 ? (
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                                {form.gallery.map((u, idx) => (
-                                    <div key={idx} className="relative rounded-2xl border border-slate-200 overflow-hidden bg-slate-50">
-                                        <img src={resolveUrl(u)} alt={`g-${idx}`} className="w-full h-28 object-cover" />
+                        <div className="space-y-3">
+                            <span className="text-sm font-semibold text-slate-700 block">แกลเลอรี (Gallery)</span>
+                            <div className="grid grid-cols-4 gap-2 bg-slate-50 p-3 rounded-lg border border-slate-200 min-h-35">
+                                {Array.isArray(form.gallery) && form.gallery.map((u, idx) => (
+                                    <div key={idx} className="aspect-square rounded border border-slate-200 relative group overflow-hidden bg-white">
+                                        <img src={resolveUrl(u)} alt={`g-${idx}`} className="w-full h-full object-cover" />
                                         <button
                                             onClick={() => removeGalleryIndex(idx)}
-                                            className="absolute top-2 right-2 rounded-full bg-black/60 hover:bg-black text-white text-xs px-3 py-1"
+                                            className="absolute inset-0 bg-red-500/80 text-white opacity-0 group-hover:opacity-100 transition-opacity font-bold text-xs flex items-center justify-center"
                                             type="button"
                                         >
                                             ลบ
                                         </button>
                                     </div>
                                 ))}
+                                <button
+                                    onClick={() => document.getElementById('gal-up').click()}
+                                    className="aspect-square rounded border border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400 hover:border-indigo-500 hover:text-indigo-500 transition-all bg-white"
+                                >
+                                    <span className="text-2xl font-light">+</span>
+                                </button>
+                                <input id="gal-up" type="file" multiple accept="image/*" className="hidden" onChange={onUploadGallery} disabled={uploading} />
                             </div>
-                        ) : (
-                            <div className="rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-500">
-                                ยังไม่มีรูปใน Gallery
-                            </div>
-                        )}
+                        </div>
                     </div>
 
-                    <Toggle
-                        label="แสดงบนหน้าเว็บ"
-                        desc="ถ้าปิด จะยังเก็บในระบบ แต่ไม่แสดงฝั่งหน้าเว็บ"
-                        checked={!!form.is_active}
-                        onChange={(v) => setField("is_active", v)}
-                    />
+                    <div className="pt-2">
+                        <Toggle
+                            label="เผยแพร่ข่าวนี้"
+                            desc="เปิดเพื่อแสดงผลบนหน้าเว็บไซต์"
+                            checked={!!form.is_active}
+                            onChange={(v) => setField("is_active", v)}
+                        />
+                    </div>
 
-                    <div className="flex flex-col sm:flex-row gap-3 justify-end pt-2">
+                    <div className="flex justify-end gap-3 pt-6 border-t border-slate-100 mt-4">
                         <button
                             onClick={() => setForm(emptyForm)}
-                            className="px-4 py-3 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 font-semibold text-sm"
+                            className="px-5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-600 font-medium hover:bg-slate-50 transition-all text-sm"
                             type="button"
                             disabled={savingNews}
                         >
@@ -944,223 +794,140 @@ export default function AdminNewsPage() {
                         <button
                             onClick={onSaveNews}
                             disabled={savingNews}
-                            className={[
-                                "px-5 py-3 rounded-2xl font-semibold text-sm text-white shadow-sm",
-                                savingNews ? "bg-slate-400" : "bg-slate-900 hover:bg-slate-800",
-                            ].join(" ")}
+                            className="px-6 py-2.5 rounded-lg bg-indigo-600 text-white font-semibold hover:bg-indigo-700 shadow-sm transition-all text-sm disabled:opacity-70"
                             type="button"
                         >
-                            {savingNews ? "กำลังบันทึก..." : "บันทึก"}
+                            {savingNews ? "กำลังบันทึก..." : "บันทึกข้อมูล"}
                         </button>
                     </div>
                 </div>
             </Modal>
 
-            <div className="min-h-screen bg-linear-to-b from-slate-50 via-white to-slate-50">
-                {/* topbar */}
-                <div className="sticky top-0 z-40 backdrop-blur bg-white/70 border-b border-slate-200">
-                    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
-                        <div className="min-w-0">
-                            <p className="text-xs font-semibold text-slate-500">Admin Panel</p>
-                            <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 truncate">
-                                จัดการข่าวประชาสัมพันธ์
-                            </h1>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-20">
+                {/* Header Area */}
+                <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="bg-indigo-50 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded border border-indigo-100">ADMIN</span>
+                            <span className="text-slate-400 text-sm">/ News Management</span>
                         </div>
+                        <h1 className="text-3xl font-bold text-slate-900">News & Relations</h1>
+                    </div>
+                    <div className="flex gap-3">
 
-                        <div className="flex items-center gap-2">
-                            <a
-                                href="/#news"
-                                target="_blank"
-                                className="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold text-slate-700"
-                            >
-                                ดูหน้าเว็บจริง ↗
-                            </a>
-                            <button
-                                onClick={openCreate}
-                                className="px-3 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-sm font-semibold shadow-sm"
-                                type="button"
-                            >
-                                + เพิ่มข่าว
-                            </button>
-                            <button
-                                onClick={logout}
-                                className="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold text-slate-700"
-                                type="button"
-                            >
-                                ออกจากระบบ
-                            </button>
-                        </div>
+                        <button onClick={openCreate} className="px-4 py-2 rounded-lg bg-slate-900 text-white font-semibold text-sm hover:bg-black transition-all shadow-sm flex items-center gap-2">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
+                            สร้างข่าวใหม่
+                        </button>
                     </div>
                 </div>
 
-                <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-                    {/* toolbar */}
-                    <div className="rounded-3xl border border-slate-200 bg-white shadow-sm p-5">
-                        <div className="grid md:grid-cols-[1fr_auto_auto] gap-3 items-end">
-                            <Input
-                                label="ค้นหา"
-                                value={q}
-                                onChange={setQ}
-                                placeholder="ค้นหาจากหัวข้อ/รายละเอียด/วันที่"
-                            />
-
-                            <label className="flex items-center gap-2 px-4 py-3 rounded-2xl border border-slate-200 bg-white">
+                <div className="space-y-6">
+                    {/* Toolbar Card */}
+                    <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
+                        <div className="flex flex-col md:flex-row gap-4 justify-between items-center">
+                            <div className="relative flex-1 w-full max-w-lg">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <svg className="h-5 w-5 text-slate-400" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clipRule="evenodd" /></svg>
+                                </div>
                                 <input
-                                    type="checkbox"
-                                    checked={showOnlyActive}
-                                    onChange={(e) => setShowOnlyActive(e.target.checked)}
-                                    className="w-4 h-4"
+                                    value={q}
+                                    onChange={(e) => setQ(e.target.value)}
+                                    placeholder="ค้นหาข่าว..."
+                                    className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg leading-5 bg-white placeholder-slate-400 focus:outline-none focus:placeholder-slate-500 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 sm:text-sm transition-all"
                                 />
-                                <span className="text-sm font-semibold text-slate-700">แสดงเฉพาะที่เปิด</span>
-                            </label>
+                            </div>
 
-                            <button
-                                onClick={saveOrder}
-                                disabled={savingOrder || loading}
-                                className={[
-                                    "px-4 py-3 rounded-2xl font-semibold text-sm text-white shadow-sm",
-                                    savingOrder || loading ? "bg-slate-400" : "bg-emerald-600 hover:bg-emerald-700",
-                                ].join(" ")}
-                                type="button"
-                                title="บันทึกลำดับข่าว (จะอัปเดต sort_order อัตโนมัติ)"
-                            >
-                                {savingOrder ? "กำลังบันทึกลำดับ..." : "บันทึกลำดับ"}
-                            </button>
+                            <div className="flex items-center gap-4 w-full md:w-auto justify-end">
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input type="checkbox" checked={showOnlyActive} onChange={(e) => setShowOnlyActive(e.target.checked)} className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                                    <span className="text-sm font-medium text-slate-600">แสดงเฉพาะที่เผยแพร่</span>
+                                </label>
+                                <div className="h-6 w-px bg-slate-200"></div>
+                                <button
+                                    onClick={saveOrder}
+                                    disabled={savingOrder || loading}
+                                    className={`px-4 py-2 rounded-lg font-medium text-sm transition-all flex items-center gap-2 ${savingOrder || loading
+                                        ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                                        : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'}`}
+                                >
+                                    {savingOrder && <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>}
+                                    {savingOrder ? "กำลังบันทึก" : "บันทึกลำดับ"}
+                                </button>
+                            </div>
                         </div>
-
-                        <p className="text-xs text-slate-500 mt-3">
-                            ✅ จัดลำดับข่าวด้วยปุ่ม ↑ ↓ ในรายการ แล้วกด “บันทึกลำดับ”
-                        </p>
                     </div>
 
-                    {/* list */}
-                    <div className="rounded-3xl border border-slate-200 bg-white shadow-sm overflow-hidden">
-                        <div className="p-5 border-b border-slate-200 flex items-center justify-between gap-3">
-                            <div className="min-w-0">
-                                <h2 className="text-lg font-bold text-slate-900">รายการข่าว</h2>
-                                <p className="text-sm text-slate-600 mt-1">คลิก “แก้ไข” เพื่อเปิดป๊อปอัพ</p>
+                    {/* News Grid Area */}
+                    {loading ? (
+                        <div className="py-20 flex justify-center">
+                            <div className="animate-pulse flex flex-col items-center">
+                                <div className="h-8 w-8 bg-slate-200 rounded-full mb-2"></div>
+                                <div className="h-4 w-32 bg-slate-200 rounded"></div>
                             </div>
-                            <button
-                                onClick={loadNews}
-                                className="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold text-slate-700"
-                                type="button"
-                            >
-                                รีเฟรช
-                            </button>
                         </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {orderedItems.map((row) => (
+                                <div key={row.id} className="group bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-300 flex flex-col overflow-hidden">
+                                    {/* Image Area */}
+                                    <div className="aspect-video bg-slate-100 relative overflow-hidden">
+                                        {row.cover_image_url ? (
+                                            <img src={resolveUrl(row.cover_image_url)} alt="cover" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                        ) : (
+                                            <div className="w-full h-full flex items-center justify-center text-slate-400 text-xs font-medium">NO IMAGE</div>
+                                        )}
+                                        <div className="absolute top-3 left-3">
+                                            <StatusBadge active={row.is_active} />
+                                        </div>
+                                        {/* Sort Controls */}
+                                        <div className="absolute top-3 right-3 flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-all translate-x-2 group-hover:translate-x-0">
+                                            <button onClick={() => moveUp(row.id)} className="w-7 h-7 bg-white/90 backdrop-blur rounded shadow flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:bg-white transition-colors">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" /></svg>
+                                            </button>
+                                            <button onClick={() => moveDown(row.id)} className="w-7 h-7 bg-white/90 backdrop-blur rounded shadow flex items-center justify-center text-slate-600 hover:text-indigo-600 hover:bg-white transition-colors">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                            </button>
+                                        </div>
+                                    </div>
 
-                        <div className="p-5">
-                            {loading ? (
-                                <div className="py-16 text-center text-slate-500 animate-pulse">กำลังโหลด...</div>
-                            ) : orderedItems.length === 0 ? (
-                                <div className="py-16 text-center text-slate-500">ไม่พบข่าว</div>
-                            ) : (
-                                <div className="space-y-3">
-                                    {orderedItems.map((row) => (
-                                        <div
-                                            key={row.id}
-                                            className="group rounded-3xl border border-slate-200 bg-white hover:bg-slate-50 transition overflow-hidden"
-                                        >
-                                            <div className="p-4 flex gap-4 items-start">
-                                                <div className="w-28 h-20 rounded-2xl border border-slate-200 bg-slate-100 overflow-hidden shrink-0">
-                                                    {row.cover_image_url ? (
-                                                        <img
-                                                            src={resolveUrl(row.cover_image_url)}
-                                                            alt="cover"
-                                                            className="w-full h-full object-cover"
-                                                        />
-                                                    ) : null}
-                                                </div>
+                                    {/* Content Area */}
+                                    <div className="p-5 flex-1 flex flex-col">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <span className="text-xs font-semibold text-indigo-600">{row.date_label || "-"}</span>
+                                            <span className="text-[10px] text-slate-400 font-mono">ID: {row.id}</span>
+                                        </div>
+                                        <h3 className="text-lg font-bold text-slate-900 line-clamp-2 leading-tight mb-2 group-hover:text-indigo-700 transition-colors">{row.title}</h3>
+                                        <p className="text-slate-500 text-sm line-clamp-3 mb-4 flex-1">{row.desc1}</p>
 
-                                                <div className="flex-1 min-w-0">
-                                                    <div className="flex flex-wrap items-center gap-2">
-                                                        <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800">
-                                                            {row.date_label || "-"}
-                                                        </span>
-                                                        {!row.is_active ? (
-                                                            <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-200 text-slate-700">
-                                                                ซ่อน
-                                                            </span>
-                                                        ) : (
-                                                            <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800">
-                                                                แสดง
-                                                            </span>
-                                                        )}
-                                                    </div>
-
-                                                    <p className="mt-2 font-extrabold text-slate-900 line-clamp-2">
-                                                        {row.title}
-                                                    </p>
-                                                    <p className="mt-1 text-sm text-slate-600 line-clamp-2">{row.desc1}</p>
-                                                </div>
-
-                                                <div className="flex flex-col gap-2 items-end">
-                                                    {/* ปุ่มจัดลำดับ */}
-                                                    <div className="flex gap-2">
-                                                        <button
-                                                            onClick={() => moveUp(row.id)}
-                                                            className="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold"
-                                                            type="button"
-                                                            title="เลื่อนขึ้น"
-                                                        >
-                                                            ↑
-                                                        </button>
-                                                        <button
-                                                            onClick={() => moveDown(row.id)}
-                                                            className="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold"
-                                                            type="button"
-                                                            title="เลื่อนลง"
-                                                        >
-                                                            ↓
-                                                        </button>
-                                                    </div>
-
-                                                    <div className="flex gap-2">
-                                                        <button
-                                                            onClick={() => openEdit(row)}
-                                                            className="px-3 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-sm font-semibold"
-                                                            type="button"
-                                                        >
-                                                            แก้ไข
-                                                        </button>
-                                                        <button
-                                                            onClick={() => requestDelete(row.id)}
-                                                            className="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold"
-                                                            type="button"
-                                                        >
-                                                            ลบ
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                        <div className="flex items-center justify-between pt-4 border-t border-slate-100 mt-auto">
+                                            <div className="flex items-center gap-1 text-slate-400 text-xs">
+                                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                                                <span>{Array.isArray(row.gallery) ? row.gallery.length : safeParseJson(row.gallery, []).length}</span>
                                             </div>
-
-                                            <div className="px-4 pb-4">
-                                                <div className="h-px bg-slate-100" />
-                                                <div className="mt-3 text-xs text-slate-500 flex items-center justify-between gap-2">
-                                                    <span>ID: {row.id}</span>
-                                                    <span className="truncate">
-                                                        Gallery:{" "}
-                                                        {Array.isArray(row.gallery)
-                                                            ? row.gallery.length
-                                                            : typeof row.gallery === "string"
-                                                                ? safeParseJson(row.gallery, []).length
-                                                                : 0}{" "}
-                                                        รูป
-                                                    </span>
-                                                </div>
+                                            <div className="flex gap-2">
+                                                <button onClick={() => openEdit(row)} className="p-2 rounded-lg text-slate-400 hover:bg-indigo-50 hover:text-indigo-600 transition-colors" title="แก้ไข">
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                                                </button>
+                                                <button onClick={() => requestDelete(row.id)} className="p-2 rounded-lg text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors" title="ลบ">
+                                                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                                </button>
                                             </div>
                                         </div>
-                                    ))}
+                                    </div>
                                 </div>
-                            )}
+                            ))}
                         </div>
-                    </div>
-
-                    <div className="text-xs text-slate-500 text-center pb-10">
-                        API: <span className="font-mono">{API_BASE}</span>
-                    </div>
+                    )}
                 </div>
+
+                <footer className="mt-16 pt-8 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center text-xs text-slate-400 font-medium">
+                    <p>© TJC News Management System</p>
+                    <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-slate-600 transition-colors mt-2 sm:mt-0">
+                        Back to Top ↑
+                    </button>
+                </footer>
             </div>
-        </>
+        </div>
     );
 }

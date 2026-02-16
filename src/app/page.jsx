@@ -15,7 +15,6 @@ import ReviewsSection from "./componect/ReviewsSection";
 import NewsSection from "./componect/NewsSection";
 import CustomersCarousel from "./componect/CustomersCarousel";
 import QuotationBuilder from "./componect/QuotationBuilder";
-import FloatingPotato from "./componect/FloatingPotato";
 
 
 
@@ -23,16 +22,14 @@ import FloatingPotato from "./componect/FloatingPotato";
 export default function CompanyLandingPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-slate-900 antialiased">
-      
         <Navbar />
         <Hero />
         <AboutHeader />
         <TeamSection />
-        <CertificationsSection />
-        <Services />
         <Work />
+        <Services />
+        <CertificationsSection />
         <NewsSection />
-        <Content />
         <CustomersCarousel />
         <Footer />
     </div>

@@ -5,6 +5,7 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
     "./app/**/*.{js,ts,jsx,tsx}",
   ],
+
   theme: {
     extend: {
       // 🎨 Colors
@@ -21,38 +22,38 @@ module.exports = {
           900: "#FF6F00",
         },
         gray: {
-          50: '#f9fafb',
-          100: '#f3f4f6',
-          200: '#e5e7eb',
-          300: '#d1d5db',
-          400: '#9ca3af',
-          500: '#6b7280',
-          600: '#4b5563',
-          700: '#374151',
-          800: '#1f2937',
-          900: '#111827',
+          50: "#f9fafb",
+          100: "#f3f4f6",
+          200: "#e5e7eb",
+          300: "#d1d5db",
+          400: "#9ca3af",
+          500: "#6b7280",
+          600: "#4b5563",
+          700: "#374151",
+          800: "#1f2937",
+          900: "#111827",
         },
       },
 
       // 📱 Breakpoints แบบ Ultra-Responsive
       screens: {
-        xxs: "360px",   // มือถือเล็กมาก เช่น Galaxy A01, iPhone 5 SE
-        xs: "420px",    // มือถือทั่วไป 4.7"–5.0"
-        sm: "640px",    // มือถือใหญ่
-        md: "768px",    // Tablet / iPad Mini
-        lg: "1024px",   // iPad 11" / Notebook 13"
-        xl: "1280px",   // Laptop 15"
+        xxs: "360px",
+        xs: "420px",
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
         "2xl": "1536px",
-        "3xl": "1900px", // 2K / Ultrawide
-        "4xl": "2200px", // 4K + Super Ultrawide
+        "3xl": "1900px",
+        "4xl": "2200px",
       },
     },
   },
 
-  // 🧩 Core plugins
   corePlugins: {
     preflight: true,
   },
 
-  plugins: [],
+  // ✅ เพิ่มปลั๊กอิน line-clamp ตรงนี้
+  plugins: [require("@tailwindcss/line-clamp")],
 };
