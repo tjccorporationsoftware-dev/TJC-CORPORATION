@@ -393,31 +393,33 @@ export default function NewsSlider() {
                         </div>
 
                         {/* Modal */}
+                        {/* Modal */}
                         {selectedNews && (
                             <div
                                 className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
                                 onClick={closeModal}
                             >
                                 <div
-                                    className="bg-white rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl relative animate-in fade-in zoom-in duration-200"
+                                    className="bg-white rounded-3xl w-full max-w-9xl max-h-[92vh] overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200"
                                     onClick={(e) => e.stopPropagation()}
                                 >
                                     <button
                                         onClick={closeModal}
-                                        className="absolute top-4 right-4 z-20 p-2 bg-white/80 hover:bg-white text-gray-600 hover:text-red-500 rounded-full shadow-md transition-all"
+                                        className="absolute top-5 right-5 z-30 p-2 bg-white/90 hover:bg-white text-gray-600 hover:text-red-500 rounded-full shadow-lg transition-all active:scale-95"
                                     >
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     </button>
 
-                                    <div className="flex flex-col md:flex-row">
-                                        <div className="md:w-1/2 bg-gray-100 relative min-h-75">
+                                    <div className="flex flex-col md:flex-row h-full max-h-[92vh]">
+                                        {/* Image Section - สัดส่วนที่สมดุล */}
+                                        <div className="md:w-[45%] bg-black flex items-center justify-center relative overflow-hidden min-h-87.5 md:min-h-full">
                                             {selectedNews.gallery && selectedNews.gallery.length > 0 ? (
                                                 <>
                                                     <img
                                                         src={resolveUrl(selectedNews.gallery[modalImageIndex] || selectedNews.image)}
-                                                        className="w-full h-full object-cover absolute inset-0"
+                                                        className="w-full h-full object-contain"
                                                         alt="gallery"
                                                     />
 
@@ -426,13 +428,11 @@ export default function NewsSlider() {
                                                             <button
                                                                 onClick={(e) => {
                                                                     e.stopPropagation();
-                                                                    setModalImageIndex(
-                                                                        (prev) => (prev - 1 + selectedNews.gallery.length) % selectedNews.gallery.length
-                                                                    );
+                                                                    setModalImageIndex((prev) => (prev - 1 + selectedNews.gallery.length) % selectedNews.gallery.length);
                                                                 }}
-                                                                className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"
+                                                                className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2.5 rounded-full transition-colors"
                                                             >
-                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                                                                 </svg>
                                                             </button>
@@ -442,19 +442,18 @@ export default function NewsSlider() {
                                                                     e.stopPropagation();
                                                                     setModalImageIndex((prev) => (prev + 1) % selectedNews.gallery.length);
                                                                 }}
-                                                                className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full"
+                                                                className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2.5 rounded-full transition-colors"
                                                             >
-                                                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path d="M9 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                                                 </svg>
                                                             </button>
 
-                                                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                                                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5">
                                                                 {selectedNews.gallery.map((_, i) => (
                                                                     <div
                                                                         key={i}
-                                                                        className={`w-2 h-2 rounded-full shadow-sm ${i === modalImageIndex ? "bg-white w-4" : "bg-white/60"
-                                                                            }`}
+                                                                        className={`w-2.5 h-2.5 rounded-full shadow-md transition-all ${i === modalImageIndex ? "bg-white w-6" : "bg-white/50"}`}
                                                                     />
                                                                 ))}
                                                             </div>
@@ -464,22 +463,42 @@ export default function NewsSlider() {
                                             ) : (
                                                 <img
                                                     src={resolveUrl(selectedNews.image)}
-                                                    className="w-full h-full object-cover absolute inset-0"
+                                                    className="w-full h-full object-contain"
                                                     alt={selectedNews.title}
                                                 />
                                             )}
                                         </div>
 
-                                        <div className="md:w-1/2 p-8 md:p-10">
-                                            <span className="inline-block bg-yellow-100 text-yellow-800 text-sm px-3 py-1 rounded-full font-semibold mb-4">
-                                                {selectedNews.date}
-                                            </span>
-                                            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-6 leading-snug">
-                                                {selectedNews.title}
-                                            </h3>
-                                            <div className="space-y-4 text-gray-600 text-lg leading-relaxed max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
-                                                <p>{selectedNews.desc}</p>
-                                                {selectedNews.desc2 && <p>{selectedNews.desc2}</p>}
+                                        {/* Content Section - ปรับให้แสดงข้อมูลได้ยาวและเต็มที่มากขึ้น */}
+                                        <div className="md:w-[55%] p-10 md:p-14 flex flex-col bg-white overflow-hidden">
+                                            <div className="mb-6">
+                                                <span className="inline-block bg-amber-100 text-amber-800 text-[11px] px-4 py-1.5 rounded-full font-black uppercase tracking-widest mb-5">
+                                                    {selectedNews.date}
+                                                </span>
+                                                <h3 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight">
+                                                    {selectedNews.title}
+                                                </h3>
+                                            </div>
+
+                                            {/* ส่วนของเนื้อหาที่เลื่อนอ่านได้ยาวๆ */}
+                                            <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
+                                                <div className="space-y-6 text-gray-600 text-lg md:text-xl leading-relaxed font-medium">
+                                                    <p className="whitespace-pre-wrap">{selectedNews.desc}</p>
+                                                    {selectedNews.desc2 && (
+                                                        <div className="pt-4 border-t border-gray-100">
+                                                            <p className="whitespace-pre-wrap">{selectedNews.desc2}</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            <div className="mt-8 pt-6 border-t border-gray-100">
+                                                <button
+                                                    onClick={closeModal}
+                                                    className="text-gray-400 hover:text-gray-900 font-bold text-sm uppercase tracking-widest transition-colors"
+                                                >
+                                                    Back to news
+                                                </button>
                                             </div>
                                         </div>
                                     </div>

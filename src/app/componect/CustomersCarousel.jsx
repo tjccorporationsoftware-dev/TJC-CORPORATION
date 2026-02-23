@@ -1,85 +1,95 @@
 "use client";
-import React, { useEffect, useRef } from "react";
-import { motion, useAnimation } from "framer-motion";
+import React, { useEffect, useState } from "react";
 
-export default function CustomersCarousel({
-    logos = [
-        "/images/customers/c01-removebg-preview.png",
-        "/images/customers/c02-removebg-preview.png",
-        "/images/customers/c03-removebg-preview.png",
-        "/images/customers/c04-removebg-preview.png",
-        "/images/customers/c05-removebg-preview.png",
-        "/images/customers/c06-removebg-preview.png",
-        "/images/customers/c07-removebg-preview.png",
-        "/images/customers/c08-removebg-preview.png",
-        "/images/customers/c09-removebg-preview.png",
-        "/images/customers/c010-removebg-preview.png",
-        "/images/customers/c11-removebg-preview.png",
-        "/images/customers/c12.png",
-    ],
-    duration = 50,
-}) {
-    const controls = useAnimation();
-    const trackRef = useRef(null);
-    const loopLogos = [...logos, ...logos]; // duplicated
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+
+const resolveUrl = (u) => {
+    if (!u) return "";
+    if (u.startsWith("http")) return u;
+    if (u.startsWith("/images/")) return u;
+    const cleanPath = u.startsWith("/") ? u : `/${u}`;
+    return `${API_BASE}${cleanPath}`;
+};
+
+export default function CustomersCarousel({ speed = 40 }) {
+    const [logos, setLogos] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const track = trackRef.current;
-        if (!track) return;
-
-        const totalWidth = track.scrollWidth;       // ความกว้างจริง
-        const halfWidth = totalWidth / 2;           // สไลด์ครึ่งหนึ่งพอดี
-
-        controls.start({
-            x: [0, -halfWidth],
-            transition: {
-                duration,
-                ease: "linear",
-                repeat: Infinity,
-            },
-        });
+        async function fetchLogos() {
+            try {
+                const res = await fetch(`${API_BASE}/api/customer-logos`);
+                if (!res.ok) throw new Error("Failed to fetch");
+                const data = await res.json();
+                const sorted = data.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+                setLogos(sorted);
+            } catch (err) {
+                console.error("Error loading logos:", err);
+            } finally {
+                setLoading(false);
+            }
+        }
+        fetchLogos();
     }, []);
 
+    // เบิ้ลโลโก้ 3 ชุดเพื่อให้มั่นใจว่าแถวยาวพอที่จะเลื่อนได้ไม่สะดุด
+    const loopLogos = [...logos, ...logos, ...logos];
+
+    if (loading || logos.length === 0) return null;
+
     return (
-        <section className="py-16 bg-white overflow-hidden">
+        <section className="py-20 bg-white overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 text-center">
+                <div className="mb-14">
+                    <h3 className="text-3xl md:text-4xl font-black bg-linear-to-r from-amber-500 to-slate-700 bg-clip-text text-transparent leading-tight">
+                        ลูกค้าที่ไว้วางใจเรา
+                    </h3>
+                    <div className="w-16 h-1 bg-amber-400 mx-auto mt-4 rounded-full" />
+                </div>
 
-               <div className=" justify-items-center " >
-                 <h3 className="text-2xl md:text-3xl mb-10 font-extrabold bg-linear-to-r from-yellow-500 to-gray-700 bg-clip-text text-transparent drop-shadow-sm leading-tight">
-                    ลูกค้าที่ไว้วางใจเรา
-                </h3>
-               </div>
-
-                <div className="relative overflow-hidden">
-
-                    <motion.div
-                        ref={trackRef}
-                        className="flex items-center gap-6 sm:gap-10"
-                        animate={controls}
+                {/* รางเลื่อนหลัก */}
+                <div className="relative flex overflow-hidden group">
+                    <div 
+                        className="flex py-4 animate-scroll-infinite hover:[animation-play-state:paused]"
+                        style={{
+                            // บังคับให้เป็นแถวเดียวยาวๆ ห้ามขึ้นบรรทัดใหม่
+                            minWidth: "max-content", 
+                            // ใช้ CSS Animation ผ่าน Inline Style เพื่อความชัวร์
+                            animation: `scroll ${speed}s linear infinite`
+                        }}
                     >
-                        {loopLogos.map((src, idx) => (
+                        {loopLogos.map((item, idx) => (
                             <div
-                                key={idx}
-                                className="flex items-center justify-center bg-white rounded-xl shadow p-4 shrink-0"
+                                key={`${item.id}-${idx}`}
+                                className="flex items-center justify-center bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mx-4 shrink-0 transition-transform duration-300 hover:scale-110"
                                 style={{
-                                    width: 200,     // ❗ ใช้ px เพื่อให้รวมกว้างแน่นอน
-                                    height: 130,
+                                    width: 220,
+                                    height: 140,
                                 }}
                             >
                                 <img
-                                    src={src}
+                                    src={resolveUrl(item.image_url)}
+                                    alt={item.name || "Customer Logo"}
                                     className="w-full h-full object-contain"
                                     loading="lazy"
                                 />
                             </div>
                         ))}
-                    </motion.div>
+                    </div>
 
-                    {/* Fade overlays */}
-                    <div className="pointer-events-none absolute top-0 left-0 w-20 h-full bg-linear-to-r from-white to-transparent" />
-                    <div className="pointer-events-none absolute top-0 right-0 w-20 h-full bg-linear-to-l from-white to-transparent" />
+                    {/* Gradient Fade ปิดหัวท้ายเพื่อให้ดูเนียน */}
+                    <div className="pointer-events-none absolute top-0 left-0 w-32 h-full bg-linear-to-r from-white via-white/40 to-transparent z-10" />
+                    <div className="pointer-events-none absolute top-0 right-0 w-32 h-full bg-linear-to-l from-white via-white/40 to-transparent z-10" />
                 </div>
             </div>
+
+            {/* เพิ่ม Keyframes ลงใน globals.css หรือใส่ไว้ที่นี่ก็ได้ครับ */}
+            <style dangerouslySetInnerHTML={{ __html: `
+                @keyframes scroll {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-33.33%); }
+                }
+            `}} />
         </section>
     );
 }

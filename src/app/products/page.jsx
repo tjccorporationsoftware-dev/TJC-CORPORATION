@@ -6,376 +6,322 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Navbar from "../componect/Navbar";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-
-// 🔥 1. เพิ่มฟังก์ชัน normalize เพื่อช่วยเปรียบเทียบค่า
 const normalize = (val) => String(val || "").toLowerCase().trim();
 
 function ProductContent() {
-    const searchParams = useSearchParams();
-    const router = useRouter();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const paramCat = searchParams.get("cat");
+  const selectedIdentifier = !paramCat || paramCat === "undefined" ? "all" : paramCat;
 
-    // 🔥 2. ดึงค่า cat จาก URL อย่างปลอดภัย
-    const paramCat = searchParams.get("cat");
-    const selectedIdentifier = (!paramCat || paramCat === "undefined") ? "all" : paramCat;
+  const [categories, setCategories] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedSubcategory, setSelectedSubcategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
-    const [categories, setCategories] = useState([]);
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [selectedSubcategory, setSelectedSubcategory] = useState("all");
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedProduct, setSelectedProduct] = useState(null);
+  useEffect(() => {
+    setSelectedSubcategory("all");
+  }, [selectedIdentifier]);
 
-    // รีเซ็ต Subcategory เมื่อ URL เปลี่ยน
-    useEffect(() => {
-        setSelectedSubcategory("all");
-    }, [selectedIdentifier]);
-
-    // ดึงข้อมูล
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                setLoading(true);
-                const [catRes, prodRes] = await Promise.all([
-                    fetch(`${API_BASE_URL}/api/product-categories`),
-                    fetch(`${API_BASE_URL}/api/products`),
-                ]);
-                const cats = await catRes.json();
-                const prods = await prodRes.json();
-                setCategories(cats);
-                setProducts(prods);
-            } catch (err) {
-                console.error("Fetch error:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
-
-    // ล็อกสกรอลเมื่อเปิด Modal
-    useEffect(() => {
-        document.body.style.overflow = selectedProduct ? "hidden" : "unset";
-    }, [selectedProduct]);
-
-    // เปลี่ยนหมวดหมู่
-    const handleCategoryChange = (slug) => {
-        const params = new URLSearchParams();
-        if (slug !== "all") {
-            params.set("cat", slug);
-        }
-        router.push(`?${params.toString()}`, { scroll: false });
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [catRes, prodRes] = await Promise.all([
+          fetch(`${API_BASE_URL}/api/product-categories`),
+          fetch(`${API_BASE_URL}/api/products`),
+        ]);
+        setCategories(await catRes.json());
+        setProducts(await prodRes.json());
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchData();
+  }, []);
 
-    // 🔥 3. Logic หาหมวดหมู่ปัจจุบัน (แก้ไขให้รองรับทั้ง ID, Slug, Title)
-    const activeCategoryData = useMemo(() => {
-        if (selectedIdentifier === "all") return null;
-        return categories.find(
-            (c) =>
-                normalize(c.slug) === normalize(selectedIdentifier) ||
-                normalize(c.id) === normalize(selectedIdentifier) ||
-                normalize(c.title) === normalize(selectedIdentifier)
-        );
-    }, [categories, selectedIdentifier]);
+  const handleCategoryChange = (slug) => {
+    const params = new URLSearchParams();
+    if (slug !== "all") params.set("cat", slug);
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
-    const activeSubcategories = activeCategoryData?.subcategories || [];
+  const activeCategoryData = useMemo(() => {
+    if (selectedIdentifier === "all") return null;
+    return categories.find(
+      (c) => normalize(c.slug) === normalize(selectedIdentifier) || normalize(c.id) === normalize(selectedIdentifier)
+    );
+  }, [categories, selectedIdentifier]);
 
-    // 🔥 4. Logic กรองสินค้า (แก้ไขให้ Robust ขึ้น)
-    const filteredProducts = useMemo(() => {
-        return products.filter((product) => {
-            // 4.1 กรองตามหมวดหมู่หลัก
-            if (selectedIdentifier !== "all") {
-                if (!activeCategoryData && !loading) return false;
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      if (selectedIdentifier !== "all") {
+        if (!activeCategoryData && !loading) return false;
+        if (activeCategoryData) {
+          const prodCat = normalize(product.category);
+          const isMatch = prodCat === normalize(activeCategoryData.title) || prodCat === normalize(activeCategoryData.id);
+          if (!isMatch) return false;
+        }
+      }
+      if (selectedSubcategory !== "all" && normalize(product.subcategory) !== normalize(selectedSubcategory)) return false;
+      if (searchQuery.trim() !== "" && !normalize(product.name).includes(normalize(searchQuery))) return false;
+      return product.is_active !== false;
+    });
+  }, [products, selectedIdentifier, activeCategoryData, selectedSubcategory, searchQuery, loading]);
 
-                if (activeCategoryData) {
-                    const prodCat = normalize(product.category);
-                    const targetTitle = normalize(activeCategoryData.title);
-                    const targetId = normalize(activeCategoryData.id);
-                    const targetSlug = normalize(activeCategoryData.slug);
+  const getImageUrl = (url) => {
+    if (!url) return "https://placehold.co/600x600/f4f4f5/a1a1aa?text=No+Image";
+    if (url.startsWith("http")) return url;
+    if (url.startsWith("/images/")) return url;
+    const cleanPath = url.startsWith("/") ? url : `/${url}`;
+    return `${API_BASE_URL}${cleanPath}`;
+  };
 
-                    // ยอมให้ผ่านถ้าตรงกับ Title หรือ ID หรือ Slug
-                    const isMatch =
-                        prodCat === targetTitle ||
-                        prodCat === targetId ||
-                        prodCat === targetSlug;
-
-                    if (!isMatch) return false;
-                }
-            }
-
-            // 4.2 กรองตามหมวดหมู่ย่อย
-            if (selectedSubcategory !== "all") {
-                if (normalize(product.subcategory) !== normalize(selectedSubcategory)) return false;
-            }
-
-            // 4.3 กรองตามคำค้นหา
-            if (searchQuery.trim() !== "") {
-                if (!normalize(product.name).includes(normalize(searchQuery))) return false;
-            }
-
-            return product.is_active !== false;
-        });
-    }, [products, selectedIdentifier, activeCategoryData, selectedSubcategory, searchQuery, loading]);
-
-    const getImageUrl = (url) =>
-        !url
-            ? "https://placehold.co/600x600/f4f4f5/a1a1aa?text=No+Image"
-            : url.startsWith("http")
-                ? url
-                : `${API_BASE_URL}${url}`;
-
-    if (loading)
-        return (
-            <div className="min-h-screen flex items-center justify-center bg-[#FAFAFA]">
-                <div className="flex flex-col items-center gap-5">
-                    <div className="w-12 h-12 border-4 border-zinc-200 border-t-amber-500 rounded-full animate-spin shadow-lg"></div>
-                    <span className="text-xs font-semibold tracking-widest text-zinc-500 uppercase">
-                        กำลังโหลดข้อมูล...
-                    </span>
-                </div>
-            </div>
-        );
-
+  if (loading)
     return (
-        <div className="bg-[#FAFAFA] min-h-screen font-(family-name:--font-ibm-plex-thai) text-zinc-800 selection:bg-amber-500 selection:text-white pb-32">
-            <Navbar />
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="w-10 h-10 border-4 border-slate-200 border-t-amber-500 rounded-full animate-spin" />
+      </div>
+    );
 
-            {/* ======= HEADER ======= */}
-            <div className="w-full px-6 lg:px-10 2xl:px-16 pt-32 lg:pt-40">
-                <header className="flex flex-col-reverse lg:flex-row lg:items-end justify-between gap-12 mb-20">
-                    <div className="flex-1 max-w-3xl flex flex-col gap-8">
-                        <div className="flex items-center gap-6">
-                            <div className="relative w-20 h-20 bg-white rounded-2xl shadow-xl shadow-zinc-200/50 border border-zinc-100 flex items-center justify-center p-3 overflow-hidden group">
-                                <Image
-                                    src="/images/logo.png"
-                                    alt="TJC Corporation Logo"
-                                    width={80}
-                                    height={80}
-                                    className="object-contain w-full h-full group-hover:scale-110 transition-transform duration-500"
-                                />
-                            </div>
-                            <div className="flex flex-col">
-                                <h1 className="text-4xl lg:text-5xl font-bold text-zinc-900 tracking-tight leading-none mb-2">
-                                    TJC Corporation
-                                </h1>
-                                <span className="text-xs font-semibold text-amber-600 tracking-[0.25em] uppercase">
-                                    มาตรฐานคุณภาพที่คุณวางใจ
-                                </span>
-                            </div>
-                        </div>
+  return (
+    <div className="min-h-screen bg-[#FBFBFC] text-slate-900 font-(family-name:--font-ibm-plex-thai) selection:bg-amber-100/60 pb-24">
+      <Navbar />
 
-                        <div className="relative group max-w-lg">
-                            <div className="absolute inset-y-0 left-0 pl-6 flex items-center pointer-events-none">
-                                <i className="bx bx-search text-xl text-zinc-400 group-focus-within:text-amber-500 transition-colors"></i>
-                            </div>
-                            <input
-                                type="text"
-                                placeholder="ค้นหาสินค้าที่คุณต้องการ..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="block w-full pl-14 pr-6 py-4 bg-white/80 backdrop-blur-md border border-zinc-200 rounded-full text-sm text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 shadow-lg shadow-zinc-100/50 transition-all duration-300"
-                            />
-                        </div>
-                    </div>
+      {/* subtle background accents (gold/gray/white) */}
+      <div className="pointer-events-none fixed inset-0 -z-10">
+        <div className="absolute inset-0 bg-linear-to-b from-white via-white to-[#F6F7F9]" />
+        <div className="absolute -top-40 left-1/2 -translate-x-1/2 h-130 w-275 rounded-full bg-linear-to-r from-amber-100/45 via-white to-slate-100/50 blur-3xl" />
+        <div className="absolute top-130 -right-55 h-105 w-105 rounded-full bg-amber-100/25 blur-3xl" />
+      </div>
 
-                    <div className="relative group cursor-pointer w-full md:w-auto self-start lg:self-end">
-                        <div className="w-full md:w-[320px] h-45 relative rounded-3xl overflow-hidden shadow-2xl shadow-zinc-300/60 transform transition-all duration-700 hover:-translate-y-2 hover:shadow-zinc-300/80">
-                            <div className="absolute inset-0 bg-linear-to-t from-black/40 to-transparent group-hover:opacity-50 transition-opacity z-10" />
-                            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover scale-105 group-hover:scale-100 transition-transform duration-1000">
-                                <source src="/video/vo002.mp4" type="video/mp4" />
-                            </video>
-                            <div className="absolute bottom-5 right-5 z-20">
-                                <div className="w-12 h-12 bg-white/20 backdrop-blur-md border border-white/40 rounded-full flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:bg-amber-500/90 group-hover:border-amber-400">
-                                    <i className="bx bx-play text-white text-2xl ml-1"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </header>
+      {/* Top header */}
+      <div className="max-w-400 mx-auto px-6 lg:px-12 pt-28 lg:pt-36">
+        <header className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
+          <div className="lg:col-span-8 flex flex-col justify-center">
+            <div className="mb-6">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="h-px w-10 bg-amber-300/80" />
+                <span className="text-[11px] uppercase tracking-[0.18em] text-slate-600 font-semibold">
+                  TJC GROUP • PRODUCT CATALOG
+                </span>
+              </div>
+              <h1 className="text-3xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
+                รายการผลิตภัณฑ์
+                <span className="text-slate-400 font-semibold"> / Catalog</span>
+              </h1>
+              <p className="mt-2 text-sm text-slate-600 leading-relaxed max-w-2xl">
+                ค้นหาและเลือกดูสินค้าได้ตามหมวดหมู่ พร้อมรายละเอียดประกอบเพื่อการพิจารณาอย่างเป็นทางการ
+              </p>
             </div>
 
-            <div className="w-full px-6 lg:px-10 2xl:px-16 flex flex-col lg:flex-row gap-12 xl:gap-20 lg:items-start">
-                {/* Sidebar หมวดหมู่ */}
-                <aside className="w-full lg:w-72 shrink-0 self-start lg:sticky lg:top-28">
-                    <div className="bg-white/60 backdrop-blur-xl p-6 rounded-3xl border border-zinc-100 shadow-xl shadow-zinc-100/50">
-                        <h3 className="hidden lg:flex items-center gap-2 text-xs font-bold text-zinc-800 uppercase tracking-widest mb-6">
-                            <i className="bx bx-category text-amber-500 text-base"></i>
-                            หมวดหมู่สินค้า
-                        </h3>
+            {/* Search */}
+            <div className="relative max-w-xl">
+              <i className="bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-lg text-slate-400" />
+              <input
+                type="text"
+                placeholder="ค้นหาสินค้า..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl outline-none
+                           focus:border-amber-400 focus:ring-4 focus:ring-amber-100/70
+                           text-sm font-medium shadow-sm"
+              />
+            </div>
+          </div>
 
-                        <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-4 lg:pb-0 no-scrollbar items-center lg:items-stretch">
-                            <CategoryItem
-                                active={selectedIdentifier === "all"}
-                                onClick={() => handleCategoryChange("all")}
-                                label="ดูทั้งหมด"
-                            />
+          {/* Media panel (gold tone) */}
+          <div className="lg:col-span-4 relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm h-56 hidden lg:block bg-white">
+            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
+              <source src="/video/vo002.mp4" type="video/mp4" />
+            </video>
+            <div className="absolute inset-0 bg-linear-to-t from-slate-900/70 via-slate-900/25 to-transparent" />
+            <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
+            <div className="absolute bottom-0 left-0 right-0 p-5">
+              <div className="inline-flex items-center gap-2 rounded-lg bg-white/10 border border-amber-200/20 px-3 py-2 backdrop-blur-sm">
+                <span className="h-2 w-2 rounded-full bg-amber-300" />
+                <h3 className="text-white font-semibold text-sm tracking-wide">Official Product Overview</h3>
+              </div>
+            </div>
+          </div>
+        </header>
+      </div>
 
-                            {categories.map((cat) => (
-                                <div key={cat.id} className="flex flex-col w-full">
-                                    <CategoryItem
-                                        // ใช้ normalize เปรียบเทียบ
-                                        active={normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)}
-                                        onClick={() => handleCategoryChange(cat.slug || cat.id)}
-                                        label={cat.title}
-                                        count={products.filter(p => normalize(p.category) === normalize(cat.title) || normalize(p.category) === normalize(cat.id)).length}
-                                    />
+      {/* Section header */}
+      <div className="max-w-400 mx-auto px-6 lg:px-12 mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h2 className="text-lg font-extrabold tracking-tight text-slate-900">
+            {selectedIdentifier === "all" ? "สินค้าทั้งหมด" : activeCategoryData?.title}
+          </h2>
+          <p className="text-xs text-slate-600 mt-1">แสดงผลตามหมวดหมู่และเงื่อนไขการค้นหา</p>
+        </div>
 
-                                    {/* เมนูย่อย (Subcategories) */}
-                                    <div className={`overflow-hidden transition-all duration-500 ease-in-out ${(normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)) && activeSubcategories.length > 0 ? "max-h-96 opacity-100 mt-2 mb-3" : "max-h-0 opacity-0"}`}>
-                                        <div className="flex flex-col pl-4 gap-1 border-l-2 border-zinc-100 ml-5">
-                                            {activeSubcategories.map((sub, idx) => {
-                                                const subName = typeof sub === "string" ? sub : sub.title;
-                                                const isActiveSub = normalize(selectedSubcategory) === normalize(subName);
-                                                return (
-                                                    <button
-                                                        key={idx}
-                                                        onClick={() => setSelectedSubcategory(subName)}
-                                                        className={`text-left text-sm py-2 px-4 rounded-xl transition-all duration-300 relative ${isActiveSub ? "text-amber-600 font-semibold bg-amber-50/50" : "text-zinc-500 hover:text-zinc-800 hover:bg-zinc-50"}`}
-                                                    >
-                                                        {isActiveSub && <span className="absolute -left-px top-1/2 -translate-y-1/2 w-0.5 h-1/2 bg-amber-500 rounded-r-full"></span>}
-                                                        {subName}
-                                                    </button>
-                                                );
-                                            })}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </aside>
+        <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
+          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Results</span>
+          <span className="text-[12px] font-extrabold text-amber-700">{filteredProducts.length}</span>
+        </div>
+      </div>
 
-                {/* รายการสินค้า */}
-                <main className="grow min-h-[50vh]">
-                    <div className="flex items-end justify-between mb-10 border-b border-zinc-200 pb-6">
-                        <div>
-                            <span className="text-[11px] text-amber-600 uppercase tracking-widest font-bold">รายการสินค้า</span>
-                            <h2 className="text-3xl font-bold text-zinc-900 mt-2">
-                                {selectedIdentifier === "all" ? "สินค้าทั้งหมด" : (activeCategoryData?.title || "ไม่พบหมวดหมู่")}
-                            </h2>
-                        </div>
-                        <span className="text-xs font-semibold text-zinc-600 bg-white px-4 py-1.5 rounded-full border border-zinc-200 shadow-sm">
-                            {filteredProducts.length} รายการ
-                        </span>
-                    </div>
+      {/* Main grid */}
+      <div className="max-w-400 mx-auto px-6 lg:px-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:items-start">
+          {/* Sidebar */}
+          <aside className="w-full lg:sticky lg:top-28 z-30">
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-100 bg-linear-to-r from-white to-amber-50/40">
+                <h3 className="text-[11px] font-bold text-slate-700 uppercase tracking-widest flex items-center gap-2">
+                  <i className="bx bx-grid-alt text-amber-600" />
+                  หมวดหมู่สินค้า
+                </h3>
+                <p className="text-xs text-slate-500 mt-1">เลือกหมวดหมู่เพื่อกรองรายการ</p>
+              </div>
 
-                    {filteredProducts.length === 0 ? (
-                        <div className="min-h-100 flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-zinc-200 bg-white/50 backdrop-blur-sm">
-                            <div className="w-20 h-20 bg-zinc-50 rounded-full flex items-center justify-center mb-4">
-                                <i className="bx bx-search-alt text-4xl text-zinc-300"></i>
-                            </div>
-                            <p className="text-zinc-600 font-medium text-lg">ไม่พบสินค้าที่ตรงกับเงื่อนไข</p>
+              <nav className="p-3 flex flex-col gap-1.5 max-h-[calc(100vh-240px)] overflow-y-auto no-scrollbar pr-1">
+                <CategoryLink
+                  active={selectedIdentifier === "all"}
+                  label="สินค้าทั้งหมด"
+                  onClick={() => handleCategoryChange("all")}
+                />
+
+                {categories.map((cat) => (
+                  <div key={cat.id} className="flex flex-col">
+                    <CategoryLink
+                      active={normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)}
+                      label={cat.title}
+                      onClick={() => handleCategoryChange(cat.slug || cat.id)}
+                    />
+
+                    {(normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)) &&
+                      cat.subcategories?.length > 0 && (
+                        <div className="mt-1 mb-2 ml-3 pl-3 border-l border-amber-200/80 space-y-1">
+                          {cat.subcategories.map((sub, idx) => (
                             <button
-                                onClick={() => { setSearchQuery(""); handleCategoryChange("all"); }}
-                                className="mt-4 px-6 py-2 bg-zinc-900 text-white rounded-full text-sm font-medium hover:bg-zinc-800 transition-colors shadow-lg shadow-zinc-900/20"
+                              key={idx}
+                              onClick={() => setSelectedSubcategory(sub.title || sub)}
+                              className={`w-full text-left text-[12px] py-2 px-3 rounded-lg transition
+                                ${
+                                  normalize(selectedSubcategory) === normalize(sub.title || sub)
+                                    ? "bg-amber-500 text-white font-semibold shadow-sm"
+                                    : "text-slate-700 hover:bg-amber-50 hover:text-slate-900 font-medium"
+                                }`}
                             >
-                                ล้างตัวกรองทั้งหมด
+                              {sub.title || sub}
                             </button>
+                          ))}
                         </div>
-                    ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-y-10 gap-x-8">
-                            {filteredProducts.map((product) => (
-                                <ProductCard key={product.id} product={product} getImageUrl={getImageUrl} onOpenModal={setSelectedProduct} />
-                            ))}
-                        </div>
-                    )}
-                </main>
+                      )}
+                  </div>
+                ))}
+              </nav>
             </div>
+          </aside>
 
-            {/* Modal รายละเอียดสินค้า */}
-            {selectedProduct && (
-                <ProductModal product={selectedProduct} onClose={() => setSelectedProduct(null)} getImageUrl={getImageUrl} />
-            )}
+          {/* Empty state */}
+          {filteredProducts.length === 0 ? (
+            <div className="lg:col-span-4 min-h-80 flex flex-col items-center justify-center bg-white rounded-2xl border border-slate-200 shadow-sm">
+              <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center mb-3">
+                <i className="bx bx-search text-2xl text-amber-600" />
+              </div>
+              <p className="text-slate-800 font-semibold">ไม่พบสินค้า</p>
+              <p className="text-xs text-slate-500 mt-1">ลองปรับหมวดหมู่หรือคำค้นหาใหม่</p>
+            </div>
+          ) : (
+            filteredProducts.map((product) => <ProductCard key={product.id} product={product} getImageUrl={getImageUrl} />)
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
-// ส่วนประกอบหลักที่ต้องมี Suspense ครอบไว้
-export default function ProductPage() {
-    return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>
-            <ProductContent />
-        </Suspense>
-    );
-}
-
-// ================= SUB COMPONENTS (UI ส่วนย่อย) =================
-
-const CategoryItem = ({ active, onClick, label, count }) => (
+/** UI HELPERS (โทนทอง-เทา-ขาว / ทางการ / ไม่แตะ logic) */
+function CategoryLink({ active, label, onClick }) {
+  return (
     <button
-        onClick={onClick}
-        className={`group relative w-full flex items-center justify-between px-5 py-3.5 rounded-2xl transition-all duration-300 outline-none shrink-0 lg:shrink whitespace-nowrap lg:whitespace-normal ${active ? "bg-zinc-900 text-white shadow-xl shadow-zinc-900/20 scale-[1.02]" : "bg-transparent text-zinc-600 hover:bg-white hover:shadow-md hover:text-zinc-900"}`}
+      onClick={onClick}
+      className={`w-full text-left px-4 py-3 rounded-xl text-[13px] transition flex items-center justify-between border
+        ${
+          active
+            ? "bg-slate-900 text-white border-slate-900 shadow-sm font-semibold"
+            : "bg-white text-slate-700 border-slate-200 hover:bg-amber-50/60 hover:text-slate-900 hover:border-amber-200 font-medium"
+        }`}
     >
-        <span className={`text-sm tracking-wide ${active ? "font-semibold" : "font-medium"}`}>{label}</span>
-        {count !== undefined && (
-            <span className={`hidden lg:flex items-center justify-center w-6 h-6 rounded-full transition-colors ${active ? "text-white" : "bg-zinc-100 text-zinc-500 group-hover:bg-zinc-200"}`}>
-                <i className={`bx ${active ? "bx-chevron-up" : "bx-chevron-down"} text-xl`}></i>
-            </span>
-        )}
+      <span className="truncate pr-2">{label}</span>
+      <span className="inline-flex items-center gap-2">
+        {active && <span className="h-2 w-2 rounded-full bg-amber-300" />}
+        <i className={`bx bx-chevron-right text-lg transition-transform ${active ? "rotate-90 text-amber-300" : "text-slate-400"}`} />
+      </span>
     </button>
-);
-
-function ProductCard({ product, getImageUrl, onOpenModal }) {
-    return (
-        <div onClick={() => onOpenModal(product)} className="group cursor-pointer bg-white overflow-hidden shadow-sm hover:shadow-2xl hover:shadow-zinc-200/60 transition-all duration-500 border border-zinc-100 flex flex-col h-full transform hover:-translate-y-1 rounded-3xl">
-            <div className="relative bg-zinc-50/50 p-8 aspect-square flex items-center justify-center overflow-hidden">
-                <Image src={getImageUrl(product.image_url)} alt={product.name} fill className="object-contain drop-shadow-xl group-hover:scale-110 transition-transform duration-700 ease-out p-6" unoptimized />
-            </div>
-            <div className="p-6 flex flex-col grow bg-white relative z-20">
-                <div className="flex items-center gap-2 mb-3">
-                    <span className="text-[10px] font-bold text-amber-600 uppercase tracking-wider bg-amber-50 px-2 py-1 rounded-md">{product.category}</span>
-                    {product.subcategory && <span className="text-[10px] font-medium text-zinc-400 truncate">• {product.subcategory}</span>}
-                </div>
-                <h3 className="text-xl font-bold text-zinc-900 leading-snug mb-2 group-hover:text-amber-600 transition-colors duration-300">{product.name}</h3>
-                <p className="text-zinc-500 text-sm leading-relaxed font-light line-clamp-3 wrap-break-word mb-6">{product.description}</p>
-                <div className="mt-auto border-t border-zinc-100 pt-4">
-                    {product.cta_url ? (
-                        <div className="group flex items-center justify-center gap-3 w-full bg-zinc-900 hover:bg-amber-500 text-white py-4 rounded-2xl text-base font-medium tracking-wide transition-all duration-300">
-                            <span>ดูรายละเอียด</span>
-                            <i className="bx bx-right-arrow-alt text-2xl group-hover:translate-x-2 transition-transform"></i>
-                        </div>
-                    ) : (
-                        <button disabled className="w-full bg-zinc-100 text-zinc-400 py-4 rounded-2xl text-base font-bold cursor-not-allowed">สินค้าหมดชั่วคราว</button>
-                    )}
-                </div>
-            </div>
-        </div>
-    );
+  );
 }
 
-function ProductModal({ product, onClose, getImageUrl }) {
-    return (
-        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 md:p-8 lg:p-12">
-            <div className="absolute inset-0 bg-zinc-900/60 backdrop-blur-md" onClick={onClose} />
-            <div className="relative bg-white w-full max-w-6xl rounded-[2.5rem] overflow-hidden shadow-2xl flex flex-col md:flex-row animate-in zoom-in duration-300 max-h-[90vh]">
-                <button onClick={onClose} className="absolute top-8 right-8 z-10 w-12 h-12 bg-zinc-100 rounded-full flex items-center justify-center hover:bg-zinc-200 transition-colors">
-                    <i className="bx bx-x text-2xl text-zinc-900"></i>
-                </button>
-                <div className="w-full md:w-1/2 bg-[#f9f9f9] p-12 flex items-center justify-center">
-                    <div className="relative w-full aspect-square">
-                        <Image src={getImageUrl(product.image_url)} alt={product.name} fill className="object-contain" unoptimized />
-                    </div>
-                </div>
-                <div className="w-full md:w-1/2 p-10 lg:p-16 flex flex-col overflow-y-auto">
-                    <div className="flex gap-2 mb-6">
-                        <span className="px-4 py-1.5 bg-zinc-900 text-white text-[10px] font-black rounded-full uppercase">{product.category}</span>
-                        {product.subcategory && <span className="px-4 py-1.5 bg-amber-100 text-amber-700 text-[10px] font-black rounded-full uppercase border border-amber-200">{product.subcategory}</span>}
-                    </div>
-                    <h2 className="text-4xl font-bold text-zinc-900 mb-6 leading-tight">{product.name}</h2>
-                    <p className="text-zinc-500 text-lg leading-relaxed mb-10 font-light whitespace-pre-wrap">{product.description || "ไม่มีรายละเอียดเพิ่มเติมสำหรับสินค้านี้"}</p>
-                    <div className="mt-auto space-y-4">
-                        {product.cta_url && (
-                            <a href={product.cta_url} target="_blank" rel="noreferrer" className="block w-full text-center bg-amber-500 hover:bg-amber-600 text-white py-5 rounded-2xl font-bold text-lg transition-all">Contact For More Details</a>
-                        )}
-                        <button onClick={onClose} className="w-full text-zinc-400 text-xs font-bold uppercase tracking-widest hover:text-zinc-800 transition-colors">ปิดหน้าต่าง</button>
-                    </div>
-                </div>
-            </div>
-            <style jsx>{`
-                .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-                .custom-scrollbar::-webkit-scrollbar-thumb { background: #E5E5E5; border-radius: 10px; }
-                .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #C5A059; }
-            `}</style>
+function ProductCard({ product, getImageUrl }) {
+  return (
+    <div className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col h-full overflow-hidden">
+      <div className="relative bg-linear-to-b from-amber-50/35 to-white aspect-square flex items-center justify-center p-6">
+        <div className="absolute inset-4 rounded-xl border border-slate-200/70 pointer-events-none" />
+        <Image
+          src={getImageUrl(product.image_url)}
+          alt={product.name}
+          fill
+          className="object-contain p-4 group-hover:scale-[1.03] transition-transform duration-300 ease-out"
+          unoptimized={true}
+        />
+      </div>
+
+      <div className="p-5 flex flex-col flex-1">
+        <div className="flex flex-wrap gap-2 items-center mb-3">
+          <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200">
+            {product.category}
+          </span>
         </div>
-    );
+
+        <h3 className="text-[15px] font-bold text-slate-900 mb-2 leading-snug line-clamp-2 min-h-10">
+          {product.name}
+        </h3>
+
+        <p className="text-slate-600 text-[12px] font-normal line-clamp-2 mb-5 leading-relaxed">
+          {product.description}
+        </p>
+
+        <div className="mt-auto pt-4 border-t border-slate-100">
+          <a
+            href={product.cta_url || "https://lin.ee/twVZIGO"}
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center justify-center gap-2 w-full
+                       bg-amber-500 hover:bg-amber-600 text-white
+                       py-3 rounded-xl font-semibold text-sm transition shadow-sm active:scale-[0.99]"
+          >
+            <i className="bx bxl-line text-xl" />
+            <span>ติดต่อสอบถาม</span>
+          </a>
+
+          <p className="text-[10px] text-slate-500 mt-2 text-center">
+            สำหรับขอใบเสนอราคา/เอกสารประกอบการจัดซื้อ
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function ProductPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center text-slate-600 bg-white">
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 border-2 border-slate-200 border-t-amber-500 rounded-full animate-spin" />
+            <span className="text-sm font-medium">Loading catalog...</span>
+          </div>
+        </div>
+      }
+    >
+      <ProductContent />
+    </Suspense>
+  );
 }

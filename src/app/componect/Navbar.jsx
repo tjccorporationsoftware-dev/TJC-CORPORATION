@@ -72,13 +72,14 @@ export default function Navbar() {
     }
 
     // 🔥 แก้ไข Logic ตรงนี้: รองรับทั้ง slug และ id และตรวจสอบค่าว่าง
+    // ฟังก์ชันใน Navbar ของคุณ (ไม่ต้องแก้ แต่ตรวจสอบให้แน่ใจว่าเป็นแบบนี้)
     function goCategory(type, identifier) {
         setMobileMenu(false);
         setOpenDropdown(null);
         setMobileOpen(null);
 
         const params = new URLSearchParams();
-        const slug = identifier || "all"; // ถ้าไม่มีค่าให้เป็น all
+        const slug = identifier || "all";
 
         if (slug !== "all") {
             params.set("cat", slug);
@@ -87,7 +88,7 @@ export default function Navbar() {
         if (type === "products") {
             router.push(`/products?${params.toString()}`);
         } else if (type === "services") {
-            router.push(`/services?${params.toString()}`);
+            router.push(`/services?${params.toString()}`); // จะไปที่ /services?cat=ชื่อหมวดหมู่
         }
     }
 
@@ -139,8 +140,8 @@ export default function Navbar() {
                         <button
                             key={cat.id}
                             type="button"
-                            // ใช้ slug หรือ id ก็ได้
-                            onClick={() => goCategory(item.key, cat.slug || cat.id)}
+                            // ✅ แก้ไข: ใช้ slug หรือ title แทน id เพื่อให้ filter ตรงกับหน้า services/products
+                            onClick={() => goCategory(item.key, cat.slug || cat.title)}
                             className="text-left px-3 py-2 rounded-xl text-white/90 hover:text-amber-200 hover:bg-white/6 transition text-[14px] w-full"
                         >
                             {cat.title}
@@ -169,7 +170,8 @@ export default function Navbar() {
                     <button
                         key={cat.id}
                         type="button"
-                        onClick={() => goCategory(item.key, cat.slug || cat.id)}
+                        // ✅ แก้ไข: ใช้ slug หรือ title แทน id เพื่อให้ filter ตรงกับหน้า services/products
+                        onClick={() => goCategory(item.key, cat.slug || cat.title)}
                         className="block w-full text-left py-2 px-3 rounded-lg text-[14px] text-white/90 hover:bg-white/6 hover:text-amber-200 transition"
                     >
                         {cat.title}
