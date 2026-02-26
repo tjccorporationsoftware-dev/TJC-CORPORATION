@@ -58,12 +58,12 @@ export default function FooterContact() {
       className="
         relative overflow-hidden
         bg-linear-to-br from-zinc-800 via-zinc-700 to-zinc-800
-        border-t border-amber-400/30
+        border-t border-[#DAA520]/30
       "
     >
       {/* subtle glow (ทอง + ขาว นุ่ม ๆ) */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-24 -left-28 h-72 w-72 rounded-full bg-amber-400/15 blur-3xl" />
+        <div className="absolute -top-24 -left-28 h-72 w-72 rounded-full bg-[#DAA520]/15 blur-3xl" />
         <div className="absolute -bottom-28 -right-28 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
       </div>
 
@@ -83,7 +83,7 @@ export default function FooterContact() {
             <h3
               className="
                 text-lg md:text-xl font-extrabold
-                bg-linear-to-r from-amber-300 via-yellow-400 to-white
+                bg-linear-to-r from-[#DAA520] via-[#DAA520] to-white
                 bg-clip-text text-transparent
               "
             >
@@ -100,7 +100,7 @@ export default function FooterContact() {
                   href={`mailto:${d.email}`}
                   className="flex gap-3 items-start rounded-xl p-3 hover:bg-white/5 transition"
                 >
-                  <i className="bx bx-envelope text-amber-300 text-xl" />
+                  <i className="bx bx-envelope text-[#DAA520] text-xl" />
                   <div>
                     <p className="text-[11px] text-zinc-300">อีเมล</p>
                     <p className="font-semibold text-white break-all">{d.email}</p>
@@ -113,7 +113,7 @@ export default function FooterContact() {
                   href={`tel:${String(d.phone).replace(/[^0-9+]/g, "")}`}
                   className="flex gap-3 items-start rounded-xl p-3 hover:bg-white/5 transition"
                 >
-                  <i className="bx bx-phone-call text-amber-300 text-xl" />
+                  <i className="bx bx-phone-call text-[#DAA520] text-xl" />
                   <div>
                     <p className="text-[11px] text-zinc-300">โทรศัพท์</p>
                     <p className="font-semibold text-white">{d.phone}</p>
@@ -143,7 +143,7 @@ export default function FooterContact() {
 
               {d.open_hours && (
                 <div className="flex gap-3 items-start rounded-xl p-3">
-                  <i className="bx bx-time text-amber-300 text-xl" />
+                  <i className="bx bx-time text-[#DAA520] text-xl" />
                   <div>
                     <p className="text-[11px] text-zinc-300">เวลาทำการ</p>
                     <p className="font-semibold text-white">{d.open_hours}</p>
@@ -175,14 +175,14 @@ export default function FooterContact() {
           >
             <div className="px-4 py-3 border-b border-white/15 flex justify-between items-center">
               <div className="text-white font-semibold text-sm flex items-center gap-2">
-                <i className="bx bx-map-alt text-amber-300 text-lg" />
+                <i className="bx bx-map-alt text-[#DAA520] text-lg" />
                 {d.map_title || "แผนที่"}
               </div>
               {d.map_open_url && (
                 <a
                   href={d.map_open_url}
                   target="_blank"
-                  className="text-xs text-amber-200 hover:text-amber-100 transition"
+                  className="text-xs text-[#DAA520] hover:text-[#DAA520]/80 transition"
                 >
                   เปิดแผนที่ →
                 </a>
@@ -204,12 +204,12 @@ export default function FooterContact() {
         </div>
 
         {/* divider */}
-        <div className="mt-8 h-px bg-linear-to-r from-transparent via-amber-300/30 to-transparent" />
+        <div className="mt-8 h-px bg-linear-to-r from-transparent via-[#DAA520]/30 to-transparent" />
 
         {/* 🔽 ส่วนล่างสุด */}
         <div className="mt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div className="flex items-center gap-3">
-            <img src="/images/logo.png" alt="TJC" className="w-9 h-9 object-contain" />
+            <img src="/images/logo.png" alt="TJC" className="w-9 h-9 object-contain bg-white rounded-3xl " />
             <div className="leading-tight">
               <p className="text-sm font-semibold text-white">TJC Corporation</p>
               <p className="text-xs text-zinc-300">
@@ -219,15 +219,15 @@ export default function FooterContact() {
           </div>
 
           <div className="flex items-center gap-4 text-xs">
-            <a href="/#about" className="text-zinc-200 hover:text-amber-300 transition">
+            <a href="/#about" className="text-zinc-200 hover:text-[#DAA520] transition">
               เกี่ยวกับเรา
             </a>
             <span className="text-zinc-500">•</span>
-            <a href="/#services" className="text-zinc-200 hover:text-amber-300 transition">
+            <a href="/#services" className="text-zinc-200 hover:text-[#DAA520] transition">
               บริการ
             </a>
             <span className="text-zinc-500">•</span>
-            <a href="/#contact" className="text-zinc-200 hover:text-amber-300 transition">
+            <a href="/#contact" className="text-zinc-200 hover:text-[#DAA520] transition">
               ติดต่อ
             </a>
           </div>

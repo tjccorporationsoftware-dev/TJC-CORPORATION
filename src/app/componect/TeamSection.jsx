@@ -34,78 +34,89 @@ export default function TeamSection() {
     };
 
     observe(fadeRef.current, "anim-fade");
-    observe(textRef.current, "anim-slide-right", 200);
-    observe(imageRef.current, "anim-slide-up", 400);
+    // สลับชื่อ animation ให้สื่อความหมายตามทิศทางใหม่
+    observe(textRef.current, "anim-slide-from-right", 200);
+    observe(imageRef.current, "anim-slide-from-left", 400);
   }, []);
 
   return (
     <>
-      {/* section ยังคงสูง 750px เท่าเดิม */}
-      <section ref={fadeRef} className="relative h-187.5 flex items-end overflow-hidden opacity-0 transition-opacity duration-700">
+      <section ref={fadeRef} className="relative h-187.5 flex items-end overflow-hidden opacity-0 transition-opacity duration-700 bg-white">
 
         {/* --- ส่วนพื้นหลัง (Background) --- */}
         <div className="absolute inset-0 z-0">
           <img
             src="/images/tjc02.jpg"
             alt="Background"
-            className="w-full h-full object-cover object-top"
+            // ปรับ opacity เพิ่มขึ้นเพื่อให้พื้นหลังชัดเจน (จาก 40 เป็น 70)
+            className="w-full h-full object-cover object-top opacity-70"
           />
-          <div className="absolute inset-0 bg-white/20"></div>
-          <div className="absolute inset-0 bg-linear-to-br from-white/40 via-transparent to-amber-100/40"></div>
+          {/* Overlay ปรับทิศทาง: ขาวทึบจากขวา ไล่ไปใสทางซ้าย เพื่อให้อ่าน text รู้เรื่อง */}
+          <div className="absolute inset-0 bg-linear-to-l from-white via-white/90 to-transparent"></div>
+          {/* ย้ายแถบกราฟิกเฉียงไปอยู่ฝั่งซ้าย เพื่อสมดุล */}
+          <div className="absolute top-0 left-0 w-[40%] h-full bg-zinc-50 -skew-x-12 transform origin-top-left pointer-events-none opacity-50" />
         </div>
 
+        <div className="container mx-auto px-6 lg:px-12 relative z-10 h-full">
+          <div className="grid lg:grid-cols-12 gap-8 h-full items-end">
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 h-full">
-          <div className="grid lg:grid-cols-12 gap-8 h-full items-end pb-0 lg:pb-0">
+            {/* --- ส่วนที่ 1: รูปคน (ย้ายมาอยู่ซ้าย) --- */}
+            <div ref={imageRef} className="lg:col-span-5 relative h-125 lg:h-full w-full flex items-end justify-center lg:justify-start opacity-0 transform -translate-x-20">
 
-            {/* ส่วนข้อความ (ซ้าย) */}
-            <div ref={textRef} className="lg:col-span-7 pb-16 lg:pb-24 opacity-0 transform -translate-x-10">
-              <div className="relative backdrop-blur-sm p-6 rounded-3xl border border-white/40 shadow-sm bg-white/30">
-                {/* ... (เนื้อหาข้อความเหมือนเดิม) ... */}
-                <div className="inline-flex items-center gap-2 px-5 py-2 bg-white border border-amber-200 rounded-full mb-6 shadow-md">
-                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-                  <span className="text-amber-800 font-bold tracking-wide text-base">
-                    ผู้นำองค์กร
-                  </span>
-                </div>
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-2 leading-tight drop-shadow-sm">
-                  {president.name}
-                </h1>
-                <p className="text-2xl md:text-3xl text-amber-700 font-medium mb-8">
-                  {president.role}
-                </p>
-                <div className="w-24 h-1.5 bg-linear-to-r from-amber-500 to-orange-500 rounded-full mb-10"></div>
-                <div className="relative bg-white/90 backdrop-blur-xl p-8 rounded-2xl shadow-xl border border-white max-w-2xl">
-                  <div className="absolute -top-5 left-8 bg-linear-to-br from-amber-400 to-orange-500 w-12 h-12 flex items-center justify-center rounded-xl shadow-lg">
-                    <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11C14.017 11.5523 13.5693 12 13.017 12H12.017V5H22.017V15C22.017 18.3137 19.3307 21 16.017 21H14.017ZM5.0166 21L5.0166 18C5.0166 16.8954 5.91203 16 7.0166 16H10.0166C10.5689 16 11.0166 15.5523 11.0166 15V9C11.0166 8.44772 10.5689 8 10.0166 8H6.0166C5.46432 8 5.0166 8.44772 5.0166 9V11C5.0166 11.5523 4.56889 12 4.0166 12H3.0166V5H13.0166V15C13.0166 18.3137 10.3303 21 7.0166 21H5.0166Z" />
-                    </svg>
-                  </div>
-                  <p className="text-lg md:text-xl text-gray-800 italic leading-relaxed pt-2 font-light">
-                    "{president.quote}"
-                  </p>
-                  <div className="mt-6 flex items-center justify-between">
-                    <div className="h-px w-12 bg-amber-300"></div>
-                    <span className="text-amber-800/60 text-xs font-bold tracking-widest uppercase">TJC Corporation</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+              {/* แสงออร่าสีทองด้านหลังคน */}
+              <div className="absolute bottom-0 left-0 w-[140%] h-2/3 bg-[radial-gradient(circle,rgba(255,213,5,0.15)_0%,rgba(255,255,255,0)_70%)] blur-3xl rounded-full"></div>
 
-            {/* ส่วนรูปคน (ขวา) */}
-            <div ref={imageRef} className="lg:col-span-5 relative h-125 lg:h-full w-full flex items-end justify-center lg:justify-end opacity-0 transform translate-y-20">
-
-              {/* แสงสีทองด้านหลังคน */}
-              <div className="absolute bottom-0 w-[120%] h-2/3 bg-linear-to-t from-white via-amber-100/40 to-transparent blur-2xl rounded-full"></div>
-
-              <div
-                className="relative z-10 h-full w-full cursor-pointer group flex items-end justify-center"
-              >
+              <div className="relative z-10 h-full w-full group flex items-end justify-center lg:justify-start">
                 <img
                   src={president.img}
                   alt={president.name}
-                  className="h-[90%] ml-24 w-auto max-w-none object-contain object-bottom drop-shadow-2xl transition-transform duration-700 group-hover:scale-105"
+                  // ปรับตำแหน่งรูปเล็กน้อยให้ชิดซ้ายสวยงาม
+                  className="h-[95%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.2)] transition-transform duration-1000 group-hover:scale-105 lg:ml-[-5%]"
                 />
+              </div>
+            </div>
+
+
+            {/* --- ส่วนที่ 2: ข้อความ (ย้ายมาอยู่ขวา) --- */}
+            {/* เพิ่ม lg:pl-12 เพื่อเว้นระยะห่างจากรูป */}
+            <div ref={textRef} className="lg:col-span-7 pb-20 lg:pb-28 lg:pl-12 opacity-0 transform translate-x-20">
+
+              {/* Tag */}
+              <div className="inline-flex items-center gap-3 px-5 py-2 bg-zinc-900 border-l-4 border-[#DAA520] mb-8 shadow-xl">
+                <span className="w-2 h-2 rounded-full bg-[#DAA520] animate-ping"></span>
+                <span className="text-[#DAA520] font-black tracking-[0.25em] uppercase text-xs">
+                  EXECUTIVE LEADERSHIP
+                </span>
+              </div>
+
+              <h1 className="text-5xl md:text-7xl font-black text-zinc-900 mb-4 tracking-tighter leading-none">
+                {president.name}
+                <span className="text-[#DAA520] ml-2">.</span>
+              </h1>
+
+              <p className="text-2xl md:text-3xl text-zinc-400 font-bold mb-10 tracking-tight">
+                {president.role}
+              </p>
+
+              {/* Decorative Line */}
+              <div className="w-24 h-1.5 bg-[#DAA520] rounded-full mb-12"></div>
+
+              {/* Quote Box */}
+              <div className="relative bg-white/60 backdrop-blur-md p-8 md:p-10 rounded-2xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.08)] border border-white/80 max-w-2xl group transition-all duration-500 hover:border-[#DAA520]/40">
+                <div className="absolute -top-6 left-10 bg-[#DAA520] w-12 h-12 flex items-center justify-center rounded-xl shadow-lg transform group-hover:rotate-12 transition-transform duration-500">
+                  <svg className="w-6 h-6 text-zinc-900" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M14.017 21L14.017 18C14.017 16.8954 14.9124 16 16.017 16H19.017C19.5693 16 20.017 15.5523 20.017 15V9C20.017 8.44772 19.5693 8 19.017 8H15.017C14.4647 8 14.017 8.44772 14.017 9V11C14.017 11.5523 13.5693 12 13.017 12H12.017V5H22.017V15C22.017 18.3137 19.3307 21 16.017 21H14.017ZM5.0166 21L5.0166 18C5.0166 16.8954 5.91203 16 7.0166 16H10.0166C10.5689 16 11.0166 15.5523 11.0166 15V9C11.0166 8.44772 10.5689 8 10.0166 8H6.0166C5.46432 8 5.0166 8.44772 5.0166 9V11C5.0166 11.5523 4.56889 12 4.0166 12H3.0166V5H13.0166V15C13.0166 18.3137 10.3303 21 7.0166 21H5.0166Z" />
+                  </svg>
+                </div>
+
+                <p className="text-xl md:text-2xl text-zinc-700 italic leading-relaxed pt-2 font-medium">
+                  "{president.quote}"
+                </p>
+
+                <div className="mt-8 flex items-center justify-between">
+                  <div className="h-0.5 w-12 bg-[#DAA520]"></div>
+                  <span className="text-zinc-400 text-xs font-black tracking-[0.3em] uppercase">TJC Corporation</span>
+                </div>
               </div>
             </div>
 
@@ -117,31 +128,34 @@ export default function TeamSection() {
       {previewImg && (
         <div
           onClick={() => setPreviewImg(null)}
-          className="fixed inset-0 z-50 bg-gray-900/90 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in cursor-pointer"
+          className="fixed inset-0 z-100 bg-zinc-950/90 backdrop-blur-md flex items-center justify-center p-4 animate-fade-in cursor-pointer"
         >
           <div className="relative max-h-screen w-auto animate-scale-in">
             <img
               src={previewImg}
-              className="max-h-[90vh] w-auto rounded-lg shadow-2xl bg-white"
+              className="max-h-[90vh] w-auto rounded-xl shadow-2xl bg-white object-contain"
               alt="Full Preview"
             />
-            <button className="absolute top-4 right-4 bg-white/20 hover:bg-white/40 rounded-full p-2 text-white transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+            <button className="absolute -top-12 right-0 text-white hover:text-[#DAA520] transition-colors">
+              <i className="bx bx-x text-4xl"></i>
             </button>
           </div>
         </div>
       )}
 
-      <style>{`
+      <style jsx>{`
         .anim-fade { animation: fadeIn 1s ease-out forwards; }
-        .anim-slide-right { animation: slideRight 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        .anim-slide-up { animation: slideUp 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
-        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
-        .animate-scale-in { animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        /* อัปเดต Keyframes ให้สอดคล้องกับทิศทางใหม่ */
+        .anim-slide-from-right { animation: slideFromRight 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .anim-slide-from-left { animation: slideFromLeft 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideRight { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(80px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes slideFromRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideFromLeft { from { opacity: 0; transform: translateX(-50px); } to { opacity: 1; transform: translateX(0); } }
+        
+        .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+        .animate-scale-in { animation: scaleIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
       `}</style>
     </>
   );

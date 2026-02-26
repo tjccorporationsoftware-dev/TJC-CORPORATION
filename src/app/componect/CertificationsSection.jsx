@@ -5,13 +5,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const resolveUrl = (u) => {
   if (!u) return "";
   if (u.startsWith("http")) return u;
-
-  // 1. ตรวจสอบว่าถ้าพาธขึ้นต้นด้วย /images/ ให้ดึงจากโฟลเดอร์ public ในโปรเจกต์หน้าบ้านเลย
-  if (u.startsWith("/images/")) {
-    return u;
-  }
-
-  // 2. ถ้าเป็นรูปที่อัปโหลดผ่านหลังบ้าน (มักขึ้นต้นด้วย /uploads/) ให้เติม URL ของ API
+  if (u.startsWith("/images/")) return u;
   const cleanPath = u.startsWith("/") ? u : `/${u}`;
   return `${API_BASE}${cleanPath}`;
 };
@@ -22,8 +16,7 @@ export default function CertificationsSection() {
   const [loading, setLoading] = useState(true);
 
   const sectionRef = useRef(null);
-  const titleRef = useRef(null);
-  const descRef = useRef(null);
+  const headerRef = useRef(null);
   const cardRefs = useRef([]);
 
   useEffect(() => {
@@ -53,8 +46,8 @@ export default function CertificationsSection() {
         (entries) => {
           entries.forEach((e) => {
             if (e.isIntersecting) {
-              el.classList.add(anim);
-              ob.unobserve(el);
+              e.target.classList.add(anim);
+              ob.unobserve(e.target);
             }
           });
         },
@@ -63,9 +56,7 @@ export default function CertificationsSection() {
       ob.observe(el);
     };
 
-    if (sectionRef.current) animate(sectionRef.current, "fade-in-sharp");
-    if (titleRef.current) animate(titleRef.current, "fade-up-mid");
-    if (descRef.current) animate(descRef.current, "fade-up-mid");
+    if (headerRef.current) animate(headerRef.current, "fade-up-mid");
 
     cardRefs.current = cardRefs.current.slice(0, certs.length);
     cardRefs.current.forEach((el, i) => {
@@ -81,108 +72,141 @@ export default function CertificationsSection() {
     <>
       <section
         ref={sectionRef}
-        className="opacity-0 bg-linear-to-b from-slate-50 via-white to-slate-100 py-24 border-t border-slate-200"
+        className="relative bg-zinc-50 py-24 lg:py-32 overflow-hidden border-t border-zinc-200"
       >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 text-center justify-items-center">
-          <h2
-            ref={titleRef}
-            className="text-4xl md:text-5xl font-black bg-linear-to-r from-amber-500 to-slate-700 bg-clip-text text-transparent drop-shadow-sm leading-tight mb-4"
-          >
-            มาตรฐานและการรับรองคุณภาพ
-          </h2>
+        {/* Background Texture: เพิ่มลวดลาย Grid จางๆ ให้ดู Technical และไม่โล่งจนเกินไป */}
+        <div className="absolute inset-0 opacity-[0.03]" 
+             style={{ backgroundImage: 'linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
+        </div>
+        
+        {/* Gradient Glow: แสงทองจางๆ ตรงกลาง */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-200 h-200 bg-[#DAA520]/5 blur-[100px] rounded-full pointer-events-none" />
 
-          <p
-            ref={descRef}
-            className="opacity-0 text-lg text-slate-600 max-w-3xl mx-auto mb-16 font-medium"
-          >
-            เราดำเนินธุรกิจตามมาตรฐานระดับสากล เพื่อให้ลูกค้าได้รับคุณภาพที่ดีที่สุด พร้อมความเชื่อถือได้สูงสุด
-          </p>
+        <div className="relative z-10 max-w-7xl mx-auto px-6">
+          
+          {/* Header Section */}
+          <div ref={headerRef} className="text-center mb-20 opacity-0 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 bg-white border border-zinc-200 rounded-full px-4 py-1 mb-6 shadow-sm">
+               <i className="bx bxs-certification text-[#DAA520] text-lg"></i>
+               <span className="text-zinc-600 font-bold tracking-widest uppercase text-[10px]">
+                  Official Certifications
+               </span>
+            </div>
 
+            <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tight leading-tight mb-6">
+              มาตรฐานและ
+              <span className="relative inline-block ml-3">
+                 <span className="relative z-10 text-[#DAA520] drop-shadow-sm-dark">การรับรอง</span>
+                 {/* ขีดเส้นใต้แบบปากกาไฮไลท์ */}
+                 <span className="absolute bottom-2 left-0 w-full h-3 bg-zinc-900/5 z-0 rotate-1 rounded-full"></span>
+              </span>
+            </h2>
+            
+            <p className="text-zinc-500 text-lg font-medium leading-relaxed">
+              เรามุ่งมั่นยกระดับคุณภาพธุรกิจด้วยมาตรฐานระดับสากล <br className="hidden md:block"/>
+              เพื่อความมั่นใจสูงสุดของคู่ค้าและลูกค้าทุกท่าน
+            </p>
+          </div>
+
+          {/* Cards Grid */}
           {certs.length > 0 ? (
-            <div className="grid gap-10 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 px-4" style={{ perspective: '2000px' }}>
+            <div className="grid gap-8 grid-cols-1 md:grid-cols-2">
               {certs.map((cert, i) => (
                 <div
                   key={cert.id || i}
                   ref={(el) => (cardRefs.current[i] = el)}
                   onClick={() => setSelectedImage(resolveUrl(cert.image_url))}
-                  className="group relative opacity-0 translate-y-8 cursor-zoom-in transition-all duration-500 ease-out w-full h-full backface-hidden will-change-transform"
+                  className="group relative opacity-0 cursor-zoom-in h-full"
                 >
-                  <div
-                    className="relative h-full w-full bg-white rounded-[2.5rem] border border-slate-200 shadow-2xl group-hover:shadow-amber-500/20 p-8 flex flex-col items-center text-center transition-all duration-500 transform-gpu preserve-3d group-hover:transform-[rotateX(4deg)_rotateY(4deg)_translateY(-8px)]"
-                    style={{ transformStyle: 'preserve-3d' }}
-                  >
-                    <div className="absolute inset-0 rounded-[2.5rem] bg-linear-to-tr from-white/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  {/* Card Container: ทำเหมือนกรอบรูป มีมิติเงาลึก */}
+                  <div className="relative h-full bg-white rounded-2xl p-6 md:p-8 border border-zinc-200 shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] group-hover:border-[#DAA520]/50 overflow-hidden">
+                    
+                    {/* Decorative Top Line (สีทองวิ่ง) */}
+                    <div className="absolute top-0 left-0 w-0 h-1 bg-linear-to-r from-[#DAA520] to-[#F59E0B] transition-all duration-700 group-hover:w-full" />
 
-                    <div className="mb-8 transition-transform duration-500 ease-out group-hover:scale-110">
-                      <div className="relative">
-                        <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-24 h-4 bg-slate-900/10 rounded-[100%] blur-md"></div>
-                        <img
-                          src={resolveUrl(cert.image_url)}
-                          alt={cert.title}
-                          className="w-32 h-32 object-contain drop-shadow-2xl image-render-sharp"
-                        />
-                      </div>
+                    <div className="flex flex-col md:flex-row gap-8 items-center md:items-start h-full">
+                       
+                       {/* Image Area: จำลองเหมือนใบประกาศวางอยู่ */}
+                       <div className="relative w-full md:w-2/5 shrink-0">
+                          <div className="relative bg-zinc-100 p-3 rounded-lg border border-zinc-200 shadow-inner group-hover:bg-[#DAA520]/10 transition-colors duration-500">
+                             <div className="aspect-3/4 overflow-hidden rounded bg-white border border-zinc-100 shadow-sm relative">
+                                <img
+                                  src={resolveUrl(cert.image_url)}
+                                  alt={cert.title}
+                                  className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-105 p-2"
+                                />
+                                {/* Overlay search icon */}
+                                <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                   <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                      <i className="bx bx-zoom-in text-zinc-900 text-xl"></i>
+                                   </div>
+                                </div>
+                             </div>
+                             
+                             {/* Badge Icon ตราประทับ */}
+                             <div className="absolute -bottom-3 -right-3 w-12 h-12 bg-[#DAA520] text-zinc-900 rounded-full flex items-center justify-center border-4 border-white shadow-md z-10 rotate-12 group-hover:rotate-0 transition-transform duration-500">
+                                <i className="bx bxs-award text-2xl"></i>
+                             </div>
+                          </div>
+                       </div>
+
+                       {/* Text Content */}
+                       <div className="flex flex-col grow text-center md:text-left">
+                          <h3 className="text-xl font-black text-zinc-900 mb-3 group-hover:text-[#b49503] transition-colors">
+                            {cert.title}
+                          </h3>
+                          
+                          <div className="w-12 h-1 bg-zinc-200 rounded-full mb-4 mx-auto md:mx-0 group-hover:bg-[#DAA520] transition-colors duration-500"></div>
+
+                          <p className="text-sm text-zinc-500 leading-relaxed font-medium mb-6">
+                            {cert.description || "ได้รับการรับรองมาตรฐานคุณภาพระดับสากล เพื่อการันตีความเชี่ยวชาญและความน่าเชื่อถือในการดำเนินธุรกิจ"}
+                          </p>
+
+                          <div className="mt-auto">
+                             <span className="inline-flex items-center gap-2 px-4 py-2 bg-zinc-50 border border-zinc-200 rounded-lg text-xs font-bold text-zinc-600 uppercase tracking-wide group-hover:bg-zinc-900 group-hover:text-[#DAA520] group-hover:border-zinc-900 transition-all duration-300">
+                                View Certificate <i className="bx bx-right-arrow-alt"></i>
+                             </span>
+                          </div>
+                       </div>
                     </div>
-
-                    <div className="grow flex flex-col justify-center w-full">
-                      <h3 className="text-2xl font-black text-slate-800 mb-4 tracking-tight">
-                        {cert.title}
-                      </h3>
-                      <p className="text-slate-500 text-base leading-relaxed font-medium line-clamp-3">
-                        {cert.description || "ได้รับการรับรองมาตรฐานคุณภาพระดับสากล"}
-                      </p>
-                    </div>
-
-                    <div className="mt-6 w-10 h-1 rounded-full bg-amber-400 group-hover:w-20 transition-all duration-500"></div>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="py-24 text-slate-400 border-4 border-dotted border-slate-200 rounded-[3rem] w-full max-w-4xl font-bold text-xl">
+            <div className="py-24 text-zinc-400 border-2 border-dashed border-zinc-300 rounded-2xl w-full text-center font-bold text-lg bg-zinc-50/50">
+              <i className="bx bx-file-blank text-4xl mb-2 block opacity-50"></i>
               ไม่พบข้อมูลใบรับรองในระบบ
             </div>
           )}
         </div>
       </section>
 
-      {/* MODAL - ปรับให้ใหญ่และคมชัดขึ้น */}
+      {/* MODAL - ปรับให้พื้นหลังมืดลง เพื่อให้รูปใบประกาศเด่นที่สุด */}
       {selectedImage && (
         <div
           onClick={() => setSelectedImage(null)}
-          className="fixed inset-0 bg-slate-950/95 flex items-center justify-center z-99999 p-2 md:p-6 backdrop-blur-md animate-modal-fade cursor-zoom-out"
+          className="fixed inset-0 bg-black/95 flex items-center justify-center z-99999 p-4 backdrop-blur-sm animate-modal-fade cursor-zoom-out"
         >
-          <div className="relative max-w-[98vw] max-h-[92vh] flex items-center justify-center">
+          <div className="relative max-w-5xl w-full max-h-[90vh] flex flex-col items-center justify-center">
+             {/* Close Button */}
+            <button className="absolute -top-12 right-0 md:-right-12 text-white hover:text-[#DAA520] transition-colors flex items-center gap-2 group">
+              <span className="text-xs font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Close</span>
+              <div className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white/10">
+                 <i className="bx bx-x text-2xl"></i>
+              </div>
+            </button>
+
             <img
               src={selectedImage}
-              alt="ใบรับรองแบบขยาย"
-              className="
-                max-w-full max-h-full
-                rounded-xl shadow-[0_0_60px_rgba(0,0,0,0.8)]
-                border border-white/10
-                animate-modal-scale-sharp
-                object-contain
-                bg-white
-                image-render-sharp
-              "
+              alt="Certification Detail"
+              className="max-w-full max-h-[85vh] rounded shadow-2xl bg-white object-contain animate-modal-scale-sharp"
             />
-            <div className="absolute -top-12 right-0 text-white font-light flex items-center gap-2 opacity-70">
-              <span className="text-sm uppercase tracking-widest">คลิกเพื่อปิด</span>
-              <span className="text-3xl">✕</span>
-            </div>
           </div>
         </div>
       )}
 
-      <style>{`
-        .image-render-sharp {
-          image-rendering: -webkit-optimize-contrast;
-          image-rendering: crisp-edges;
-        }
-
-        .fade-in-sharp {
-          animation: fadeInSharp 0.8s ease-out forwards;
-        }
+      <style jsx global>{`
         .fade-up-mid {
           animation: fadeUpMid 0.8s ease-out forwards;
         }
@@ -190,24 +214,20 @@ export default function CertificationsSection() {
           animation: cardFade 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
         }
 
-        @keyframes fadeInSharp {
-          0% { opacity: 0; transform: scale(0.98); }
-          100% { opacity: 1; transform: scale(1); }
-        }
         @keyframes fadeUpMid {
           0% { opacity: 0; transform: translateY(30px); }
           100% { opacity: 1; transform: translateY(0); }
         }
         @keyframes cardFade {
-          0% { opacity: 0; transform: translateY(40px) rotateX(10deg); }
-          100% { opacity: 1; transform: translateY(0) rotateX(0); }
+          0% { opacity: 0; transform: translateY(40px); }
+          100% { opacity: 1; transform: translateY(0); }
         }
 
         .animate-modal-fade {
-          animation: modalFade 0.2s ease-out forwards;
+          animation: modalFade 0.3s ease-out forwards;
         }
         .animate-modal-scale-sharp {
-          animation: modalScaleSharp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: modalScaleSharp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes modalFade {

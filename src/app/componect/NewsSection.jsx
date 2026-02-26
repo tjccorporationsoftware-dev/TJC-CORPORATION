@@ -1,6 +1,7 @@
 "use client";
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
+// --- ส่วนของ Logic (คงเดิม 100%) ---
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 function resolveUrl(u) {
@@ -32,23 +33,17 @@ export default function NewsSlider() {
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    // ------------------------------
     // Load news from API
-    // ------------------------------
     useEffect(() => {
         let alive = true;
-
         async function load() {
             try {
                 setLoading(true);
                 const res = await fetch(`${API_BASE}/api/news`, { cache: "no-store" });
                 const rows = await res.json();
-
-                // map DB -> UI shape
                 const mapped = (Array.isArray(rows) ? rows : [])
                     .filter((r) => r && (r.is_active === true || r.is_active === 1 || r.is_active === "true" || r.is_active === null))
                     .sort((a, b) => {
-                        // sort_order desc then id desc
                         const so = Number(b.sort_order || 0) - Number(a.sort_order || 0);
                         if (so !== 0) return so;
                         return Number(b.id || 0) - Number(a.id || 0);
@@ -59,12 +54,11 @@ export default function NewsSlider() {
                         desc: r.desc1 || "",
                         desc2: r.desc2 || "",
                         date: r.date_label || "",
-                        image: r.cover_image_url || "",         // cover
+                        image: r.cover_image_url || "",
                         gallery: Array.isArray(r.gallery)
                             ? r.gallery
                             : (typeof r.gallery === "string" ? safeParseJson(r.gallery, []) : []),
                     }));
-
                 if (!alive) return;
                 setNews(mapped);
             } catch (e) {
@@ -75,32 +69,22 @@ export default function NewsSlider() {
                 if (alive) setLoading(false);
             }
         }
-
         load();
-        return () => {
-            alive = false;
-        };
+        return () => { alive = false; };
     }, []);
 
     function safeParseJson(s, fallback) {
-        try {
-            return JSON.parse(s);
-        } catch {
-            return fallback;
-        }
+        try { return JSON.parse(s); } catch { return fallback; }
     }
 
     // choose latest
     const latestNews = news[0] || null;
     const loopNews = news;
 
-    // ------------------------------
     // Highlight image auto-change
-    // ------------------------------
     useEffect(() => {
         if (!latestNews) return;
         setActiveImageIndex(0);
-
         if (latestNews.gallery && latestNews.gallery.length > 1) {
             const timer = setInterval(() => {
                 setActiveImageIndex((prev) => (prev + 1) % latestNews.gallery.length);
@@ -109,9 +93,7 @@ export default function NewsSlider() {
         }
     }, [latestNews?.id]);
 
-    // ------------------------------
     // Resize card width
-    // ------------------------------
     const updateCardWidth = () => {
         const track = trackRef.current;
         if (!track) return;
@@ -125,30 +107,23 @@ export default function NewsSlider() {
         return () => window.removeEventListener("resize", updateCardWidth);
     }, [news.length]);
 
-    // ------------------------------
     // Auto slide
-    // ------------------------------
     useEffect(() => {
         if (dragging || cardWidth === 0 || selectedNews) return;
         if (!loopNews.length) return;
-
         const interval = setInterval(() => {
             const track = trackRef.current;
             if (!track) return;
-
             const containerWidth = track.parentElement.clientWidth;
             const contentWidth = track.scrollWidth;
-
             let maxTranslate = -(contentWidth - containerWidth);
             if (maxTranslate > 0) maxTranslate = 0;
-
             setTranslateX((prev) => {
                 if (prev <= maxTranslate) return 0;
                 const nextPos = prev - cardWidth;
                 return nextPos < maxTranslate ? maxTranslate : nextPos;
             });
-        }, 3000);
-
+        }, 5000);
         return () => clearInterval(interval);
     }, [translateX, dragging, cardWidth, selectedNews, loopNews.length]);
 
@@ -157,14 +132,8 @@ export default function NewsSlider() {
         if (track) track.style.transform = `translateX(${translateX}px)`;
     }, [translateX]);
 
-    // ------------------------------
-    // Drag
-    // ------------------------------
-    const handleStart = (clientX) => {
-        setDragging(true);
-        setStartX(clientX);
-    };
-
+    // Drag logic
+    const handleStart = (clientX) => { setDragging(true); setStartX(clientX); };
     const handleMove = (clientX) => {
         if (!dragging) return;
         const track = trackRef.current;
@@ -173,341 +142,318 @@ export default function NewsSlider() {
             track.style.transform = `translateX(${translateX + (clientX - startX)}px)`;
         }
     };
-
     const handleEnd = (clientX) => {
         if (!dragging) return;
         const track = trackRef.current;
         if (track) track.style.transition = "transform 0.5s ease-out";
-
         const moveDist = clientX - startX;
-        if (Math.abs(moveDist) < 5) {
-            setDragging(false);
-            return;
-        }
-
+        if (Math.abs(moveDist) < 5) { setDragging(false); return; }
         let newPos = translateX + moveDist;
         newPos = Math.round(newPos / cardWidth) * cardWidth;
-
         const containerWidth = track.parentElement.clientWidth;
         const contentWidth = track.scrollWidth;
-
         let maxTranslate = -(contentWidth - containerWidth);
         if (maxTranslate > 0) maxTranslate = 0;
-
         if (newPos > 0) newPos = 0;
         if (newPos < maxTranslate) newPos = maxTranslate;
-
         setTranslateX(newPos);
         setDragging(false);
     };
 
     const onPointerDown = (e) => handleStart(e.clientX || e.touches?.[0]?.clientX);
-    const onPointerMove = (e) => {
-        if (dragging) e.preventDefault();
-        handleMove(e.clientX || e.touches?.[0]?.clientX);
-    };
+    const onPointerMove = (e) => { if (dragging) e.preventDefault(); handleMove(e.clientX || e.touches?.[0]?.clientX); };
     const onPointerUp = (e) => handleEnd(e.clientX || e.changedTouches?.[0]?.clientX);
 
-    // ------------------------------
     // Modal
-    // ------------------------------
-    const openModal = (newsItem) => {
-        setModalImageIndex(0);
-        setSelectedNews(newsItem);
-    };
+    const openModal = (newsItem) => { setModalImageIndex(0); setSelectedNews(newsItem); };
     const closeModal = () => setSelectedNews(null);
+    // --- จบส่วน Logic ---
+
 
     // ------------------------------
-    // UI
+    // UI - Center Balanced & Background
     // ------------------------------
     return (
-        <section className="w-full py-16 bg-gray-50" id="news">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                <h2
-                    className="
-            text-3xl md:text-4xl font-extrabold mb-10 
-            border-l-8 border-yellow-500 pl-4 
-            bg-linear-to-r from-yellow-500 to-black bg-clip-text text-transparent
-          "
-                >
-                    ข่าวประชาสัมพันธ์
-                </h2>
+        <section className="relative w-full py-24 lg:py-32 bg-white overflow-hidden border-t border-zinc-100" id="news">
+
+            {/* 1. Background Decor: Watermark & Shapes */}
+            {/* Watermark Text - จางๆ ด้านหลัง */}
+            <div className="absolute top-10 left-1/2 -translate-x-1/2 w-full text-center pointer-events-none select-none overflow-hidden">
+                <span className="text-[12rem] md:text-[20rem] font-black text-zinc-50 opacity-60 leading-none whitespace-nowrap tracking-tighter">
+                    NEWSROOM
+                </span>
+            </div>
+
+            {/* Side Shapes - เพื่อมิติ */}
+            <div className="absolute top-0 right-0 w-[40%] h-[60%] bg-linear-to-b from-zinc-50 to-white -skew-x-12 transform origin-top-right pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[30%] h-[30%] bg-[#DAA520]/5 blur-3xl rounded-full pointer-events-none" />
+
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+
+                {/* 2. Header Section: Center Alignment (สมดุล) */}
+                <div className="text-center max-w-4xl mx-auto mb-24">
+
+                    <div className="flex items-center justify-center gap-3 mb-4">
+                        <span className="text-zinc-400 font-bold tracking-[0.3em] uppercase text-xs">
+                            Update Stories
+                        </span>
+                    </div>
+
+                    <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tight leading-tight mb-6">
+                        ข่าวสาร<span className="text-[#DAA520] mx-2">/</span>กิจกรรม
+                    </h2>
+
+                    <p className="text-zinc-500 text-lg leading-relaxed font-medium max-w-2xl mx-auto">
+                        ติดตามความเคลื่อนไหว กิจกรรมเพื่อสังคม และโปรโมชั่นล่าสุด<br className="hidden md:block" />
+                        เพื่อไม่พลาดทุกโอกาสสำคัญจากเรา
+                    </p>
+                </div>
 
                 {loading ? (
-                    <div className="py-20 text-center text-gray-500 animate-pulse">กำลังโหลดข่าว...</div>
+                    <div className="h-64 flex items-center justify-center text-zinc-400 animate-pulse font-medium">Loading news...</div>
                 ) : !latestNews ? (
-                    <div className="py-20 text-center text-gray-500">ยังไม่มีข่าว</div>
+                    <div className="py-24 text-center border-2 border-dashed border-zinc-100 rounded-xl bg-zinc-50/50 backdrop-blur text-zinc-400 font-medium">
+                        ยังไม่มีข่าวประชาสัมพันธ์
+                    </div>
                 ) : (
                     <>
-                        {/* Highlight */}
-                        <div className="mb-16">
-                            <div
-                                className="group relative bg-white rounded-3xl shadow-xl overflow-hidden hover:shadow-2xl transition-all duration-300 border border-gray-100 cursor-pointer"
-                                onClick={() => openModal(latestNews)}
-                            >
-                                <div className="grid md:grid-cols-2 h-full">
-                                    <div className="relative h-64 md:h-auto overflow-hidden bg-gray-100">
-                                        <img
-                                            src={
-                                                latestNews.gallery && latestNews.gallery.length > 0
-                                                    ? resolveUrl(latestNews.gallery[activeImageIndex])
-                                                    : resolveUrl(latestNews.image)
-                                            }
-                                            alt={latestNews.title}
-                                            className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:scale-105"
-                                        />
+                        <div className="mb-20 group cursor-pointer" onClick={() => openModal(latestNews)}>
+                            <div className="bg-white rounded-2xl overflow-hidden shadow-[0_15px_40px_-10px_rgba(0,0,0,0.05)] border border-zinc-100 flex flex-col md:flex-row items-stretch transition-all duration-500 hover:shadow-lg hover:border-[#DAA520]/30">
 
-                                        {latestNews.gallery && latestNews.gallery.length > 1 && (
-                                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
-                                                {latestNews.gallery.map((_, idx) => (
-                                                    <div
-                                                        key={idx}
-                                                        className={`w-2 h-2 rounded-full transition-all ${idx === activeImageIndex ? "bg-white w-4" : "bg-white/50"
-                                                            }`}
-                                                    />
-                                                ))}
-                                            </div>
-                                        )}
+                                {/* Image Side (50%) - ปรับความสูงให้ Compact ขึ้น */}
+                                <div className="w-full md:w-1/2 relative h-62.5 md:h-100 overflow-hidden bg-zinc-100">
+                                    <div className="absolute inset-0 bg-black/5 group-hover:bg-transparent transition-all duration-500 z-10" />
+                                    <img
+                                        src={
+                                            latestNews.gallery && latestNews.gallery.length > 0
+                                                ? resolveUrl(latestNews.gallery[activeImageIndex])
+                                                : resolveUrl(latestNews.image)
+                                        }
+                                        alt={latestNews.title}
+                                        className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                                    />
 
-                                        <div className="absolute top-4 left-4 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg z-10">
-                                            ข่าวใหม่
+                                    {/* Gallery Indicators */}
+                                    {latestNews.gallery && latestNews.gallery.length > 1 && (
+                                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                                            {latestNews.gallery.map((_, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className={`h-1 rounded-full transition-all duration-300 shadow-sm ${idx === activeImageIndex ? "bg-[#DAA520] w-6" : "bg-white/70 w-2"
+                                                        }`}
+                                                />
+                                            ))}
                                         </div>
+                                    )}
 
-                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-                                            <span className="opacity-0 group-hover:opacity-100 bg-white/90 text-gray-800 px-4 py-2 rounded-full text-sm font-bold shadow-lg transition-opacity">
-                                                อ่านเพิ่มเติม
-                                            </span>
-                                        </div>
+                                    {/* Highlight Tag */}
+                                    <div className="absolute top-4 left-4 z-20">
+                                        <span className="bg-[#DAA520] text-zinc-900 text-[9px] font-black px-2.5 py-1 uppercase tracking-widest shadow-md rounded-sm">
+                                            ล่าสุด
+                                        </span>
+                                    </div>
+                                </div>
+
+                                {/* Content Side (50%) - ลด Padding และ Font Size ให้กระชับ */}
+                                <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center bg-white relative">
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <i className='bx bx-calendar text-[#DAA520] text-lg'></i>
+                                        <span className="text-zinc-400 font-bold text-xs uppercase tracking-wider">
+                                            {latestNews.date}
+                                        </span>
                                     </div>
 
-                                    <div className="p-8 md:p-12 flex flex-col justify-center">
-                                        <div className="flex items-center space-x-2 text-yellow-600 font-semibold mb-3">
-                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                            <span>{latestNews.date}</span>
-                                        </div>
+                                    <h3 className="text-xl md:text-3xl font-black text-zinc-900 mb-4 leading-tight group-hover:text-[#b49503] transition-colors duration-300 line-clamp-2">
+                                        {latestNews.title}
+                                    </h3>
 
-                                        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight group-hover:text-yellow-600 transition-colors">
-                                            {latestNews.title}
-                                        </h3>
+                                    <p className="text-zinc-500 text-sm md:text-base leading-relaxed line-clamp-3 mb-6 font-medium">
+                                        {latestNews.desc}
+                                    </p>
 
-                                        <p className="text-gray-600 text-base md:text-lg mb-3 leading-relaxed line-clamp-3">
-                                            {latestNews.desc}
-                                        </p>
-
-                                        <p className="text-gray-500 text-sm mt-auto flex items-center gap-1 group-hover:translate-x-2 transition-transform">
-                                            ดูรายละเอียด{" "}
-                                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                <path d="M5 12h14M12 5l7 7-7 7" />
-                                            </svg>
-                                        </p>
+                                    <div className="mt-auto pt-4 border-t border-zinc-100">
+                                        <span className="inline-flex items-center gap-2 text-[10px] md:text-xs font-bold uppercase tracking-wider text-zinc-900 transition-colors group-hover:gap-3">
+                                            อ่านเพิ่มเติม <i className="bx bx-right-arrow-alt text-lg text-[#DAA520]"></i>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Slider */}
-                        <div className="w-full mt-12">
-                            <h4
-                                className="
-                  text-xl font-bold mb-6 px-2
-                  bg-linear-to-r from-yellow-500 to-black bg-clip-text text-transparent
-                "
-                            >
-                                ข่าวสารทั้งหมด
-                            </h4>
+                        {/* Slider Section */}
+                        <div className="w-full relative pt-10">
+                            <div className="flex items-end justify-between mb-8 px-2 border-b border-zinc-100 pb-4">
+                                <h4 className="text-xl font-bold text-zinc-900">
+                                    ข่าวสารอื่นๆ
+                                </h4>
 
-                            <div className="relative group">
-                                <button
-                                    onClick={() => setTranslateX((prev) => Math.min(0, prev + cardWidth))}
-                                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 -ml-4 md:-ml-6 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:scale-110 transition-all duration-200 focus:outline-none"
-                                >
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                                    </svg>
-                                </button>
-
-                                <button
-                                    onClick={() =>
-                                        setTranslateX((prev) => {
-                                            const track = trackRef.current;
-                                            if (!track) return prev;
-                                            const maxTrans = -(track.scrollWidth - track.parentElement.clientWidth);
-                                            const newPos = prev - cardWidth;
-                                            return newPos < maxTrans ? maxTrans : newPos;
-                                        })
-                                    }
-                                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 -mr-4 md:-mr-6 w-10 h-10 md:w-12 md:h-12 bg-white rounded-full shadow-lg border border-gray-200 flex items-center justify-center text-gray-600 hover:text-gray-900 hover:bg-gray-50 hover:scale-110 transition-all duration-200 focus:outline-none"
-                                >
-                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
-                                    </svg>
-                                </button>
-
-                                <div className="select-none overflow-hidden w-full py-4 px-1">
-                                    <div
-                                        ref={trackRef}
-                                        className="flex gap-5 transition-transform duration-500 ease-out"
-                                        onMouseDown={onPointerDown}
-                                        onMouseMove={onPointerMove}
-                                        onMouseUp={onPointerUp}
-                                        onMouseLeave={onPointerUp}
-                                        onTouchStart={onPointerDown}
-                                        onTouchMove={onPointerMove}
-                                        onTouchEnd={onPointerUp}
+                                {/* Navigation Buttons */}
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => setTranslateX((prev) => Math.min(0, prev + cardWidth))}
+                                        className="w-10 h-10 border border-zinc-200 text-zinc-400 hover:text-zinc-900 hover:border-zinc-900 flex items-center justify-center transition-all bg-white rounded-full"
                                     >
-                                        {loopNews.map((n, i) => (
-                                            <div
-                                                key={n.id ?? i}
-                                                onClick={() => !dragging && openModal(n)}
-                                                className="slide-card bg-white border border-gray-100 shadow-md rounded-xl overflow-hidden inline-block min-w-[85%] sm:min-w-[50%] md:min-w-[40%] lg:min-w-[30%] group cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
-                                            >
-                                                <div className="h-48 overflow-hidden relative bg-gray-100">
+                                        <i className='bx bx-chevron-left text-2xl'></i>
+                                    </button>
+                                    <button
+                                        onClick={() =>
+                                            setTranslateX((prev) => {
+                                                const track = trackRef.current;
+                                                if (!track) return prev;
+                                                const maxTrans = -(track.scrollWidth - track.parentElement.clientWidth);
+                                                const newPos = prev - cardWidth;
+                                                return newPos < maxTrans ? maxTrans : newPos;
+                                            })
+                                        }
+                                        className="w-10 h-10 bg-zinc-900 text-white hover:bg-[#DAA520] hover:text-zinc-900 flex items-center justify-center transition-all rounded-full shadow-md"
+                                    >
+                                        <i className='bx bx-chevron-right text-2xl'></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="select-none overflow-hidden w-full -mx-4 px-4 py-4">
+                                <div
+                                    ref={trackRef}
+                                    className="flex gap-6 transition-transform duration-500 ease-out"
+                                    onMouseDown={onPointerDown}
+                                    onMouseMove={onPointerMove}
+                                    onMouseUp={onPointerUp}
+                                    onMouseLeave={onPointerUp}
+                                    onTouchStart={onPointerDown}
+                                    onTouchMove={onPointerMove}
+                                    onTouchEnd={onPointerUp}
+                                >
+                                    {loopNews.map((n, i) => (
+                                        <div
+                                            key={n.id ?? i}
+                                            onClick={() => !dragging && openModal(n)}
+                                            className="slide-card inline-block min-w-[85%] sm:min-w-[50%] md:min-w-[35%] lg:min-w-[28%] group cursor-pointer"
+                                        >
+                                            <div className="bg-white h-full flex flex-col border border-zinc-100 hover:border-[#DAA520] transition-all duration-300 pb-4 hover:shadow-lg hover:-translate-y-1 rounded-xl overflow-hidden">
+
+                                                {/* Image */}
+                                                <div className="h-56 overflow-hidden relative bg-zinc-100 border-b border-zinc-50">
+                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors z-10" />
                                                     <img
                                                         src={resolveUrl(n.image)}
-                                                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                                         alt={n.title}
                                                     />
                                                     {n.id === latestNews.id && (
-                                                        <div className="absolute top-2 right-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">
+                                                        <div className="absolute top-0 right-0 bg-[#DAA520] text-zinc-900 text-[9px] font-black px-2 py-1 uppercase tracking-widest z-20">
                                                             NEW
                                                         </div>
                                                     )}
                                                 </div>
 
-                                                <div className="p-5">
-                                                    <span className="text-xs font-semibold text-yellow-600 bg-yellow-50 px-2 py-1 rounded-md">
+                                                {/* Content */}
+                                                <div className="p-6 flex flex-col grow">
+                                                    <span className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase mb-3 block">
                                                         {n.date}
                                                     </span>
-                                                    <h3 className="text-lg font-bold text-gray-800 mt-3 mb-2 line-clamp-2 group-hover:text-yellow-600 transition-colors">
+
+                                                    <h3 className="text-lg font-bold text-zinc-900 mb-3 line-clamp-2 leading-tight group-hover:text-[#b49503] transition-colors">
                                                         {n.title}
                                                     </h3>
-                                                    <p className="text-gray-500 text-sm line-clamp-2">{n.desc}</p>
+
+                                                    <p className="text-zinc-500 text-sm line-clamp-2 leading-relaxed mb-6 font-medium grow">
+                                                        {n.desc}
+                                                    </p>
+
+                                                    <div className="mt-auto pt-4 border-t border-zinc-50">
+                                                        <span className="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-wider text-zinc-400 group-hover:text-zinc-900 transition-colors">
+                                                            Read More <i className="bx bx-right-arrow-alt text-base"></i>
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        ))}
-                                    </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
-
-                        {/* Modal */}
-                        {/* Modal */}
-                        {selectedNews && (
-                            <div
-                                className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm transition-opacity duration-300"
-                                onClick={closeModal}
-                            >
-                                <div
-                                    className="bg-white rounded-3xl w-full max-w-9xl max-h-[92vh] overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-200"
-                                    onClick={(e) => e.stopPropagation()}
-                                >
-                                    <button
-                                        onClick={closeModal}
-                                        className="absolute top-5 right-5 z-30 p-2 bg-white/90 hover:bg-white text-gray-600 hover:text-red-500 rounded-full shadow-lg transition-all active:scale-95"
-                                    >
-                                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-
-                                    <div className="flex flex-col md:flex-row h-full max-h-[92vh]">
-                                        {/* Image Section - สัดส่วนที่สมดุล */}
-                                        <div className="md:w-[45%] bg-black flex items-center justify-center relative overflow-hidden min-h-87.5 md:min-h-full">
-                                            {selectedNews.gallery && selectedNews.gallery.length > 0 ? (
-                                                <>
-                                                    <img
-                                                        src={resolveUrl(selectedNews.gallery[modalImageIndex] || selectedNews.image)}
-                                                        className="w-full h-full object-contain"
-                                                        alt="gallery"
-                                                    />
-
-                                                    {selectedNews.gallery.length > 1 && (
-                                                        <>
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setModalImageIndex((prev) => (prev - 1 + selectedNews.gallery.length) % selectedNews.gallery.length);
-                                                                }}
-                                                                className="absolute left-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2.5 rounded-full transition-colors"
-                                                            >
-                                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
-                                                                </svg>
-                                                            </button>
-
-                                                            <button
-                                                                onClick={(e) => {
-                                                                    e.stopPropagation();
-                                                                    setModalImageIndex((prev) => (prev + 1) % selectedNews.gallery.length);
-                                                                }}
-                                                                className="absolute right-3 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white p-2.5 rounded-full transition-colors"
-                                                            >
-                                                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path d="M9 5l7 7-7 7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                                                </svg>
-                                                            </button>
-
-                                                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5">
-                                                                {selectedNews.gallery.map((_, i) => (
-                                                                    <div
-                                                                        key={i}
-                                                                        className={`w-2.5 h-2.5 rounded-full shadow-md transition-all ${i === modalImageIndex ? "bg-white w-6" : "bg-white/50"}`}
-                                                                    />
-                                                                ))}
-                                                            </div>
-                                                        </>
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <img
-                                                    src={resolveUrl(selectedNews.image)}
-                                                    className="w-full h-full object-contain"
-                                                    alt={selectedNews.title}
-                                                />
-                                            )}
-                                        </div>
-
-                                        {/* Content Section - ปรับให้แสดงข้อมูลได้ยาวและเต็มที่มากขึ้น */}
-                                        <div className="md:w-[55%] p-10 md:p-14 flex flex-col bg-white overflow-hidden">
-                                            <div className="mb-6">
-                                                <span className="inline-block bg-amber-100 text-amber-800 text-[11px] px-4 py-1.5 rounded-full font-black uppercase tracking-widest mb-5">
-                                                    {selectedNews.date}
-                                                </span>
-                                                <h3 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight">
-                                                    {selectedNews.title}
-                                                </h3>
-                                            </div>
-
-                                            {/* ส่วนของเนื้อหาที่เลื่อนอ่านได้ยาวๆ */}
-                                            <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
-                                                <div className="space-y-6 text-gray-600 text-lg md:text-xl leading-relaxed font-medium">
-                                                    <p className="whitespace-pre-wrap">{selectedNews.desc}</p>
-                                                    {selectedNews.desc2 && (
-                                                        <div className="pt-4 border-t border-gray-100">
-                                                            <p className="whitespace-pre-wrap">{selectedNews.desc2}</p>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-
-                                            <div className="mt-8 pt-6 border-t border-gray-100">
-                                                <button
-                                                    onClick={closeModal}
-                                                    className="text-gray-400 hover:text-gray-900 font-bold text-sm uppercase tracking-widest transition-colors"
-                                                >
-                                                    Back to news
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
                     </>
                 )}
             </div>
+
+            {/* Modal */}
+            {selectedNews && (
+                <div
+                    className="fixed inset-0 z-99999 flex items-center justify-center p-4 bg-zinc-900/90 backdrop-blur-sm transition-opacity duration-300"
+                    onClick={closeModal}
+                >
+                    <div
+                        className="bg-white w-full max-w-6xl max-h-[90vh] overflow-hidden shadow-2xl relative animate-in fade-in zoom-in duration-300 flex flex-col md:flex-row rounded-xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <button
+                            onClick={closeModal}
+                            className="absolute top-4 right-4 z-50 w-10 h-10 bg-white/20 hover:bg-[#DAA520] text-white hover:text-zinc-900 rounded-full flex items-center justify-center transition-all backdrop-blur-md"
+                        >
+                            <i className='bx bx-x text-2xl'></i>
+                        </button>
+
+                        {/* Image Section */}
+                        <div className="w-full md:w-[60%] bg-zinc-50 flex items-center justify-center relative overflow-hidden min-h-75 border-b md:border-b-0 md:border-r border-zinc-100">
+                            {selectedNews.gallery && selectedNews.gallery.length > 0 ? (
+                                <>
+                                    <img
+                                        src={resolveUrl(selectedNews.gallery[modalImageIndex] || selectedNews.image)}
+                                        className="w-full h-full object-contain max-h-[90vh]"
+                                        alt="gallery"
+                                    />
+                                    {selectedNews.gallery.length > 1 && (
+                                        <>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setModalImageIndex((prev) => (prev - 1 + selectedNews.gallery.length) % selectedNews.gallery.length); }}
+                                                className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/80 hover:bg-[#DAA520] text-zinc-900 hover:text-white rounded-full flex items-center justify-center transition-all shadow-lg"
+                                            >
+                                                <i className='bx bx-chevron-left text-3xl'></i>
+                                            </button>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); setModalImageIndex((prev) => (prev + 1) % selectedNews.gallery.length); }}
+                                                className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/80 hover:bg-[#DAA520] text-zinc-900 hover:text-white rounded-full flex items-center justify-center transition-all shadow-lg"
+                                            >
+                                                <i className='bx bx-chevron-right text-3xl'></i>
+                                            </button>
+                                        </>
+                                    )}
+                                </>
+                            ) : (
+                                <img
+                                    src={resolveUrl(selectedNews.image)}
+                                    className="w-full h-full object-contain"
+                                    alt={selectedNews.title}
+                                />
+                            )}
+                        </div>
+
+                        {/* Content Section */}
+                        <div className="w-full md:w-[40%] flex flex-col bg-white h-full max-h-[90vh]">
+                            <div className="p-8 md:p-12 overflow-y-auto custom-scrollbar">
+                                <div className="mb-8 pb-8 border-b border-zinc-100">
+                                    <span className="text-[#DAA520] text-sm font-bold uppercase tracking-widest mb-2 block">
+                                        {selectedNews.date}
+                                    </span>
+                                    <h3 className="text-3xl font-black text-zinc-900 leading-tight">
+                                        {selectedNews.title}
+                                    </h3>
+                                </div>
+
+                                <div className="space-y-6 text-zinc-600 text-base leading-relaxed font-medium">
+                                    <p className="whitespace-pre-wrap">{selectedNews.desc}</p>
+                                    {selectedNews.desc2 && (
+                                        <div className="pt-4">
+                                            <p className="whitespace-pre-wrap">{selectedNews.desc2}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 }

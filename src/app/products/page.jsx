@@ -83,226 +83,231 @@ function ProductContent() {
   if (loading)
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="w-10 h-10 border-4 border-slate-200 border-t-amber-500 rounded-full animate-spin" />
+        <div className="w-10 h-10 border-4 border-zinc-100 border-t-[#DAA520] rounded-full animate-spin" />
       </div>
     );
 
   return (
-    <div className="min-h-screen bg-[#FBFBFC] text-slate-900 font-(family-name:--font-ibm-plex-thai) selection:bg-amber-100/60 pb-24">
+    <div className="min-h-screen bg-white text-zinc-900 selection:bg-[#DAA520]/30 pb-24 overflow-hidden">
       <Navbar />
 
-      {/* subtle background accents (gold/gray/white) */}
       <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-linear-to-b from-white via-white to-[#F6F7F9]" />
-        <div className="absolute -top-40 left-1/2 -translate-x-1/2 h-130 w-275 rounded-full bg-linear-to-r from-amber-100/45 via-white to-slate-100/50 blur-3xl" />
-        <div className="absolute top-130 -right-55 h-105 w-105 rounded-full bg-amber-100/25 blur-3xl" />
+        <div className="absolute top-0 right-0 w-[45%] h-full bg-zinc-50 -skew-x-12 transform origin-top-right opacity-40" />
+        <div className="absolute bottom-0 left-0 w-[35%] h-[40%] bg-[#DAA520]/5 -skew-x-12 transform origin-bottom-left" />
       </div>
 
-      {/* Top header */}
-      <div className="max-w-400 mx-auto px-6 lg:px-12 pt-28 lg:pt-36">
-        <header className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
+      <div className="max-w-400 mx-auto px-6 lg:px-12 pt-32 lg:pt-44 mb-16">
+        <header className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-8 flex flex-col justify-center">
-            <div className="mb-6">
-              <div className="flex items-center gap-3 mb-2">
-                <span className="h-px w-10 bg-amber-300/80" />
-                <span className="text-[11px] uppercase tracking-[0.18em] text-slate-600 font-semibold">
-                  TJC GROUP • PRODUCT CATALOG
+            <div className="mb-10">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 font-black tracking-[0.25em] uppercase text-[10px] px-4 py-2 shadow-sm">
+                  EXECUTIVE CATALOG
                 </span>
               </div>
-              <h1 className="text-3xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
-                รายการผลิตภัณฑ์
-                <span className="text-slate-400 font-semibold"> / Catalog</span>
+              <h1 className="text-4xl lg:text-7xl font-black tracking-tighter text-zinc-800 leading-[0.9]">
+                รายการผลิตภัณฑ์<span className="text-[#DAA520] text-5xl md:text-8xl">.</span>
               </h1>
-              <p className="mt-2 text-sm text-slate-600 leading-relaxed max-w-2xl">
-                ค้นหาและเลือกดูสินค้าได้ตามหมวดหมู่ พร้อมรายละเอียดประกอบเพื่อการพิจารณาอย่างเป็นทางการ
+              <p className="mt-8 text-zinc-500 font-medium leading-relaxed max-w-xl text-lg">
+                คัดสรรนวัตกรรมและอุปกรณ์ไอทีคุณภาพสูง เพื่อตอบโจทย์การใช้งานระดับองค์กรอย่างมีประสิทธิภาพ
               </p>
             </div>
 
-            {/* Search */}
-            <div className="relative max-w-xl">
-              <i className="bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-lg text-slate-400" />
+            <div className="relative w-full md:w-125 group">
+              <i className="bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-xl text-zinc-400 group-focus-within:text-[#DAA520] transition-colors" />
               <input
                 type="text"
-                placeholder="ค้นหาสินค้า..."
+                placeholder="ค้นหาสินค้าในระบบ..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-3.5 bg-white border border-slate-200 rounded-xl outline-none
-                           focus:border-amber-400 focus:ring-4 focus:ring-amber-100/70
-                           text-sm font-medium shadow-sm"
+                className="w-full pl-12 pr-4 py-4.5 bg-white border border-zinc-200 rounded-sm outline-none
+                           focus:border-[#DAA520] focus:ring-0 transition-all
+                           text-sm font-bold shadow-sm placeholder:text-zinc-300"
               />
             </div>
           </div>
 
-          {/* Media panel (gold tone) */}
-          <div className="lg:col-span-4 relative rounded-2xl overflow-hidden border border-slate-200 shadow-sm h-56 hidden lg:block bg-white">
-            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover">
+          <div className="lg:col-span-4 relative rounded-none border border-zinc-200 shadow-xl h-87.5 hidden lg:block overflow-hidden bg-zinc-100 group">
+            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover group-hover:opacity-100 transition-opacity duration-700">
               <source src="/video/vo002.mp4" type="video/mp4" />
             </video>
-            <div className="absolute inset-0 bg-linear-to-t from-slate-900/70 via-slate-900/25 to-transparent" />
-            <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
-            <div className="absolute bottom-0 left-0 right-0 p-5">
-              <div className="inline-flex items-center gap-2 rounded-lg bg-white/10 border border-amber-200/20 px-3 py-2 backdrop-blur-sm">
-                <span className="h-2 w-2 rounded-full bg-amber-300" />
-                <h3 className="text-white font-semibold text-sm tracking-wide">Official Product Overview</h3>
+            <div className="absolute inset-0 bg-linear-to-t from-white/80 via-transparent to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6">
+              <div className="inline-flex items-center gap-3 bg-white/90 backdrop-blur-md border border-zinc-100 px-4 py-2 shadow-sm">
+                <span className="h-2 w-2 rounded-full bg-[#DAA520] animate-pulse" />
+                <h3 className="text-zinc-800 font-black text-[10px] uppercase tracking-[0.2em]">Official Showcase</h3>
               </div>
             </div>
           </div>
         </header>
       </div>
 
-      {/* Section header */}
-      <div className="max-w-400 mx-auto px-6 lg:px-12 mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 className="text-lg font-extrabold tracking-tight text-slate-900">
-            {selectedIdentifier === "all" ? "สินค้าทั้งหมด" : activeCategoryData?.title}
-          </h2>
-          <p className="text-xs text-slate-600 mt-1">แสดงผลตามหมวดหมู่และเงื่อนไขการค้นหา</p>
-        </div>
-
-        <div className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm">
-          <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Results</span>
-          <span className="text-[12px] font-extrabold text-amber-700">{filteredProducts.length}</span>
-        </div>
-      </div>
-
-      {/* Main grid */}
       <div className="max-w-400 mx-auto px-6 lg:px-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:items-start">
-          {/* Sidebar */}
-          <aside className="w-full lg:sticky lg:top-28 z-30">
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-              <div className="px-5 py-4 border-b border-slate-100 bg-linear-to-r from-white to-amber-50/40">
-                <h3 className="text-[11px] font-bold text-slate-700 uppercase tracking-widest flex items-center gap-2">
-                  <i className="bx bx-grid-alt text-amber-600" />
-                  หมวดหมู่สินค้า
-                </h3>
-                <p className="text-xs text-slate-500 mt-1">เลือกหมวดหมู่เพื่อกรองรายการ</p>
-              </div>
+        <div className="mb-12 flex items-center justify-between border-b border-zinc-100 pb-8">
+          <div className="flex items-center gap-4">
+            <div className="w-1.5 h-8 bg-[#DAA520] rounded-full"></div>
+            <div>
+              <h2 className="text-2xl font-black text-zinc-800 uppercase tracking-tight">
+                {selectedIdentifier === "all" ? "ALL PRODUCTS" : activeCategoryData?.title}
+              </h2>
+              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">Found {filteredProducts.length} high-quality results</p>
+            </div>
+          </div>
+        </div>
 
-              <nav className="p-3 flex flex-col gap-1.5 max-h-[calc(100vh-240px)] overflow-y-auto no-scrollbar pr-1">
-                <CategoryLink
-                  active={selectedIdentifier === "all"}
-                  label="สินค้าทั้งหมด"
-                  onClick={() => handleCategoryChange("all")}
-                />
+        {/* ปรับสัดส่วน Grid: Sidebar ขยายจาก 2 เป็น 3 ในจอใหญ่ */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
 
-                {categories.map((cat) => (
-                  <div key={cat.id} className="flex flex-col">
-                    <CategoryLink
-                      active={normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)}
-                      label={cat.title}
-                      onClick={() => handleCategoryChange(cat.slug || cat.id)}
-                    />
+          {/* Sidebar: ขยายให้กว้างกว่าเดิมเพื่อรองรับชื่อเต็ม */}
+          <aside className="lg:col-span-4 xl:col-span-3">
+            <div className="sticky top-32">
+              <div className="bg-white rounded-4xl border border-zinc-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-500">
 
-                    {(normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)) &&
-                      cat.subcategories?.length > 0 && (
-                        <div className="mt-1 mb-2 ml-3 pl-3 border-l border-amber-200/80 space-y-1">
-                          {cat.subcategories.map((sub, idx) => (
-                            <button
-                              key={idx}
-                              onClick={() => setSelectedSubcategory(sub.title || sub)}
-                              className={`w-full text-left text-[12px] py-2 px-3 rounded-lg transition
-                                ${
-                                  normalize(selectedSubcategory) === normalize(sub.title || sub)
-                                    ? "bg-amber-500 text-white font-semibold shadow-sm"
-                                    : "text-slate-700 hover:bg-amber-50 hover:text-slate-900 font-medium"
-                                }`}
-                            >
-                              {sub.title || sub}
-                            </button>
-                          ))}
-                        </div>
-                      )}
+                <div className="px-8 py-6 border-b border-zinc-50 bg-zinc-50/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-1 h-5 bg-[#DAA520] rounded-full"></div>
+                    <div className="flex flex-col">
+                      <span className="text-[11px] font-black text-zinc-800 uppercase tracking-[0.25em] leading-none">PRODUCT</span>
+                      <span className="text-[11px] font-black text-zinc-800 uppercase tracking-[0.25em] leading-none mt-1">CATEGORIES</span>
+                    </div>
                   </div>
-                ))}
-              </nav>
+                </div>
+
+                <div className="p-4 space-y-1.5">
+                  <CategoryLink
+                    active={selectedIdentifier === "all"}
+                    label="สินค้าทั้งหมด"
+                    onClick={() => handleCategoryChange("all")}
+                  />
+
+                  <div className="space-y-1 mt-2">
+                    {categories.map((cat) => (
+                      <div key={cat.id} className="flex flex-col gap-1">
+                        <CategoryLink
+                          active={normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)}
+                          label={cat.title}
+                          onClick={() => handleCategoryChange(cat.slug || cat.id)}
+                        />
+
+                        {(normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)) &&
+                          cat.subcategories?.length > 0 && (
+                            <div className="my-2 ml-4 pl-4 border-l-2 border-zinc-100 space-y-1">
+                              {cat.subcategories.map((sub, idx) => (
+                                <button
+                                  key={idx}
+                                  onClick={() => setSelectedSubcategory(sub.title || sub)}
+                                  className={`w-full text-left text-[11px] py-2.5 px-3 rounded-lg transition-all duration-300 leading-relaxed
+                                    ${normalize(selectedSubcategory) === normalize(sub.title || sub)
+                                      ? "text-[#b49503] font-black bg-zinc-50 translate-x-1"
+                                      : "text-zinc-500 hover:text-zinc-800 font-bold hover:translate-x-1"
+                                    }`}
+                                >
+                                  — {sub.title || sub}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           </aside>
 
-          {/* Empty state */}
-          {filteredProducts.length === 0 ? (
-            <div className="lg:col-span-4 min-h-80 flex flex-col items-center justify-center bg-white rounded-2xl border border-slate-200 shadow-sm">
-              <div className="w-12 h-12 rounded-full bg-amber-50 border border-amber-100 flex items-center justify-center mb-3">
-                <i className="bx bx-search text-2xl text-amber-600" />
+          {/* Product Grid: ปรับสัดส่วนให้เข้ากับ Sidebar ที่ขยายขึ้น */}
+          <div className="lg:col-span-8 xl:col-span-9">
+            {filteredProducts.length === 0 ? (
+              <div className="min-h-80 flex flex-col items-center justify-center bg-zinc-50 border-2 border-dashed border-zinc-200">
+                <i className="bx bx-package text-5xl text-zinc-300 mb-4" />
+                <p className="text-zinc-500 font-bold text-lg uppercase tracking-widest">No Products Found</p>
               </div>
-              <p className="text-slate-800 font-semibold">ไม่พบสินค้า</p>
-              <p className="text-xs text-slate-500 mt-1">ลองปรับหมวดหมู่หรือคำค้นหาใหม่</p>
-            </div>
-          ) : (
-            filteredProducts.map((product) => <ProductCard key={product.id} product={product} getImageUrl={getImageUrl} />)
-          )}
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                {filteredProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} getImageUrl={getImageUrl} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-/** UI HELPERS (โทนทอง-เทา-ขาว / ทางการ / ไม่แตะ logic) */
 function CategoryLink({ active, label, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-4 py-3 rounded-xl text-[13px] transition flex items-center justify-between border
-        ${
-          active
-            ? "bg-slate-900 text-white border-slate-900 shadow-sm font-semibold"
-            : "bg-white text-slate-700 border-slate-200 hover:bg-amber-50/60 hover:text-slate-900 hover:border-amber-200 font-medium"
+      className={`w-full text-left px-5 py-4 rounded-xl text-[13px] transition-all duration-300 flex items-start justify-between border-l-4
+        ${active
+          ? "bg-[#DAA520] text-zinc-900 border-[#DAA520] shadow-md font-black"
+          : "bg-white text-zinc-600 border-transparent hover:border-zinc-200 hover:bg-zinc-50 font-bold"
         }`}
     >
-      <span className="truncate pr-2">{label}</span>
-      <span className="inline-flex items-center gap-2">
-        {active && <span className="h-2 w-2 rounded-full bg-amber-300" />}
-        <i className={`bx bx-chevron-right text-lg transition-transform ${active ? "rotate-90 text-amber-300" : "text-slate-400"}`} />
+      <span className="leading-snug flex-1 mr-2 wrap-break-word">
+        {label}
       </span>
+      <i className={`bx bx-right-arrow-alt text-lg transition-transform mt-0.5 ${active ? "translate-x-1" : "opacity-0"}`} />
     </button>
   );
 }
 
 function ProductCard({ product, getImageUrl }) {
   return (
-    <div className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition flex flex-col h-full overflow-hidden">
-      <div className="relative bg-linear-to-b from-amber-50/35 to-white aspect-square flex items-center justify-center p-6">
-        <div className="absolute inset-4 rounded-xl border border-slate-200/70 pointer-events-none" />
+    <div className="group bg-white rounded-none border border-zinc-100 transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] hover:border-[#DAA520]/30 hover:-translate-y-2 flex flex-col h-full overflow-hidden">
+      <div className="relative bg-zinc-50 aspect-square flex items-center justify-center p-8 overflow-hidden">
+        <div className="absolute inset-0 bg-[#DAA520] opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
         <Image
           src={getImageUrl(product.image_url)}
           alt={product.name}
           fill
-          className="object-contain p-4 group-hover:scale-[1.03] transition-transform duration-300 ease-out"
+          className="object-contain p-4 group-hover:scale-110 transition-transform duration-700 ease-out"
           unoptimized={true}
         />
+        <div className="absolute top-4 left-4 z-10">
+          <span className="px-2.5 py-1 text-[10px] font-black text-zinc-700 bg-white border border-zinc-100 uppercase tracking-[0.2em] shadow-sm">
+            {product.category || "GENERAL"}
+          </span>
+        </div>
       </div>
 
       <div className="p-5 flex flex-col flex-1">
-        <div className="flex flex-wrap gap-2 items-center mb-3">
-          <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold text-amber-800 bg-amber-50 border border-amber-200">
-            {product.category}
-          </span>
-        </div>
-
-        <h3 className="text-[15px] font-bold text-slate-900 mb-2 leading-snug line-clamp-2 min-h-10">
+        <h3 className="text-base font-black text-zinc-800 mb-2 leading-tight group-hover:text-[#b49503] transition-colors min-h-12 line-clamp-2 uppercase">
           {product.name}
         </h3>
-
-        <p className="text-slate-600 text-[12px] font-normal line-clamp-2 mb-5 leading-relaxed">
-          {product.description}
+        <p className="text-zinc-500 text-[12px] font-medium leading-relaxed line-clamp-2 mb-6 italic">
+          {product.description || "Inquire for full technical specifications"}
         </p>
-
-        <div className="mt-auto pt-4 border-t border-slate-100">
+        <div className="mt-auto pt-6 border-t border-zinc-50">
           <a
             href={product.cta_url || "https://lin.ee/twVZIGO"}
             target="_blank"
             rel="noreferrer"
-            className="flex items-center justify-center gap-2 w-full
-                       bg-amber-500 hover:bg-amber-600 text-white
-                       py-3 rounded-xl font-semibold text-sm transition shadow-sm active:scale-[0.99]"
+            className="group/btn flex items-center justify-between w-full bg-[#DAA520] text-zinc-900 hover:bg-[#DAA520] px-6 py-4 rounded-sm transition-all duration-300 shadow-[0_4px_15px_rgba(255,213,5,0.15)] hover:shadow-[0_10px_25px_rgba(255,213,5,0.3)] hover:-translate-y-0.5 active:scale-[0.98]"
           >
-            <i className="bx bxl-line text-xl" />
-            <span>ติดต่อสอบถาม</span>
+            {/* ข้อความใช้ font-black และเพิ่มระยะห่างตัวอักษรเพื่อความหรูหรา */}
+            <span className="font-black text-[11px] uppercase tracking-[0.2em]">
+              ติดต่อสอบถามข้อมูล
+            </span>
+
+            <div className="flex items-center gap-2">
+              {/* ไอคอน Line ปรับขนาดให้พอดี */}
+              <i className="bx bxl-line text-xl transition-transform group-hover/btn:scale-110" />
+              {/* ลูกศรที่จะเลื่อนออกมาเมื่อ Hover */}
+              <i className="bx bx-right-arrow-alt text-xl opacity-0 -translate-x-2 transition-all duration-300 group-hover/btn:opacity-100 group-hover/btn:translate-x-0" />
+            </div>
           </a>
 
-          <p className="text-[10px] text-slate-500 mt-2 text-center">
-            สำหรับขอใบเสนอราคา/เอกสารประกอบการจัดซื้อ
-          </p>
+          {/* ส่วนท้ายปรับให้ดู Official และสมดุลมากขึ้น */}
+          <div className="flex items-center justify-center gap-3 mt-4 opacity-50">
+            <div className="h-px w-4 bg-zinc-200"></div>
+            <p className="text-[9px] font-black text-zinc-400 tracking-[0.3em] uppercase whitespace-nowrap">
+              Official TJC Support
+            </p>
+            <div className="h-px w-4 bg-zinc-200"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -313,11 +318,8 @@ export default function ProductPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center text-slate-600 bg-white">
-          <div className="flex items-center gap-3">
-            <div className="w-6 h-6 border-2 border-slate-200 border-t-amber-500 rounded-full animate-spin" />
-            <span className="text-sm font-medium">Loading catalog...</span>
-          </div>
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <div className="w-10 h-10 border-4 border-zinc-100 border-t-[#DAA520] rounded-full animate-spin" />
         </div>
       }
     >

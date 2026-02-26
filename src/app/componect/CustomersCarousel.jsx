@@ -32,59 +32,77 @@ export default function CustomersCarousel({ speed = 40 }) {
         fetchLogos();
     }, []);
 
-    // เบิ้ลโลโก้ 3 ชุดเพื่อให้มั่นใจว่าแถวยาวพอที่จะเลื่อนได้ไม่สะดุด
+    // เบิ้ลโลโก้ 3 ชุดเพื่อให้มั่นใจว่าแถวยาวพอที่จะเลื่อนได้ไม่สะดุด (Logic คงเดิม)
     const loopLogos = [...logos, ...logos, ...logos];
 
     if (loading || logos.length === 0) return null;
 
     return (
-        <section className="py-20 bg-white overflow-hidden">
-            <div className="max-w-7xl mx-auto px-4 text-center">
-                <div className="mb-14">
-                    <h3 className="text-3xl md:text-4xl font-black bg-linear-to-r from-amber-500 to-slate-700 bg-clip-text text-transparent leading-tight">
-                        ลูกค้าที่ไว้วางใจเรา
-                    </h3>
-                    <div className="w-16 h-1 bg-amber-400 mx-auto mt-4 rounded-full" />
+        <section className="relative py-24 lg:py-32 bg-white overflow-hidden border-t border-zinc-100">
+
+
+            <div className="absolute top-0 right-0 w-[45%] h-full bg-zinc-50 -skew-x-12 transform origin-top-right pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-[35%] h-[40%] bg-[#DAA520]/5 -skew-x-12 transform origin-bottom-left pointer-events-none" />
+
+            <div className="relative z-10 max-w-7xl mx-auto px-6">
+
+
+                <div className="text-center mb-20 flex flex-col items-center">
+
+
+                    <div className="flex items-center justify-center gap-3 mb-6">
+
+                        <span className=" text-[#DAA520] font-black tracking-[0.25em] uppercase text-[10px] px-4 py-2 shadow-lg">
+                            Trusted Partners
+                        </span>
+                    </div>
+
+                    <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tighter leading-tight">
+                        ลูกค้าที่ไว้วางใจเรา<span className="text-[#DAA520] text-5xl md:text-7xl">.</span>
+                    </h2>
+
+                    <p className="mt-8 text-zinc-500 text-lg md:text-xl font-semibold max-w-2xl mx-auto leading-relaxed">
+                        ร่วมสร้างความสำเร็จไปกับ <span className="text-zinc-900 border-b-2 border-[#DAA520]">องค์กรชั้นนำ</span> ทั่วประเทศไทย
+                    </p>
                 </div>
 
-                {/* รางเลื่อนหลัก */}
-                <div className="relative flex overflow-hidden group">
-                    <div 
-                        className="flex py-4 animate-scroll-infinite hover:[animation-play-state:paused]"
+
+                <div className="relative flex overflow-hidden group py-10">
+                    <div
+                        className="flex animate-scroll-infinite hover:[animation-play-state:paused]"
                         style={{
-                            // บังคับให้เป็นแถวเดียวยาวๆ ห้ามขึ้นบรรทัดใหม่
-                            minWidth: "max-content", 
-                            // ใช้ CSS Animation ผ่าน Inline Style เพื่อความชัวร์
+                            minWidth: "max-content",
                             animation: `scroll ${speed}s linear infinite`
                         }}
                     >
                         {loopLogos.map((item, idx) => (
                             <div
                                 key={`${item.id}-${idx}`}
-                                className="flex items-center justify-center bg-white rounded-2xl border border-slate-100 shadow-sm p-6 mx-4 shrink-0 transition-transform duration-300 hover:scale-110"
+                                className="flex items-center justify-center bg-white border border-zinc-100 rounded-2xl shadow-[0_4px_20px_-10px_rgba(0,0,0,0.1)] p-8 mx-5 shrink-0 transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(255,213,5,0.4)] hover:border-[#DAA520] hover:-translate-y-2"
                                 style={{
-                                    width: 220,
-                                    height: 140,
+                                    width: 250,
+                                    height: 150,
                                 }}
                             >
                                 <img
                                     src={resolveUrl(item.image_url)}
                                     alt={item.name || "Customer Logo"}
-                                    className="w-full h-full object-contain"
+                                    className="w-full h-full object-contain "
                                     loading="lazy"
                                 />
                             </div>
                         ))}
                     </div>
 
-                    {/* Gradient Fade ปิดหัวท้ายเพื่อให้ดูเนียน */}
-                    <div className="pointer-events-none absolute top-0 left-0 w-32 h-full bg-linear-to-r from-white via-white/40 to-transparent z-10" />
-                    <div className="pointer-events-none absolute top-0 right-0 w-32 h-full bg-linear-to-l from-white via-white/40 to-transparent z-10" />
+                    {/* Gradient Fade ปรับให้เข้มข้นขึ้นเพื่อความ Smooth */}
+                    <div className="pointer-events-none absolute top-0 left-0 w-48 h-full bg-linear-to-r from-white via-white/70 to-transparent z-10" />
+                    <div className="pointer-events-none absolute top-0 right-0 w-48 h-full bg-linear-to-l from-white via-white/70 to-transparent z-10" />
                 </div>
             </div>
 
-            {/* เพิ่ม Keyframes ลงใน globals.css หรือใส่ไว้ที่นี่ก็ได้ครับ */}
-            <style dangerouslySetInnerHTML={{ __html: `
+            {/* Keyframes (คงเดิมตาม Logic) */}
+            <style dangerouslySetInnerHTML={{
+                __html: `
                 @keyframes scroll {
                     0% { transform: translateX(0); }
                     100% { transform: translateX(-33.33%); }

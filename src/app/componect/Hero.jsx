@@ -3,56 +3,58 @@ import React, { useEffect, useRef, useState } from "react";
 
 export default function Hero() {
     const videoRef = useRef(null);
-    const [isVisible, setIsVisible] = useState(false); // state สำหรับคุม animation
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        // จัดการ Video
         const video = videoRef.current;
         if (video) {
             video.currentTime = 0;
             video.play().catch((err) => console.log("Video play error:", err));
         }
 
-        // Trigger Animation หลังจาก mount Component แล้วเล็กน้อย
         const timer = setTimeout(() => {
             setIsVisible(true);
-        }, 100); // delay เล็กน้อยเพื่อให้มั่นใจว่า render ครั้งแรกเสร็จแล้ว
+        }, 100);
 
         return () => clearTimeout(timer);
     }, []);
 
     return (
-        <div id="hero" className="mt-15">
+        <div id="hero" className="mt-15 overflow-hidden">
             <section
                 className="
-                relative overflow-hidden 
+                relative 
                 min-h-[95vh]
                 md:min-h-[92vh] 
                 flex items-center 
-                text-white
+                bg-white
             "
             >
-                <video
-                    ref={videoRef}
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="absolute inset-0 w-full h-full object-cover object-center"
-                >
-                    <source src="/video/1112.mp4" type="video/mp4" />
-                </video>
-
-                <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/60 to-black/40"></div>
+                {/* Background Video Section */}
+                <div className="absolute inset-0 z-0">
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="absolute inset-0 w-full h-full object-cover object-top"
+                    >
+                        <source src="/video/1112.mp4" type="video/mp4" />
+                    </video>
+                    {/* Overlay: ปรับให้เข้มข้นขึ้นทางซ้ายเพื่อขับตัวหนังสือให้เด่น */}
+                    <div className="absolute inset-0 bg-linear-to-r from-zinc-950/90 via-zinc-950/50 to-transparent"></div>
+                    {/* Decorative Slanted Shape: แถบเฉียงซิกเนเจอร์จางๆ */}
+                    <div className="absolute top-0 left-0 w-[40%] h-full bg-[#DAA520]/5 -skew-x-12 transform origin-top-left pointer-events-none" />
+                </div>
 
                 <div
                     className="
                     relative z-10 w-full
                     px-6 sm:px-8 md:px-12
-                    lg:ml-16
+                    lg:px-24
                 "
                 >
-                    {/* Main Container Wrapper */}
                     <div
                         className={`
                             max-w-4xl mx-auto md:mx-0 text-center md:text-left
@@ -60,49 +62,70 @@ export default function Hero() {
                             ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}
                         `}
                     >
-                        {/* TITLE */}
-                        {/* Delay 0.4s (400ms) | Slide from y: -20 to y: 0 */}
+                        {/* TAG: สไตล์พรีเมียมพื้นดำตัวทอง */}
+                        <div className="inline-flex items-center gap-3 mb-8 reveal-on-scroll">
+                            <span className=" text-[#DAA520] font-black tracking-[0.25em] uppercase text-[10px] px-4 py-2 shadow-xl">
+                                INNOVATING YOUR FUTURE
+                            </span>
+                        </div>
+
+                        {/* TITLE: เน้นความหนาและจุดสีทอง */}
                         <h1
                             className={`
-                                font-bold leading-tight tracking-tight
-                                text-white drop-shadow-2xl
-                                text-3xl
-                                sm:text-4xl
-                                md:text-5xl
-                                lg:text-6xl
-                                mb-6
+                                font-black leading-[0.9] tracking-tighter
+                                text-white drop-shadow-xl
+                                text-2xl
+                                sm:text-5xl
+                                md:text-7xl
+                                lg:text-7xl
+                                mb-8
                                 transition-all duration-1000 ease-out delay-400 transform
                                 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"}
                             `}
                         >
-                            บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด
+                            บริษัท ทีเจซี
+                        </h1>
+                        {/* TITLE: เน้นความหนาและจุดสีทอง */}
+                        <h1
+                            className={`
+                                font-black leading-[0.9] tracking-tighter
+                                text-white drop-shadow-xl
+                                text-2xl
+                                sm:text-5xl
+                                md:text-7xl
+                                lg:text-7xl
+                                mb-3
+                                transition-all duration-1000 ease-out delay-400 transform
+                                ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"}
+                            `}
+                        >
+                           คอร์ปอเรชั่น จำกัด<span className="text-[#DAA520]">.</span>
                         </h1>
 
                         {/* DESCRIPTION */}
-                        {/* Delay 0.6s (600ms) */}
                         <p
                             className={`
                                 text-base
                                 sm:text-lg
                                 md:text-xl
                                 leading-relaxed
-                                max-w-2xl
+                                max-w-xl
                                 mx-auto md:mx-0
-                                text-gray-200
-                                mb-8
+                                text-zinc-300
+                                mb-5
+                                font-medium
                                 transition-all duration-1000 ease-out delay-600
                                 ${isVisible ? "opacity-100" : "opacity-0"}
                             `}
                         >
                             ผู้จัดจำหน่ายคอมพิวเตอร์และอุปกรณ์ไอทีครบวงจร
-                            พร้อมบริการติดตั้งและดูแลด้วยมาตรฐานระดับมืออาชีพ
+                            คัดสรรนวัตกรรมคุณภาพสูงเพื่อยกระดับธุรกิจของคุณให้เหนือกว่า
                         </p>
 
-                        {/* CTA BUTTONS */}
-                        {/* Delay 0.8s (800ms) */}
+                        {/* CTA BUTTONS: สไตล์ High Contrast */}
                         <div
                             className={`
-                                flex flex-wrap gap-4 justify-center md:justify-start
+                                flex flex-wrap gap-5 justify-center md:justify-start
                                 transition-all duration-1000 ease-out delay-800
                                 ${isVisible ? "opacity-100" : "opacity-0"}
                             `}
@@ -110,40 +133,41 @@ export default function Hero() {
                             <a
                                 href="#contact"
                                 className="
-                                    px-8 py-3 
-                                    bg-amber-600 hover:bg-amber-700
-                                    text-white font-semibold rounded-lg
-                                    shadow-lg hover:shadow-xl
+                                    px-10 py-4 
+                                    bg-[#DAA520] hover:bg-[#E6C200]
+                                    text-zinc-900 font-black rounded-sm
+                                    shadow-lg hover:shadow-[#DAA520]/20
                                     transition-all duration-300
-                                    hover:scale-105
-                                    flex items-center gap-2
+                                    hover:-translate-y-1
+                                    flex items-center gap-3
+                                    text-xs uppercase tracking-widest
                                 "
                             >
-                                <i className='bx bxs-phone'></i>
+                                <i className='bx bxs-phone text-lg'></i>
                                 ติดต่อเรา
                             </a>
                             <a
                                 href="#services"
                                 className="
-                                    px-8 py-3
+                                    px-10 py-4
                                     bg-white/10 backdrop-blur-md hover:bg-white/20
-                                    text-white font-semibold rounded-lg
-                                    border border-white/30
+                                    text-white font-black rounded-sm
+                                    border border-white/20
                                     transition-all duration-300
-                                    hover:scale-105
-                                    flex items-center gap-2
+                                    hover:-translate-y-1
+                                    flex items-center gap-3
+                                    text-xs uppercase tracking-widest
                                 "
                             >
-                                <i className='bx bx-info-circle'></i>
+                                <i className='bx bx-info-circle text-lg'></i>
                                 เรียนรู้เพิ่มเติม
                             </a>
                         </div>
 
-                        {/* STATS */}
-                        {/* Delay 1.2s (1200ms) */}
+                        {/* STATS SECTION: ปรับสีเป็นทองสด */}
                         <div
                             className={`
-                                mt-16 pt-8 border-t border-white/20
+                                mt-20 pt-10 border-t border-white/10
                                 transition-all duration-1000 ease-out delay-1200
                                 ${isVisible ? "opacity-100" : "opacity-0"}
                             `}
@@ -152,38 +176,27 @@ export default function Hero() {
                                 className="
                                     grid
                                     grid-cols-3
-                                    gap-6 sm:gap-8
-                                    text-center
+                                    gap-8
+                                    text-center md:text-left
                                 "
                             >
                                 {[
-                                    { num: "3000+", label: "ลูกค้าที่ไว้วางใจ", icon: "bx-group" },
-                                    { num: "5000+", label: "โปรเจกต์สำเร็จ", icon: "bx-check-circle" },
-                                    { num: "10+ ปี", label: "ประสบการณ์", icon: "bx-time-five" },
+                                    { num: "3000+", label: "TRUSTED CLIENTS", icon: "bx-group" },
+                                    { num: "5000+", label: "PROJECTS DONE", icon: "bx-check-circle" },
+                                    { num: "10+ YRS", label: "EXPERIENCE", icon: "bx-time-five" },
                                 ].map((item, index) => (
-                                    <div key={index}>
-                                        <i className={`bx ${item.icon} text-4xl text-amber-400 mb-2`}></i>
-                                        <h3
-                                            className="
-                                                font-bold text-amber-400
-                                                text-2xl
-                                                sm:text-3xl
-                                                md:text-4xl
-                                                mb-1
-                                            "
-                                        >
-                                            {item.num}
-                                        </h3>
-                                        <p
-                                            className="
-                                                text-white/90
-                                                text-xs
-                                                sm:text-sm
-                                                md:text-base
-                                            "
-                                        >
-                                            {item.label}
-                                        </p>
+                                    <div key={index} className="group">
+                                        <div className="flex flex-col md:flex-row items-center gap-3">
+                                            <i className={`bx ${item.icon} text-3xl text-[#DAA520] mb-2 md:mb-0`}></i>
+                                            <div>
+                                                <h3 className="font-black text-[#DAA520] text-2xl sm:text-3xl lg:text-4xl leading-none">
+                                                    {item.num}
+                                                </h3>
+                                                <p className="text-zinc-500 text-[10px] font-bold tracking-widest uppercase mt-1">
+                                                    {item.label}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
                                 ))}
                             </div>

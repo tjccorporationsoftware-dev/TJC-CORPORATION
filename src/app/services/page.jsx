@@ -3,9 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "../componect/Navbar";
-import { Loader2, ArrowUpRight } from "lucide-react";
+import { Loader2, ArrowUpRight, Sparkles } from "lucide-react";
 
-// --- Config ---
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 const getImgUrl = (path) => {
@@ -17,12 +16,11 @@ const getImgUrl = (path) => {
 
 function ServicesPage() {
   const searchParams = useSearchParams();
-
   const [services, setServices] = useState([]);
   const [categories, setCategories] = useState([]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [loading, setLoading] = useState(true);
-  const [animateTrigger, setAnimateTrigger] = useState(true);
+  const [animationKey, setAnimationKey] = useState(0);
 
   useEffect(() => {
     const fetchServices = async () => {
@@ -30,26 +28,15 @@ function ServicesPage() {
         const res = await fetch(`${API_BASE}/api/services`);
         if (!res.ok) throw new Error("Failed to fetch");
         const data = await res.json();
-
         const activeServices = Array.isArray(data)
-          ? data
-              .filter((s) => s.is_active !== false)
-              .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
+          ? data.filter((s) => s.is_active !== false).sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0))
           : [];
-
         setServices(activeServices);
-
-        const uniqueCategories = [
-          "All",
-          ...new Set(activeServices.map((s) => s.category).filter((c) => c && c.trim() !== "")),
-        ];
+        const uniqueCategories = ["All", ...new Set(activeServices.map((s) => s.category).filter((c) => c && c.trim() !== ""))];
         setCategories(uniqueCategories);
-
         const catFromUrl = searchParams.get("cat");
         if (catFromUrl && catFromUrl !== "all") {
-          const matched = uniqueCategories.find(
-            (c) => c.toLowerCase() === decodeURIComponent(catFromUrl).toLowerCase()
-          );
+          const matched = uniqueCategories.find((c) => c.toLowerCase() === decodeURIComponent(catFromUrl).toLowerCase());
           if (matched) setActiveCategory(matched);
         } else {
           setActiveCategory("All");
@@ -63,105 +50,78 @@ function ServicesPage() {
     fetchServices();
   }, [searchParams]);
 
-  const filteredServices =
-    activeCategory === "All" ? services : services.filter((s) => s.category === activeCategory);
+  const filteredServices = activeCategory === "All" ? services : services.filter((s) => s.category === activeCategory);
 
   const handleCategoryChange = (cat) => {
     if (cat === activeCategory) return;
     setActiveCategory(cat);
-    setAnimateTrigger(false);
-    setTimeout(() => setAnimateTrigger(true), 20);
+    setAnimationKey((prev) => prev + 1);
   };
 
   return (
-    <div className="bg-white min-h-screen text-slate-900 font-(family-name:--font-ibm-plex-thai) selection:bg-amber-100/60 overflow-x-hidden">
+    /* ใช้ฟอนต์รองรับจาก RootLayout และกำหนดสีพื้นฐาน */
+    <div className="min-h-screen bg-white text-zinc-800 selection:bg-[#DAA520]/30 overflow-x-hidden">
       <style
         dangerouslySetInnerHTML={{
           __html: `
-            @keyframes fadeInUp {
-              from { opacity: 0; transform: translateY(14px); }
+            @keyframes fadeInUpSoft {
+              from { opacity: 0; transform: translateY(20px); }
               to { opacity: 1; transform: translateY(0); }
             }
-            .animate-custom-fade { animation: fadeInUp 0.55s ease-out forwards; }
+            .animate-soft-fade { animation: fadeInUpSoft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
             .no-scrollbar::-webkit-scrollbar { display: none; }
             .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-            /* more subtle, formal hover zoom */
-            .img-hover-zoom { transition: transform 0.75s cubic-bezier(0.2, 0, 0.2, 1); }
-            .group:hover .img-hover-zoom { transform: scale(1.04); }
           `,
         }}
       />
 
       <Navbar />
 
-      {/* ======= HERO SECTION (Gold/Gray/White) ======= */}
-      <div className="relative pt-28 pb-12 sm:pt-36 sm:pb-16 lg:pt-44 lg:pb-24 border-b border-slate-100">
-        {/* Background accents */}
+      {/* ======= HERO SECTION ======= */}
+      <div className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-linear-to-b from-white via-white to-[#F6F7F9]" />
-          <div className="absolute -top-40 left-1/2 -translate-x-1/2 h-130 w-275 rounded-full bg-linear-to-r from-amber-100/55 via-white to-slate-100/60 blur-3xl" />
-          <div className="absolute top-130 -right-55 h-105 w-105 rounded-full bg-amber-100/25 blur-3xl" />
+          <div className="absolute top-0 right-0 w-[45%] h-full bg-zinc-50 -skew-x-12 transform origin-top-right opacity-40" />
+          <div className="absolute bottom-0 left-0 w-[35%] h-[40%] bg-[#DAA520]/5 -skew-x-12 transform origin-bottom-left" />
         </div>
 
-        <div className="max-w-7xl mx-auto px-5 sm:px-10 lg:px-12 text-center animate-custom-fade">
-          {/* Branding Label */}
-          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-5 sm:mb-7">
-            <span className="h-px w-6 bg-amber-200/90" />
-            <h2 className="text-slate-800 font-semibold tracking-[0.22em] text-[9px] sm:text-[10px] uppercase">
-              TJC <span className="text-amber-700">Corporation</span>
-            </h2>
-            <span className="h-px w-6 bg-amber-200/90" />
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center animate-soft-fade">
+          <div className="flex items-center justify-center gap-3 mb-8">
+            <span className="text-[#DAA520] font-bold tracking-[0.25em] uppercase text-[10px] px-5 py-2 shadow-sm">
+              EXECUTIVE SERVICES
+            </span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-slate-900 mb-5 sm:mb-6 tracking-tight leading-tight max-w-4xl mx-auto">
-            Integrated Technology & <br className="hidden sm:block" />
-            <span className="text-amber-700 font-semibold">Infrastructure Solutions</span>
+          <h1 className="text-4xl lg:text-7xl font-bold text-zinc-900 tracking-tighter leading-[1.1] mb-10 max-w-5xl mx-auto uppercase">
+            Integrated Services<br />
+            & Innovations<span className="text-[#DAA520]">.</span>
           </h1>
 
-          <p className="text-slate-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto font-light leading-relaxed">
-            ผู้เชี่ยวชาญด้านการจัดจำหน่ายและวางระบบเทคโนโลยีสำหรับหน่วยงานภาครัฐและเอกชน
-            ครอบคลุมทั้งระบบโครงข่ายไอทีและครุภัณฑ์ทางการศึกษาทั่วประเทศ
+          <p className="text-zinc-500 text-lg lg:text-2xl max-w-3xl mx-auto font-medium leading-relaxed">
+            ยกระดับองค์กรด้วยโซลูชันเทคโนโลยีแบบครบวงจร โดยทีมผู้เชี่ยวชาญที่พร้อมขับเคลื่อนความสำเร็จอย่างยั่งยืน
           </p>
 
-          {/* subtle separator */}
-          <div className="mt-10 flex justify-center">
-            <div className="h-px w-24 bg-linear-to-r from-transparent via-amber-300/80 to-transparent" />
+          <div className="mt-12 flex justify-center">
+            <div className="h-1.5 w-20 bg-[#DAA520] rounded-full shadow-sm" />
           </div>
         </div>
       </div>
 
-      {/* ======= TABS (Formal, Gold underline) ======= */}
-      <div className="sticky top-16 z-30 bg-white/92 backdrop-blur-md border-b border-slate-200 shadow-[0_8px_24px_-18px_rgba(15,23,42,0.35)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-start sm:justify-center gap-6 sm:gap-10 overflow-x-auto no-scrollbar py-3.5 px-1">
+      {/* ======= TABS (Floating Capsule Style) ======= */}
+      <div className="sticky top-16 z-30 mb-12">
+        <div className="max-w-min mx-auto bg-white/90 backdrop-blur-xl border border-zinc-100 p-2 rounded-full shadow-[0_10px_30px_-10px_rgba(0,0,0,0.05)]">
+          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar px-1">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => handleCategoryChange(cat)}
                 className={`
-                  relative text-[13px] sm:text-sm font-semibold transition-all duration-300 pb-2 whitespace-nowrap
-                  ${
-                    activeCategory === cat
-                      ? "text-slate-900"
-                      : "text-slate-500 hover:text-slate-700"
-                  }
+                  relative px-6 py-2.5 rounded-full text-[13px] font-bold uppercase tracking-wider transition-all duration-500 whitespace-nowrap
+                  ${activeCategory === cat
+                    ? "bg-zinc-900/90 text-[#DAA520] shadow-md"
+                    : "text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50"}
                 `}
               >
-                <span className="relative">
-                  {cat === "All" ? "ทั้งหมด" : cat}
-                  {/* underline */}
-                  <span
-                    className={`
-                      absolute left-0 -bottom-2 h-0.5 w-full rounded-full transition-all duration-300
-                      ${
-                        activeCategory === cat
-                          ? "bg-linear-to-r from-amber-300 via-amber-500 to-amber-300 opacity-100"
-                          : "opacity-0"
-                      }
-                    `}
-                  />
-                </span>
+                {cat === "All" ? "ทั้งหมด" : cat}
               </button>
             ))}
           </div>
@@ -169,91 +129,21 @@ function ServicesPage() {
       </div>
 
       {/* ======= SERVICES GRID ======= */}
-      <div className="bg-[#F6F7F9] py-12 sm:py-16 lg:py-24">
-        <div className="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+      <div className="pb-24 lg:pb-32">
+        <div className="max-w-400 mx-auto px-6 lg:px-12">
           {loading ? (
-            <div className="flex justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-slate-300" />
+            <div className="flex justify-center py-32">
+              <Loader2 className="w-10 h-10 animate-spin text-[#DAA520]" />
             </div>
           ) : (
-            <div
-              className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-10 items-start ${
-                animateTrigger ? "animate-custom-fade" : "opacity-0"
-              }`}
-            >
+            <div key={animationKey} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 items-start animate-soft-fade">
               {filteredServices.length === 0 ? (
-                <div className="col-span-full text-center py-20 text-slate-500 font-light text-sm sm:text-base">
-                  ไม่พบข้อมูลในหมวดหมู่นี้
+                <div className="col-span-full text-center py-32 bg-zinc-50 rounded-4xl border-2 border-dashed border-zinc-200">
+                  <p className="text-zinc-400 font-bold uppercase tracking-[0.2em]">COMING SOON</p>
                 </div>
               ) : (
-                filteredServices.map((service) => (
-                  <div
-                    key={service.id}
-                    className="
-                      group flex flex-col bg-white border border-slate-200 rounded-2xl
-                      hover:border-amber-300/70 hover:shadow-[0_18px_50px_-28px_rgba(15,23,42,0.45)]
-                      transition-all duration-300 overflow-hidden
-                    "
-                  >
-                    {/* Image */}
-                    <div className="relative aspect-16/10 sm:aspect-4/3 lg:aspect-16/10 overflow-hidden bg-slate-100">
-                      {getImgUrl(service.image_url) ? (
-                        <img
-                          src={getImgUrl(service.image_url)}
-                          alt={service.title}
-                          className="w-full h-full object-cover img-hover-zoom"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-slate-50">
-                          <div className="w-10 h-10 bg-white rounded-full opacity-70 border border-slate-200" />
-                        </div>
-                      )}
-
-                      {/* Gold frame line */}
-                      <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-amber-200/35" />
-                      {/* top accent */}
-                      <div className="pointer-events-none absolute top-0 left-0 right-0 h-1 bg-linear-to-r from-amber-300 via-amber-500 to-amber-300 opacity-80" />
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6 sm:p-7 flex flex-col flex-1">
-                      <div className="mb-4 sm:mb-5">
-                        <p className="text-[9px] sm:text-[10px] font-bold text-amber-700 uppercase tracking-widest mb-1">
-                          {service.category || "Service"}
-                        </p>
-
-                        <h3 className="text-base sm:text-lg lg:text-xl font-extrabold text-slate-900 group-hover:text-amber-700 transition-colors leading-snug">
-                          {service.title}
-                        </h3>
-                      </div>
-
-                      <p className="text-slate-600 text-xs sm:text-sm font-light leading-relaxed mb-6 sm:mb-8 flex-1 line-clamp-3 lg:line-clamp-2">
-                        {service.description ||
-                          "สอบถามข้อมูลเพิ่มเติมเกี่ยวกับบริการได้ผ่านช่องทางการติดต่อของเรา"}
-                      </p>
-
-                      {/* Action */}
-                      <div className="mt-auto pt-4 border-t border-slate-100">
-                        <a
-                          href="https://lin.ee/twVZIGO"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="
-                            inline-flex items-center justify-between w-full
-                            text-[11px] sm:text-xs font-bold uppercase tracking-widest
-                            text-slate-700 hover:text-slate-900
-                            transition-colors
-                          "
-                        >
-                          <span className="inline-flex items-center gap-2">
-                            <span className="inline-block h-2 w-2 rounded-full bg-amber-400" />
-                            View Details
-                          </span>
-                          <ArrowUpRight size={16} className="text-amber-600" />
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+                filteredServices.map((service, index) => (
+                  <ServiceCard key={service.id} service={service} index={index} />
                 ))
               )}
             </div>
@@ -262,54 +152,84 @@ function ServicesPage() {
       </div>
 
       {/* ======= CONTACT CTA ======= */}
-      <div className="bg-white py-16 sm:py-24 border-t border-slate-100 text-center">
-        <div className="max-w-3xl mx-auto px-6 animate-custom-fade">
-          <div className="flex justify-center mb-6">
-            <div className="h-px w-28 bg-linear-to-r from-transparent via-amber-300/80 to-transparent" />
-          </div>
+      <div className="relative py-24 lg:py-40 bg-white overflow-hidden border-t border-zinc-100 text-center">
+        <div className="pointer-events-none absolute inset-0 -z-10">
+          <div className="absolute top-0 right-0 w-[45%] h-full bg-zinc-50 -skew-x-12 transform origin-top-right opacity-60" />
+          <div className="absolute bottom-0 left-0 w-[30%] h-[40%] bg-[#DAA520]/5 -skew-x-12 transform origin-bottom-left" />
+        </div>
 
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 mb-4 sm:mb-5 tracking-tight">
-            ร่วมงานกับ TJC Corporation
+        <div className="max-w-5xl mx-auto px-6 relative z-10 animate-soft-fade">
+
+          <h2 className="text-4xl lg:text-7xl font-bold text-zinc-900 mb-8 tracking-tighter leading-none uppercase">
+            Let's build the future <br className="hidden md:block" />
+            together<span className="text-[#DAA520] text-5xl md:text-8xl">.</span>
           </h2>
 
-          <p className="text-slate-600 mb-10 font-light text-sm sm:text-base leading-relaxed">
-            ทีมงาน TJC พร้อมให้คำปรึกษาและจัดหาโซลูชันที่เหมาะสมที่สุดสำหรับคุณ
+          <p className="text-zinc-500 mb-16 font-medium text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto">
+            ทีมงาน TJC พร้อมมอบคำปรึกษาและจัดหาโซลูชันที่เหมาะสมที่สุด เพื่อขับเคลื่อนองค์กรของคุณสู่ความสำเร็จอย่างยั่งยืน
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <a
               href="https://lin.ee/twVZIGO"
               target="_blank"
               rel="noreferrer"
-              className="
-                w-full sm:w-auto
-                bg-slate-900 hover:bg-slate-800 text-white
-                px-8 sm:px-12 py-3.5 rounded-xl
-                text-[11px] sm:text-xs font-bold uppercase tracking-widest
-                transition-all shadow-sm active:scale-95
-              "
+              className="flex items-center justify-center gap-3 px-14 py-5 bg-[#DAA520] text-zinc-900 font-bold text-[12px] uppercase tracking-[0.3em] rounded-sm transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95"
             >
-              Line Official
+              Line Official <i className="bx bxl-line text-xl" />
             </a>
 
             <a
-              href="/contact"
-              className="
-                w-full sm:w-auto
-                bg-white border border-slate-200 hover:border-amber-300
-                text-slate-900
-                px-8 sm:px-12 py-3.5 rounded-xl
-                text-[11px] sm:text-xs font-bold uppercase tracking-widest
-                transition-all active:scale-95
-              "
+              href="/#contact"
+              className="group flex items-center justify-center gap-3 px-14 py-5 bg-white border-2 border-zinc-100 text-zinc-800 hover:border-[#DAA520] font-bold text-[12px] uppercase tracking-[0.3em] rounded-sm transition-all duration-300 hover:-translate-y-1 active:scale-95"
             >
-              Contact Us
+              Contact Us <i className="bx bx-right-arrow-alt text-xl transition-transform group-hover:translate-x-1" />
             </a>
           </div>
 
-          <p className="mt-6 text-[11px] text-slate-500">
-            สำหรับขอใบเสนอราคา/เอกสารประกอบการจัดซื้อ
-          </p>
+          <div className="mt-16 flex items-center justify-center gap-4 opacity-40">
+            <div className="h-px w-8 bg-zinc-200"></div>
+            <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.3em]">Official TJC Implementation Support</p>
+            <div className="h-px w-8 bg-zinc-200"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ServiceCard({ service, index }) {
+  return (
+    <div className="group relative flex flex-col bg-white rounded-none border border-zinc-100 transition-all duration-700 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] hover:border-[#DAA520]/30 hover:-translate-y-2 h-full overflow-hidden">
+      <div className="relative h-64 overflow-hidden bg-zinc-50">
+        {getImgUrl(service.image_url) ? (
+          <img src={getImgUrl(service.image_url)} alt={service.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center opacity-30">
+            <Sparkles size={40} className="text-zinc-300" />
+          </div>
+        )}
+        <div className="absolute top-6 left-6 z-10">
+          <span className="inline-block px-4 py-2 bg-white border border-zinc-100 text-[10px] font-bold text-zinc-700 uppercase tracking-[0.2em] shadow-sm">
+            {service.category || "Service"}
+          </span>
+        </div>
+      </div>
+
+      <div className="p-8 flex flex-col flex-1 relative">
+        <div className="pt-6 mb-6">
+          <h3 className="text-2xl font-bold text-zinc-800 leading-tight uppercase tracking-tight group-hover:text-[#b49503] transition-colors line-clamp-2">
+            {service.title}
+          </h3>
+        </div>
+        <p className="text-zinc-500 text-base font-medium leading-relaxed mb-10 line-clamp-3 italic">
+          {service.description || "สอบถามข้อมูลเพิ่มเติมเกี่ยวกับบริการและรายละเอียดการติดตั้งได้โดยตรง"}
+        </p>
+        <div className="mt-auto">
+          <a href="https://lin.ee/twVZIGO" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.25em] text-zinc-800 group/link">
+            <span>Explore Solution</span>
+            <ArrowUpRight size={18} className="text-[#DAA520] transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" />
+          </a>
         </div>
       </div>
     </div>
