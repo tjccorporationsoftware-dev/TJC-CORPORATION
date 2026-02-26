@@ -57,7 +57,7 @@ export default function CustomersCarousel({ speed = 40 }) {
                         </span>
                     </div>
 
-                    <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tighter leading-tight">
+                    <h2 className="text-4xl md:text-6xl font-black tracking-tighter leading-tight bg-linear-to-r from-zinc-900 to-[#DAA520] bg-clip-text text-transparent">
                         ลูกค้าที่ไว้วางใจเรา<span className="text-[#DAA520] text-5xl md:text-7xl">.</span>
                     </h2>
 

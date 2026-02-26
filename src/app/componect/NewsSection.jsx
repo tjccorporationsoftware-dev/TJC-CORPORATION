@@ -199,7 +199,7 @@ export default function NewsSlider() {
                         </span>
                     </div>
 
-                    <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tight leading-tight mb-6">
+                    <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-tight mb-6 bg-linear-to-r from-zinc-900 to-[#DAA520] bg-clip-text text-transparent">
                         ข่าวสาร<span className="text-[#DAA520] mx-2">/</span>กิจกรรม
                     </h2>
 

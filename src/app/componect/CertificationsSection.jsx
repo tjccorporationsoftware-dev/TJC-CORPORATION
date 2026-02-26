@@ -93,13 +93,9 @@ export default function CertificationsSection() {
                </span>
             </div>
 
-            <h2 className="text-4xl md:text-6xl font-black text-zinc-900 tracking-tight leading-tight mb-6">
-              มาตรฐานและ
-              <span className="relative inline-block ml-3">
-                 <span className="relative z-10 text-[#DAA520] drop-shadow-sm-dark">การรับรอง</span>
-                 {/* ขีดเส้นใต้แบบปากกาไฮไลท์ */}
-                 <span className="absolute bottom-2 left-0 w-full h-3 bg-zinc-900/5 z-0 rotate-1 rounded-full"></span>
-              </span>
+            <h2 className="text-4xl md:text-6xl font-black tracking-tight leading-tight mb-6 bg-linear-to-r from-zinc-900 to-[#DAA520] bg-clip-text text-transparent">
+              มาตรฐานและการรับรอง
+             
             </h2>
             
             <p className="text-zinc-500 text-lg font-medium leading-relaxed">

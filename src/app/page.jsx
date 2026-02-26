@@ -25,7 +25,7 @@ export default function CompanyLandingPage() {
         <Navbar />
         <Hero />
         <AboutHeader />
-        <TeamSection />
+
         <Work />
         <Services />
         <CertificationsSection />

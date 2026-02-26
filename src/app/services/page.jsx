@@ -4,6 +4,7 @@ import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "../componect/Navbar";
 import { Loader2, ArrowUpRight, Sparkles } from "lucide-react";
+import FooterContact from "../componect/Footer";
 
 // บังคับให้เป็น Dynamic Rendering เพื่อป้องกันการ Error ตอน Build เมื่อ API ไม่พร้อม
 export const dynamic = "force-dynamic";
@@ -181,6 +182,7 @@ function ServicesPage() {
           </div>
         </div>
       </div>
+      <FooterContact />
     </div>
   );
 }

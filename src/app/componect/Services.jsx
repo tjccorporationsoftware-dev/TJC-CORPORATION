@@ -84,9 +84,9 @@ export default function ServicesSection() {
                 OUR SERVICES
               </span>
             </div>
-            <h2 className="text-5xl md:text-7xl font-black text-zinc-900 tracking-tighter leading-[0.9]">
+            <h2 className="text-5xl md:text-7xl font-black bg-linear-to-r from-zinc-900 to-[#DAA520] bg-clip-text text-transparent tracking-tighter leading-[0.9]">
               บริการ<br />
-              <span className="text-[#DAA520] drop-shadow-sm inline-block">ครบวงจร</span>
+              <span className="bg-linear-to-r from-zinc-900 to-[#DAA520] bg-clip-text text-transparent">ครบวงจร</span>
               <span className="text-zinc-300 text-6xl md:text-8xl leading-none">.</span>
             </h2>
           </div>

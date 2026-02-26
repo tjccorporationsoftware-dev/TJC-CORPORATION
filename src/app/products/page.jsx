@@ -4,6 +4,8 @@ import React, { useState, useEffect, Suspense, useMemo } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import Navbar from "../componect/Navbar";
+import FloatingPotatoCorner from "../componect/FloatingPotato";
+import Link from "next/link";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const normalize = (val) => String(val || "").toLowerCase().trim();
@@ -90,97 +92,74 @@ function ProductContent() {
   return (
     <div className="min-h-screen bg-white text-zinc-900 selection:bg-[#DAA520]/30 pb-24 overflow-hidden">
       <Navbar />
+      <FloatingPotatoCorner />
 
+      {/* --- BACKGROUND DECOR --- */}
       <div className="pointer-events-none fixed inset-0 -z-10">
-        <div className="absolute top-0 right-0 w-[45%] h-full bg-zinc-50 -skew-x-12 transform origin-top-right opacity-40" />
-        <div className="absolute bottom-0 left-0 w-[35%] h-[40%] bg-[#DAA520]/5 -skew-x-12 transform origin-bottom-left" />
+        <div className="absolute top-0 right-0 w-[60%] h-full bg-zinc-50 -skew-x-12 transform origin-top-right opacity-30" />
       </div>
 
-      <div className="max-w-400 mx-auto px-6 lg:px-12 pt-32 lg:pt-44 mb-16">
-        <header className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-8 flex flex-col justify-center">
-            <div className="mb-10">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="bg-zinc-100 text-zinc-600 border border-zinc-200 font-black tracking-[0.25em] uppercase text-[10px] px-4 py-2 shadow-sm">
-                  EXECUTIVE CATALOG
-                </span>
-              </div>
-              <h1 className="text-4xl lg:text-7xl font-black tracking-tighter text-zinc-800 leading-[0.9]">
-                รายการผลิตภัณฑ์<span className="text-[#DAA520] text-5xl md:text-8xl">.</span>
-              </h1>
-              <p className="mt-8 text-zinc-500 font-medium leading-relaxed max-w-xl text-lg">
-                คัดสรรนวัตกรรมและอุปกรณ์ไอทีคุณภาพสูง เพื่อตอบโจทย์การใช้งานระดับองค์กรอย่างมีประสิทธิภาพ
-              </p>
-            </div>
+      {/* --- HEADER SECTION: Ultra-Wide 1600px --- */}
+      <div className="max-w-400 mx-auto px-6 lg:px-12 pt-32 lg:pt-48 mb-20">
+        <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-12">
+          <div className="max-w-5xl">
+            <h1 className="text-2xl lg:text-[70px] font-black tracking-tighter leading-[0.85] filter drop-shadow-[0_0_2px_#fff] drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]">
+              <span className="bg-linear-to-r from-zinc-900 via-zinc-800 to-[#DAA520] bg-clip-text text-transparent">
+                PRODUCT CATALOG
+              </span>
+              <span className="text-[#DAA520]">.</span>
+            </h1>
 
-            <div className="relative w-full md:w-125 group">
-              <i className="bx bx-search absolute left-4 top-1/2 -translate-y-1/2 text-xl text-zinc-400 group-focus-within:text-[#DAA520] transition-colors" />
+            <p className="mt-12 text-zinc-500 font-medium text-xl leading-relaxed italic border-l-4 border-[#DAA520] pl-10 max-w-2xl">
+              ศูนย์รวมนวัตกรรมไอทีและครุภัณฑ์สำนักงานระดับมาตรฐานสากล เพื่อขับเคลื่อนธุรกิจของคุณสู่ความสำเร็จ
+            </p>
+          </div>
+
+          <div className="relative w-full xl:w-125">
+            <div className="relative flex items-center">
+              <i className="bx bx-search absolute left-5 top-1/2 -translate-y-1/2 text-xl text-zinc-400" />
               <input
                 type="text"
-                placeholder="ค้นหาสินค้าในระบบ..."
+                placeholder="ค้นหาชื่อสินค้าหรือรหัสสินค้า..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-12 pr-4 py-4.5 bg-white border border-zinc-200 rounded-sm outline-none
-                           focus:border-[#DAA520] focus:ring-0 transition-all
-                           text-sm font-bold shadow-sm placeholder:text-zinc-300"
+                className="w-full pl-14 pr-6 py-4.5 bg-white border-2 border-zinc-100 rounded-2xl outline-none 
+                 focus:border-[#DAA520] focus:bg-white transition-all 
+                 text-base font-bold text-zinc-800 placeholder:text-zinc-300 shadow-sm"
               />
-            </div>
-          </div>
-
-          <div className="lg:col-span-4 relative rounded-none border border-zinc-200 shadow-xl h-87.5 hidden lg:block overflow-hidden bg-zinc-100 group">
-            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover group-hover:opacity-100 transition-opacity duration-700">
-              <source src="/video/vo002.mp4" type="video/mp4" />
-            </video>
-            <div className="absolute inset-0 bg-linear-to-t from-white/80 via-transparent to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6">
-              <div className="inline-flex items-center gap-3 bg-white/90 backdrop-blur-md border border-zinc-100 px-4 py-2 shadow-sm">
-                <span className="h-2 w-2 rounded-full bg-[#DAA520] animate-pulse" />
-                <h3 className="text-zinc-800 font-black text-[10px] uppercase tracking-[0.2em]">Official Showcase</h3>
-              </div>
-            </div>
-          </div>
-        </header>
-      </div>
-
-      <div className="max-w-400 mx-auto px-6 lg:px-12">
-        <div className="mb-12 flex items-center justify-between border-b border-zinc-100 pb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-1.5 h-8 bg-[#DAA520] rounded-full"></div>
-            <div>
-              <h2 className="text-2xl font-black text-zinc-800 uppercase tracking-tight">
-                {selectedIdentifier === "all" ? "ALL PRODUCTS" : activeCategoryData?.title}
-              </h2>
-              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-widest mt-1">Found {filteredProducts.length} high-quality results</p>
+              <div className="absolute right-4 top-1/2 -translate-y-1/2 h-6 w-1 bg-[#DAA520]/20 rounded-full" />
             </div>
           </div>
         </div>
+      </div>
 
-        {/* ปรับสัดส่วน Grid: Sidebar ขยายจาก 2 เป็น 3 ในจอใหญ่ */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+      {/* --- CONTENT SECTION --- */}
+      <div className="max-w-400 mx-auto px-6 lg:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
 
-          {/* Sidebar: ขยายให้กว้างกว่าเดิมเพื่อรองรับชื่อเต็ม */}
+          {/* SIDEBAR: ขยายความกว้างและแก้ตัวหนังสือตัด */}
           <aside className="lg:col-span-4 xl:col-span-3">
             <div className="sticky top-32">
-              <div className="bg-white rounded-4xl border border-zinc-100 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-500">
+              <div className="bg-white rounded-[2.5rem] border border-zinc-100 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.06)] overflow-hidden">
 
-                <div className="px-8 py-6 border-b border-zinc-50 bg-zinc-50/30">
-                  <div className="flex items-center gap-3">
-                    <div className="w-1 h-5 bg-[#DAA520] rounded-full"></div>
-                    <div className="flex flex-col">
-                      <span className="text-[11px] font-black text-zinc-800 uppercase tracking-[0.25em] leading-none">PRODUCT</span>
-                      <span className="text-[11px] font-black text-zinc-800 uppercase tracking-[0.25em] leading-none mt-1">CATEGORIES</span>
-                    </div>
+                <div className="px-10 py-8 border-b border-zinc-50 bg-zinc-900 flex items-center justify-between">
+                  <div className="flex flex-col">
+                    <span className="text-[10px] font-black text-[#DAA520] tracking-[0.3em] uppercase">Browse</span>
+                    <span className="text-sm font-black text-white uppercase tracking-widest mt-1">Categories</span>
                   </div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#DAA520] shadow-[0_0_15px_#DAA520]" />
                 </div>
 
-                <div className="p-4 space-y-1.5">
+                <div className="p-6 space-y-2.5">
                   <CategoryLink
                     active={selectedIdentifier === "all"}
-                    label="สินค้าทั้งหมด"
+                    label="ผลิตภัณฑ์ทั้งหมด"
                     onClick={() => handleCategoryChange("all")}
                   />
 
-                  <div className="space-y-1 mt-2">
+                  <div className="h-px bg-zinc-50 mx-2 my-2" />
+
+                  <div className="space-y-1.5">
                     {categories.map((cat) => (
                       <div key={cat.id} className="flex flex-col gap-1">
                         <CategoryLink
@@ -191,15 +170,15 @@ function ProductContent() {
 
                         {(normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)) &&
                           cat.subcategories?.length > 0 && (
-                            <div className="my-2 ml-4 pl-4 border-l-2 border-zinc-100 space-y-1">
+                            <div className="my-2 ml-8 pl-5 border-l-2 border-[#DAA520]/20 flex flex-col gap-2">
                               {cat.subcategories.map((sub, idx) => (
                                 <button
                                   key={idx}
                                   onClick={() => setSelectedSubcategory(sub.title || sub)}
-                                  className={`w-full text-left text-[11px] py-2.5 px-3 rounded-lg transition-all duration-300 leading-relaxed
+                                  className={`text-left text-[13px] py-2.5 px-4 rounded-xl transition-all duration-300
                                     ${normalize(selectedSubcategory) === normalize(sub.title || sub)
                                       ? "text-[#b49503] font-black bg-zinc-50 translate-x-1"
-                                      : "text-zinc-500 hover:text-zinc-800 font-bold hover:translate-x-1"
+                                      : "text-zinc-400 hover:text-zinc-800 font-bold hover:translate-x-1"
                                     }`}
                                 >
                                   — {sub.title || sub}
@@ -214,16 +193,24 @@ function ProductContent() {
               </div>
             </div>
           </aside>
-
-          {/* Product Grid: ปรับสัดส่วนให้เข้ากับ Sidebar ที่ขยายขึ้น */}
           <div className="lg:col-span-8 xl:col-span-9">
+            <div className="flex items-center gap-6 mb-12 border-b border-zinc-100 pb-10">
+              <h2 className="text-zinc-900 font-black text-4xl uppercase tracking-tighter">
+                {selectedIdentifier === "all" ? "Our Collections" : activeCategoryData?.title}
+              </h2>
+              <div className="h-2 w-2 rounded-full bg-[#DAA520]" />
+              <span className="text-zinc-400 text-sm font-bold uppercase tracking-widest">
+                {filteredProducts.length} Premium Items
+              </span>
+            </div>
+
             {filteredProducts.length === 0 ? (
-              <div className="min-h-80 flex flex-col items-center justify-center bg-zinc-50 border-2 border-dashed border-zinc-200">
-                <i className="bx bx-package text-5xl text-zinc-300 mb-4" />
-                <p className="text-zinc-500 font-bold text-lg uppercase tracking-widest">No Products Found</p>
+              <div className="min-h-100 flex flex-col items-center justify-center bg-zinc-50 rounded-[3.5rem] border-2 border-dashed border-zinc-100">
+                <i className="bx bx-package text-7xl text-zinc-200 mb-6" />
+                <p className="text-zinc-400 font-bold text-xl uppercase tracking-widest">No matching items found</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 xl:grid-cols-4 gap-8">
                 {filteredProducts.map((product) => (
                   <ProductCard key={product.id} product={product} getImageUrl={getImageUrl} />
                 ))}
@@ -236,78 +223,60 @@ function ProductContent() {
   );
 }
 
+
+
 function CategoryLink({ active, label, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-5 py-4 rounded-xl text-[13px] transition-all duration-300 flex items-start justify-between border-l-4
+      className={`w-full text-left px-6 py-4 rounded-2xl text-[14px] transition-all duration-500 flex items-start justify-between gap-3
         ${active
-          ? "bg-[#DAA520] text-zinc-900 border-[#DAA520] shadow-md font-black"
-          : "bg-white text-zinc-600 border-transparent hover:border-zinc-200 hover:bg-zinc-50 font-bold"
+          ? "bg-zinc-50 text-[#b49503] font-black shadow-inner"
+          : "text-zinc-500 hover:text-zinc-900 font-bold hover:translate-x-1"
         }`}
     >
-      <span className="leading-snug flex-1 mr-2 wrap-break-word">
+      <span className="flex-1 leading-snug wrap-break-word">
         {label}
       </span>
-      <i className={`bx bx-right-arrow-alt text-lg transition-transform mt-0.5 ${active ? "translate-x-1" : "opacity-0"}`} />
+      {active && <i className="bx bx-chevron-right text-xl mt-0.5" />}
     </button>
   );
 }
 
 function ProductCard({ product, getImageUrl }) {
   return (
-    <div className="group bg-white rounded-none border border-zinc-100 transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.08)] hover:border-[#DAA520]/30 hover:-translate-y-2 flex flex-col h-full overflow-hidden">
-      <div className="relative bg-zinc-50 aspect-square flex items-center justify-center p-8 overflow-hidden">
-        <div className="absolute inset-0 bg-[#DAA520] opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
+    <div className="group bg-white rounded-[2.5rem] border border-zinc-100 transition-all duration-700 hover:shadow-[0_60px_100px_-30px_rgba(218,165,32,0.12)] hover:border-[#DAA520]/20 flex flex-col h-full overflow-hidden">
+      <div className="relative bg-zinc-50 aspect-square p-10 flex items-center justify-center overflow-hidden">
         <Image
           src={getImageUrl(product.image_url)}
           alt={product.name}
           fill
-          className="object-contain p-4 group-hover:scale-110 transition-transform duration-700 ease-out"
+          className="object-contain p-10 transition-transform duration-1000 ease-out group-hover:scale-110"
           unoptimized={true}
         />
-        <div className="absolute top-4 left-4 z-10">
-          <span className="px-2.5 py-1 text-[10px] font-black text-zinc-700 bg-white border border-zinc-100 uppercase tracking-[0.2em] shadow-sm">
-            {product.category || "GENERAL"}
+        <div className="absolute top-6 left-6">
+          <span className="px-4 py-2 text-[9px] font-black text-white bg-zinc-900 rounded-lg uppercase tracking-widest shadow-2xl">
+            {product.category || "Official"}
           </span>
         </div>
       </div>
 
-      <div className="p-5 flex flex-col flex-1">
-        <h3 className="text-base font-black text-zinc-800 mb-2 leading-tight group-hover:text-[#b49503] transition-colors min-h-12 line-clamp-2 uppercase">
+      <div className="p-8 flex flex-col flex-1">
+        <h3 className="text-base font-black text-zinc-900 mb-3 leading-tight line-clamp-2 uppercase tracking-tight group-hover:text-[#b49503] transition-colors">
           {product.name}
         </h3>
-        <p className="text-zinc-500 text-[12px] font-medium leading-relaxed line-clamp-2 mb-6 italic">
-          {product.description || "Inquire for full technical specifications"}
+        <p className="text-zinc-400 text-[12px] leading-relaxed line-clamp-2 mb-8 italic">
+          {product.description || "Specifications available upon request"}
         </p>
-        <div className="mt-auto pt-6 border-t border-zinc-50">
-          <a
-            href={product.cta_url || "https://lin.ee/twVZIGO"}
-            target="_blank"
-            rel="noreferrer"
-            className="group/btn flex items-center justify-between w-full bg-[#DAA520] text-zinc-900 hover:bg-[#DAA520] px-6 py-4 rounded-sm transition-all duration-300 shadow-[0_4px_15px_rgba(255,213,5,0.15)] hover:shadow-[0_10px_25px_rgba(255,213,5,0.3)] hover:-translate-y-0.5 active:scale-[0.98]"
+
+        <div className="mt-auto">
+          {/* ✅ เปลี่ยนเป็นปุ่มดูรายละเอียดเพิ่มเติม และใช้ Link ไปที่หน้าสินค้า */}
+          <Link
+            href={`/products/${product.id}`}
+            className="flex items-center justify-center w-full bg-zinc-900 text-[#DAA520] hover:bg-[#DAA520] hover:text-zinc-900 py-4 rounded-2xl transition-all duration-500 font-black text-[11px] uppercase tracking-widest shadow-xl active:scale-95"
           >
-            {/* ข้อความใช้ font-black และเพิ่มระยะห่างตัวอักษรเพื่อความหรูหรา */}
-            <span className="font-black text-[11px] uppercase tracking-[0.2em]">
-              ติดต่อสอบถามข้อมูล
-            </span>
-
-            <div className="flex items-center gap-2">
-              {/* ไอคอน Line ปรับขนาดให้พอดี */}
-              <i className="bx bxl-line text-xl transition-transform group-hover/btn:scale-110" />
-              {/* ลูกศรที่จะเลื่อนออกมาเมื่อ Hover */}
-              <i className="bx bx-right-arrow-alt text-xl opacity-0 -translate-x-2 transition-all duration-300 group-hover/btn:opacity-100 group-hover/btn:translate-x-0" />
-            </div>
-          </a>
-
-          {/* ส่วนท้ายปรับให้ดู Official และสมดุลมากขึ้น */}
-          <div className="flex items-center justify-center gap-3 mt-4 opacity-50">
-            <div className="h-px w-4 bg-zinc-200"></div>
-            <p className="text-[9px] font-black text-zinc-400 tracking-[0.3em] uppercase whitespace-nowrap">
-              Official TJC Support
-            </p>
-            <div className="h-px w-4 bg-zinc-200"></div>
-          </div>
+            ดูรายละเอียดเพิ่มเติม
+          </Link>
         </div>
       </div>
     </div>
@@ -316,13 +285,7 @@ function ProductCard({ product, getImageUrl }) {
 
 export default function ProductPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center bg-white">
-          <div className="w-10 h-10 border-4 border-zinc-100 border-t-[#DAA520] rounded-full animate-spin" />
-        </div>
-      }
-    >
+    <Suspense fallback={<div className="min-h-screen bg-white" />}>
       <ProductContent />
     </Suspense>
   );
