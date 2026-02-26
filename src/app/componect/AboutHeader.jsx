@@ -112,52 +112,66 @@ export default function AboutHeader() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            {[
-              {
-                title: "Innovation",
-                titleTh: "นวัตกรรม",
-                desc: "มุ่งมั่นพัฒนาและนำเสนอเทคโนโลยีที่ทันสมัยเพื่อสร้างคุณค่าที่เหนือกว่าให้กับองค์กร",
-                icon: "M13 10V3L4 14h7v7l9-11h-7z"
-              },
-              {
-                title: "Collaboration",
-                titleTh: "ความร่วมมือ",
-                desc: "ส่งเสริมการทำงานเป็นทีมและการประสานงานอย่างมีประสิทธิภาพ เพื่อเป้าหมายร่วมกัน",
-                icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-              },
-              {
-                title: "Quality",
-                titleTh: "คุณภาพ",
-                desc: "ยึดมั่นในมาตรฐานการให้บริการและการส่งมอบผลงานที่มีคุณภาพสูงสุดในทุกขั้นตอน",
-                icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
-              },
-            ].map((val, idx) => (
-              <div
-                key={idx}
-                className="reveal-on-scroll fade-up group relative h-full"
-                style={{ transitionDelay: `${idx * 200}ms` }}
-              >
-                <div className="relative h-full bg-white rounded-4xl p-12 border border-zinc-100 transition-all duration-500 group-hover:-translate-y-2 group-hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] group-hover:border-[#DAA520]/40">
-                  <span className="absolute top-8 right-10 text-8xl font-bold text-zinc-50 transition-colors duration-500 group-hover:text-[#DAA520]/10">
-                    0{idx + 1}
-                  </span>
-                  <div className="relative z-10">
-                    <div className="w-20 h-20 bg-zinc-900 rounded-3xl flex items-center justify-center mb-12 transition-all duration-700 group-hover:bg-[#DAA520] group-hover:rotate-10 shadow-2xl">
-                      <svg className="w-10 h-10 text-[#DAA520] group-hover:text-zinc-900 transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d={val.icon} />
-                      </svg>
+          {/* แนะนำให้ใส่ bg-zinc-50 ที่ Container หลักของส่วนนี้เพื่อให้ Card สีขาวลอยเด่นขึ้นมา */}
+          <div className="bg-zinc-50/50 py-20 px-6">
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
+              {[
+                {
+                  title: "Innovation",
+                  titleTh: "นวัตกรรม",
+                  desc: "มุ่งมั่นพัฒนาและนำเสนอเทคโนโลยีที่ทันสมัยเพื่อสร้างคุณค่าที่เหนือกว่าให้กับองค์กร",
+                  icon: "M13 10V3L4 14h7v7l9-11h-7z"
+                },
+                {
+                  title: "Collaboration",
+                  titleTh: "ความร่วมมือ",
+                  desc: "ส่งเสริมการทำงานเป็นทีมและการประสานงานอย่างมีประสิทธิภาพ เพื่อเป้าหมายร่วมกัน",
+                  icon: "M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                },
+                {
+                  title: "Quality",
+                  titleTh: "คุณภาพ",
+                  desc: "ยึดมั่นในมาตรฐานการให้บริการและการส่งมอบผลงานที่มีคุณภาพสูงสุดในทุกขั้นตอน",
+                  icon: "M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                },
+              ].map((val, idx) => (
+                <div
+                  key={idx}
+                  className="reveal-on-scroll fade-up group relative h-full"
+                  style={{ transitionDelay: `${idx * 200}ms` }}
+                >
+                  {/* ปรับปรุง: เพิ่ม shadow-sm และ border-zinc-200/50 เพื่อให้เห็นขอบชัดขึ้นแม้พื้นหลังขาว */}
+                  <div className="relative h-full bg-white rounded-4xl p-12 border border-zinc-200/60 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] transition-all duration-500 group-hover:-translate-y-3 group-hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.12)] group-hover:border-[#DAA520]/50 overflow-hidden">
+
+                    {/* ตัวเลข Background ที่ชัดขึ้นเล็กน้อย */}
+                    <span className="absolute top-8 right-10 text-8xl font-black text-zinc-100/50 transition-colors duration-500 group-hover:text-[#DAA520]/10 select-none">
+                      0{idx + 1}
+                    </span>
+
+                    <div className="relative z-10">
+                      {/* Icon Box ที่มีมิติมากขึ้น */}
+                      <div className="w-20 h-20 bg-zinc-900 rounded-3xl flex items-center justify-center mb-12 transition-all duration-700 group-hover:bg-[#DAA520] group-hover:rotate-6 shadow-xl group-hover:shadow-[#DAA520]/20">
+                        <svg className="w-10 h-10 text-[#DAA520] group-hover:text-zinc-900 transition-colors duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.8" d={val.icon} />
+                        </svg>
+                      </div>
+
+                      <h4 className="text-[11px] font-bold text-[#DAA520] uppercase tracking-[0.4em] mb-4">{val.title}</h4>
+                      <h5 className="text-3xl font-bold text-zinc-900 mb-6 tracking-tight uppercase leading-tight">{val.titleTh}</h5>
+                      <p className="text-zinc-500 text-lg leading-relaxed font-medium group-hover:text-zinc-700 transition-colors duration-500">
+                        {val.desc}
+                      </p>
                     </div>
-                    <h4 className="text-[11px] font-bold text-[#DAA520] uppercase tracking-[0.4em] mb-4">{val.title}</h4>
-                    <h5 className="text-3xl font-bold text-zinc-900 mb-6 tracking-tight uppercase">{val.titleTh}</h5>
-                    <p className="text-zinc-500 text-lg leading-relaxed font-medium group-hover:text-zinc-700 transition-colors duration-500">
-                      {val.desc}
-                    </p>
+
+                    {/* ตกแต่งขอบด้านข้างเล็กน้อยเพื่อให้ดูมีระดับ (Optional) */}
+                    <div className="absolute top-0 left-0 w-1.5 h-0 bg-[#DAA520] transition-all duration-700 group-hover:h-full opacity-50" />
+
+                    {/* Line Decor ด้านล่าง */}
+                    <div className="absolute bottom-0 left-0 w-0 h-1.5 bg-[#DAA520] transition-all duration-700 group-hover:w-full" />
                   </div>
-                  <div className="absolute bottom-0 left-0 w-0 h-1.5 bg-[#DAA520] transition-all duration-700 group-hover:w-full rounded-full" />
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
