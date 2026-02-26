@@ -1,13 +1,12 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-// import { motion } from "framer-motion"; // ถ้าไม่ได้ใช้ ลบออกได้ครับ
+import Link from "next/link"; // ✅ เพิ่มการ Import Link
+import { Boxes } from "lucide-react";
 
-// 1. ตั้งค่า API Base แบบเดียวกับตัวอย่างที่ได้ผล
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
-// 2. ฟังก์ชันช่วยแปลง URL รูปภาพ
 const resolveUrl = (u) => {
-  if (!u) return "/images/placeholder.png"; // ใส่รูป Default กันไว้
+  if (!u) return "/images/placeholder.png";
   if (u.startsWith("http")) return u;
   if (u.startsWith("/images/")) return u;
   const cleanPath = u.startsWith("/") ? u : `/${u}`;
@@ -23,23 +22,19 @@ export default function ServicesSection() {
   const headerRef = useRef(null);
   const cardsRef = useRef([]);
 
-  // 3. ดึงข้อมูลจาก API
   useEffect(() => {
     async function fetchServices() {
       try {
         const res = await fetch(`${API_BASE}/api/services`);
         if (!res.ok) throw new Error("Failed to fetch services");
         const data = await res.json();
-
-        // กรองเฉพาะ Active และเรียงลำดับ
         const activeServices = data
           .filter((s) => s.is_active !== false)
           .sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
 
-        setServices(activeServices);
+        setServices(activeServices.slice(0, 4)); // แสดงแค่ 4 อันแรกในหน้าแรก
       } catch (err) {
         console.error("API Error (Services):", err);
-        // กรณี Error อาจจะใส่ข้อมูล Default ไว้โชว์แทน หรือปล่อยว่าง
       } finally {
         setLoading(false);
       }
@@ -47,13 +42,9 @@ export default function ServicesSection() {
     fetchServices();
   }, []);
 
-  // 4. Animation Observer
   useEffect(() => {
     if (loading || services.length === 0) return;
-
-    // Reset refs ให้ตรงจำนวน
     cardsRef.current = cardsRef.current.slice(0, services.length);
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -65,17 +56,14 @@ export default function ServicesSection() {
       },
       { threshold: 0.12 }
     );
-
     if (headerRef.current) observer.observe(headerRef.current);
-
     cardsRef.current.forEach((card, i) => {
       if (card) {
-        card.classList.remove("animate-fade-up"); // Reset ก่อน
+        card.classList.remove("animate-fade-up");
         card.style.animationDelay = `${i * 0.1}s`;
         observer.observe(card);
       }
     });
-
     return () => observer.disconnect();
   }, [loading, services]);
 
@@ -96,16 +84,12 @@ export default function ServicesSection() {
                 OUR SERVICES
               </span>
             </div>
-
             <h2 className="text-5xl md:text-7xl font-black text-zinc-900 tracking-tighter leading-[0.9]">
               บริการ<br />
-              <span className="text-[#DAA520] drop-shadow-sm inline-block">
-                ครบวงจร
-              </span>
+              <span className="text-[#DAA520] drop-shadow-sm inline-block">ครบวงจร</span>
               <span className="text-zinc-300 text-6xl md:text-8xl leading-none">.</span>
             </h2>
           </div>
-
           <div className="hidden md:block pb-2 border-l-4 border-zinc-200 pl-6">
             <p className="text-zinc-500 text-sm max-w-xs leading-relaxed font-bold">
               ดูแลคุณทุกขั้นตอน<br />
@@ -115,7 +99,7 @@ export default function ServicesSection() {
         </div>
 
         {/* Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
           {loading ? (
             [...Array(4)].map((_, i) => (
               <div key={i} className="h-80 bg-zinc-50 animate-pulse border border-zinc-100" />
@@ -125,17 +109,13 @@ export default function ServicesSection() {
               <div
                 key={service.id || index}
                 ref={(el) => (cardsRef.current[index] = el)}
-                onMouseEnter={() => setActiveCard(index)}
-                onMouseLeave={() => setActiveCard(null)}
                 className="group relative bg-white border border-zinc-200 hover:border-[#DAA520] transition-all duration-500 flex flex-col h-full opacity-0 hover:-translate-y-2 hover:shadow-[0_20px_40px_-12px_rgba(255,213,5,0.15)] overflow-hidden"
               >
-
                 {/* Image Area */}
                 <div className="relative h-48 bg-zinc-50 flex items-center justify-center overflow-hidden p-6 border-b border-zinc-100">
                   <div className="absolute w-32 h-32 bg-[#DAA520] rounded-full blur-[60px] opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
-
                   <img
-                    src={resolveUrl(service.image_url)} // ใช้ฟังก์ชัน resolveUrl
+                    src={resolveUrl(service.image_url)}
                     alt={service.title}
                     className="relative z-10 w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
                     onError={(e) => { e.target.src = "/images/placeholder.png"; }}
@@ -147,38 +127,37 @@ export default function ServicesSection() {
                   <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity duration-300">
                     <span className="text-4xl font-black text-zinc-200 group-hover:text-[#DAA520]/20">0{index + 1}</span>
                   </div>
-
-                  <h3 className="text-lg font-black text-zinc-900 mb-3 group-hover:text-[#b49503] transition-colors relative z-10">
-                    {service.title}
-                  </h3>
-
-                  <p className="text-sm text-zinc-500 leading-relaxed grow font-medium relative z-10">
-                    {service.description}
-                  </p>
-
+                  <h3 className="text-lg font-black text-zinc-900 mb-3 group-hover:text-[#b49503] transition-colors relative z-10">{service.title}</h3>
+                  <p className="text-sm text-zinc-500 leading-relaxed grow font-medium relative z-10 line-clamp-3">{service.description}</p>
                   <div className="w-8 h-1 bg-zinc-200 mt-6 group-hover:w-full group-hover:bg-[#DAA520] transition-all duration-500" />
                 </div>
-
               </div>
             ))
           )}
         </div>
+
+        {/* ======= ✅ เพิ่มปุ่มลิงก์ไปหน้า Services ตรงนี้ ======= */}
+        <div className="text-center relative z-10">
+          <Link href="/services" className="inline-block group relative">
+            {/* เงาสีเทาด้านหลัง */}
+            <div className="absolute inset-0 bg-zinc-200 transform translate-x-2 translate-y-2 transition-transform group-hover:translate-x-0 group-hover:translate-y-0"></div>
+
+            {/* ตัวปุ่มสีทอง */}
+            <div className="relative bg-[#DAA520] px-14 py-5 text-zinc-900 font-black text-sm uppercase tracking-[0.25em] transition-all duration-300 hover:shadow-xl hover:shadow-[#DAA520]/20 flex items-center gap-4 border-2 border-[#DAA520]">
+              <span>ดูบริการทั้งหมด</span>
+              {/* เลือกเปลี่ยนไอค่อนตรงนี้ครับ */}
+              <Boxes size={20} className="transition-transform duration-500 group-hover:scale-110" />
+            </div>
+          </Link>
+        </div>
+
       </div>
 
       <style jsx>{`
-        @keyframes fadeUp {
-          from {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-up {
-          animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-        }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-up { animation: fadeUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        :global(.animate-spin-slow) { animation: spin 8s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
       `}</style>
     </section>
   );
