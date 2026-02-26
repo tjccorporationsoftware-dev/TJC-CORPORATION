@@ -66,7 +66,7 @@ export default function TeamSection() {
               {/* แสงออร่าสีทองด้านหลังคน */}
               <div className="absolute bottom-0 left-0 w-[140%] h-2/3 bg-[radial-gradient(circle,rgba(255,213,5,0.15)_0%,rgba(255,255,255,0)_70%)] blur-3xl rounded-full"></div>
 
-              <div className="relative z-10 h-full w-full group flex items-end justify-center lg:justify-start">
+              <div className="relative z-10 h-full w-full group flex items-end justify-center left-16 lg:justify-start">
                 <img
                   src={president.img}
                   alt={president.name}
