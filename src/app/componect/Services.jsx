@@ -117,7 +117,6 @@ export default function ServicesSection() {
         {/* Cards Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {loading ? (
-            // Skeleton Loading (แสดงกล่องว่างๆ ระหว่างรอ)
             [...Array(4)].map((_, i) => (
               <div key={i} className="h-80 bg-zinc-50 animate-pulse border border-zinc-100" />
             ))
