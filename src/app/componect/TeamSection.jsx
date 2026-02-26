@@ -59,29 +59,21 @@ export default function TeamSection() {
 
         <div className="container mx-auto px-6 lg:px-12 relative z-10 h-full">
           <div className="grid lg:grid-cols-12 gap-8 h-full items-end">
-
-            {/* --- ส่วนที่ 1: รูปคน (ย้ายมาอยู่ซ้าย) --- */}
             <div ref={imageRef} className="lg:col-span-5 relative h-125 lg:h-full w-full flex items-end justify-center lg:justify-start opacity-0 transform -translate-x-20">
 
-              {/* แสงออร่าสีทองด้านหลังคน */}
               <div className="absolute bottom-0 left-0 w-[140%] h-2/3 bg-[radial-gradient(circle,rgba(255,213,5,0.15)_0%,rgba(255,255,255,0)_70%)] blur-3xl rounded-full"></div>
 
-              <div className="relative z-10 h-full w-full group flex items-end justify-center left-16 lg:justify-start">
+              <div className="relative z-10 h-full w-full group flex items-end justify-center left-36 lg:justify-start">
                 <img
                   src={president.img}
                   alt={president.name}
-                  // ปรับตำแหน่งรูปเล็กน้อยให้ชิดซ้ายสวยงาม
+
                   className="h-[95%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_20px_50px_rgba(0,0,0,0.2)] transition-transform duration-1000 group-hover:scale-105 lg:ml-[-5%]"
                 />
               </div>
             </div>
-
-
-            {/* --- ส่วนที่ 2: ข้อความ (ย้ายมาอยู่ขวา) --- */}
-            {/* เพิ่ม lg:pl-12 เพื่อเว้นระยะห่างจากรูป */}
             <div ref={textRef} className="lg:col-span-7 pb-20 lg:pb-28 lg:pl-12 opacity-0 transform translate-x-20">
 
-              {/* Tag */}
               <div className="inline-flex items-center gap-3 px-5 py-2 bg-zinc-900 border-l-4 border-[#DAA520] mb-8 shadow-xl">
                 <span className="w-2 h-2 rounded-full bg-[#DAA520] animate-ping"></span>
                 <span className="text-[#DAA520] font-black tracking-[0.25em] uppercase text-xs">
