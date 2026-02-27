@@ -90,14 +90,16 @@ export default function Navbar() {
                                 <img src="/images/logo.png" alt="TJC" className="w-16 h-16 object-contain" />
                             </div>
                         </div>
-                        <div className="flex flex-col border-l border-zinc-600 pl-4 whitespace-nowrap">
-                            <span
-                                className="font-black text-2xl leading-none tracking-tighter uppercase bg-gradient-to-r from-zinc-900 via-zinc-800 to-[#DAA520] bg-clip-text text-transparent py-0.5 drop-shadow-[0_0_2px_rgb(255_255_255/0.9)] drop-shadow-[0_0_6px_rgb(255_255_255/0.5)]"
-                            >
-                                TJC CORPORATION
-                            </span>
+                        <div className="flex flex-col border-l border-zinc-400 pl-4 whitespace-nowrap transition-all duration-300">
+                            <div className="flex items-baseline font-black text-2xl leading-none tracking-tighter uppercase py-0.5">
+                                <span
+                                    className="text-[#DAA520]"
+                                >
+                                    TJC CORPORATION
+                                </span>
+                            </div>
 
-                            <span className="text-[9px] font-bold text-zinc-500 mt-1 uppercase tracking-[0.25em]">
+                            <span className="text-[9px] font-bold text-zinc-200 mt-1 uppercase tracking-[0.25em]">
                                 Established Excellence
                             </span>
                         </div>

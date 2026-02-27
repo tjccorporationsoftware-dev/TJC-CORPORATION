@@ -68,7 +68,7 @@ export default function FloatingPotatoCorner() {
             </div>
 
             {/* ส่วนของวิดีโอตัวการ์ตูน */}
-            <div className="w-32 h-32  drop-shadow-2xl overflow-hidden rounded-full border-4 border-white shadow-xl relative">
+            <div className="w-32 h-32  drop-shadow-2xl overflow-hidden rounded-full border-4 bg-white border-gray-300 shadow-xl relative">
                 <video
                     autoPlay
                     muted
