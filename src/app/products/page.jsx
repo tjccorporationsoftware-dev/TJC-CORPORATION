@@ -33,6 +33,7 @@ const SearchInput = ({ value, onChange }) => {
 function ProductContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
+
   const paramCat = searchParams.get("cat");
   const selectedIdentifier = !paramCat || paramCat === "undefined" ? "all" : paramCat;
 
@@ -64,13 +65,13 @@ function ProductContent() {
         const [catRes, prodRes, partnerRes] = await Promise.all([
           fetch(`${API_BASE_URL}/api/product-categories`),
           fetch(`${API_BASE_URL}/api/products`),
-          fetch(`${API_BASE_URL}/api/partner-logos`) // ดึง API
+          fetch(`${API_BASE_URL}/api/partner-logos`), // ดึง API
         ]);
 
         const [cats, prods, partners] = await Promise.all([
           catRes.json(),
           prodRes.json(),
-          partnerRes.ok ? partnerRes.json() : [] // กัน Error ถ้า API มีปัญหา
+          partnerRes.ok ? partnerRes.json() : [], // กัน Error ถ้า API มีปัญหา
         ]);
 
         setCategories(cats);
@@ -91,24 +92,57 @@ function ProductContent() {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
+  // ✅ แก้: หา activeCategoryData ให้ match ได้ทั้ง slug / id / title
   const activeCategoryData = useMemo(() => {
     if (selectedIdentifier === "all") return null;
-    return categories.find(
-      (c) => normalize(c.slug) === normalize(selectedIdentifier) || normalize(c.id) === normalize(selectedIdentifier)
-    );
+
+    const needle = normalize(selectedIdentifier);
+
+    return categories.find((c) => {
+      const slug = normalize(c.slug);
+      const id = normalize(c.id);
+      const title = normalize(c.title);
+      return needle === slug || needle === id || needle === title;
+    });
   }, [categories, selectedIdentifier]);
 
+  // ✅ แก้: filter ให้รองรับทั้ง category_slug / category_id / category(title/slug)
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
+      // --- category filter ---
       if (selectedIdentifier !== "all") {
-        if (activeCategoryData) {
-          const prodCat = normalize(product.category);
-          const isMatch = prodCat === normalize(activeCategoryData.title) || prodCat === normalize(activeCategoryData.id);
-          if (!isMatch) return false;
-        }
+        if (!activeCategoryData) return false;
+
+        const selectedSlug = normalize(activeCategoryData.slug);
+        const selectedId = normalize(activeCategoryData.id);
+        const selectedTitle = normalize(activeCategoryData.title);
+
+        // Product fields (รองรับหลายรูปแบบจาก API)
+        const prodCatSlug = normalize(product.category_slug);
+        const prodCatId = normalize(product.category_id);
+
+        // บางระบบเก็บ product.category เป็น "title" หรือ "slug" หรือ "id"
+        const prodCategory = normalize(product.category);
+
+        const isMatch =
+          (selectedSlug && prodCatSlug && prodCatSlug === selectedSlug) ||
+          (selectedId && prodCatId && prodCatId === selectedId) ||
+          (selectedTitle && prodCategory && prodCategory === selectedTitle) ||
+          (selectedSlug && prodCategory && prodCategory === selectedSlug) ||
+          (selectedId && prodCategory && prodCategory === selectedId);
+
+        if (!isMatch) return false;
       }
-      if (selectedSubcategory !== "all" && normalize(product.subcategory) !== normalize(selectedSubcategory)) return false;
-      if (debouncedSearchQuery.trim() !== "" && !normalize(product.name).includes(normalize(debouncedSearchQuery))) return false;
+
+      // --- subcategory filter ---
+      if (selectedSubcategory !== "all" && normalize(product.subcategory) !== normalize(selectedSubcategory))
+        return false;
+
+      // --- search filter ---
+      if (debouncedSearchQuery.trim() !== "" && !normalize(product.name).includes(normalize(debouncedSearchQuery)))
+        return false;
+
+      // --- active ---
       return product.is_active !== false;
     });
   }, [products, selectedIdentifier, activeCategoryData, selectedSubcategory, debouncedSearchQuery]);
@@ -161,7 +195,6 @@ function ProductContent() {
       {/* --- CONTENT SECTION --- */}
       <div className="max-w-400 mx-auto px-6 lg:px-12 mb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 xl:gap-8 items-start">
-
           {/* 1. CATEGORY BOX */}
           <div className="col-span-1 w-full">
             <div className="bg-white border border-zinc-200 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.06)] flex flex-col rounded-none">
@@ -183,11 +216,17 @@ function ProductContent() {
                   {categories.map((cat) => (
                     <div key={cat.id} className="flex flex-col gap-1">
                       <CategoryLink
-                        active={normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)}
+                        active={
+                          normalize(selectedIdentifier) === normalize(cat.slug) ||
+                          normalize(selectedIdentifier) === normalize(cat.id) ||
+                          normalize(selectedIdentifier) === normalize(cat.title)
+                        }
                         label={cat.title}
-                        onClick={() => handleCategoryChange(cat.slug || cat.id)}
+                        onClick={() => handleCategoryChange(cat.slug || cat.id || cat.title)}
                       />
-                      {(normalize(selectedIdentifier) === normalize(cat.slug) || normalize(selectedIdentifier) === normalize(cat.id)) &&
+                      {(normalize(selectedIdentifier) === normalize(cat.slug) ||
+                        normalize(selectedIdentifier) === normalize(cat.id) ||
+                        normalize(selectedIdentifier) === normalize(cat.title)) &&
                         cat.subcategories?.length > 0 && (
                           <div className="my-1 ml-4 pl-3 border-l-2 border-[#DAA520]/30 flex flex-col gap-1">
                             {cat.subcategories.map((sub, idx) => (
@@ -220,23 +259,16 @@ function ProductContent() {
             </div>
           ) : (
             filteredProducts.map((product) => (
-              <MemoizedProductCard
-                key={product.id}
-                product={product}
-                getImageUrl={getImageUrl}
-              />
+              <MemoizedProductCard key={product.id} product={product} getImageUrl={getImageUrl} />
             ))
           )}
         </div>
       </div>
 
       {/* ✅ PARTNER SLIDER จาก API */}
-      {partnerLogos.length > 0 && (
-        <PartnerSlider logos={partnerLogos} resolveUrl={getImageUrl} />
-      )}
+      {partnerLogos.length > 0 && <PartnerSlider logos={partnerLogos} resolveUrl={getImageUrl} />}
 
       <FooterContact />
-
     </div>
   );
 }
@@ -251,9 +283,7 @@ function CategoryLink({ active, label, onClick }) {
           : "text-zinc-500 hover:text-zinc-900 font-bold hover:bg-zinc-50"
         }`}
     >
-      <span className="flex-1 leading-snug wrap-break-word whitespace-normal">
-        {label}
-      </span>
+      <span className="flex-1 leading-snug wrap-break-word whitespace-normal">{label}</span>
       {active && <i className="bx bxs-circle text-[5px] mt-1.5 shrink-0" />}
     </button>
   );
@@ -263,9 +293,11 @@ const MemoizedProductCard = memo(function ProductCard({ product, getImageUrl }) 
   return (
     <div className="group relative w-full transform transition-transform duration-300 hover:z-10">
       <div className="relative flex flex-col bg-white transition-all duration-500 group-hover:-translate-y-2 border border-zinc-200 group-hover:border-[#DAA520] group-hover:shadow-[0_20px_40px_-12px_rgba(255,213,5,0.2)] overflow-hidden">
-
         {/* Image Section */}
-        <Link href={`/products/${product.id}`} className="block relative h-75 overflow-hidden bg-zinc-50/80 items-center justify-center p-8 cursor-pointer">
+        <Link
+          href={`/products/${product.id}`}
+          className="block relative h-75 overflow-hidden bg-zinc-50/80 items-center justify-center p-8 cursor-pointer"
+        >
           <div className="absolute w-40 h-40 bg-[#DAA520] rounded-full blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity duration-500 will-change-opacity" />
           <div className="absolute top-4 left-4 z-20">
             <span className="block bg-[#DAA520] px-3 py-1 text-[10px] font-black tracking-widest uppercase text-zinc-900 shadow-sm">
@@ -336,16 +368,20 @@ const PartnerSlider = ({ logos, resolveUrl }) => {
       </div>
 
       <style jsx>{`
-          @keyframes scroll {
-             0% { transform: translateX(0); }
-             100% { transform: translateX(-50%); }
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
           }
-          .animate-infinite-scroll {
-             animation: scroll 40s linear infinite;
-             display: flex;
-             width: max-content;
+          100% {
+            transform: translateX(-50%);
           }
-       `}</style>
+        }
+        .animate-infinite-scroll {
+          animation: scroll 40s linear infinite;
+          display: flex;
+          width: max-content;
+        }
+      `}</style>
     </section>
   );
 };
@@ -357,7 +393,7 @@ const PartnerLogo = ({ logo, resolveUrl }) => (
       src={resolveUrl(logo.image_url)}
       alt={logo.name}
       className="w-full h-full object-contain"
-      onError={(e) => e.target.src = `https://placehold.co/150x80?text=${logo.name}`}
+      onError={(e) => (e.target.src = `https://placehold.co/150x80?text=${logo.name}`)}
     />
   </div>
 );
