@@ -98,7 +98,7 @@ export default function CertificationsSection() {
              
             </h2>
             
-            <p className="text-zinc-500 text-lg font-medium leading-relaxed">
+            <p className="text-zinc-500 text-[20px] font-medium leading-relaxed">
               เรามุ่งมั่นยกระดับคุณภาพธุรกิจด้วยมาตรฐานระดับสากล <br className="hidden md:block"/>
               เพื่อความมั่นใจสูงสุดของคู่ค้าและลูกค้าทุกท่าน
             </p>
@@ -154,7 +154,7 @@ export default function CertificationsSection() {
                           
                           <div className="w-12 h-1 bg-zinc-200 rounded-full mb-4 mx-auto md:mx-0 group-hover:bg-[#DAA520] transition-colors duration-500"></div>
 
-                          <p className="text-sm text-zinc-500 leading-relaxed font-medium mb-6">
+                          <p className="text-[18px] text-zinc-500 leading-relaxed font-medium mb-6">
                             {cert.description || "ได้รับการรับรองมาตรฐานคุณภาพระดับสากล เพื่อการันตีความเชี่ยวชาญและความน่าเชื่อถือในการดำเนินธุรกิจ"}
                           </p>
 

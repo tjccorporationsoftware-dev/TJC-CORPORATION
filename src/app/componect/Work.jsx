@@ -100,19 +100,19 @@ export default function WorkJSFast() {
           transition={{ duration: 1 }}
           className="flex flex-col md:flex-row md:items-end md:justify-between gap-8"
         >
-          <div className="max-w-3xl">
+          <div className="max-w-5xl pl-">
             <div className="flex items-center gap-3 mb-6">
               <span className="bg-zinc-50 text-zinc-800 border-l-4 border-[#DAA520] font-bold tracking-[0.2em] uppercase text-[15px] px-4 py-1.5 shadow-sm">
                 EXECUTIVE SHOWCASE
               </span>
             </div>
 
-            <h2 className="text-5xl md:text-7xl font-black bg-linear-to-r from-zinc-900 to-[#DAA520] bg-clip-text text-transparent tracking-tighter leading-[0.9]">
+            <h2 className="text-5xl md:text-7xl font-black bg-linear-to-r from-zinc-900 to-[#DAA520] bg-clip-text  tracking-tighter leading-[0.9]">
               สินค้าและ<br />
               <span className="bg-linear-to-r from-zinc-900 to-[#DAA520] bg-clip-text text-transparent">
                 โซลูชันของเรา
               </span>
-              <span className="text-zinc-300 text-6xl md:text-8xl leading-none">.</span>
+              
             </h2>
           </div>
 
@@ -144,7 +144,7 @@ export default function WorkJSFast() {
                     className="relative z-10 max-w-full max-h-full object-contain transition-transform duration-500 ease-out group-hover:scale-110 group-hover:rotate-2"
                   />
                   <div className="absolute top-4 left-4 z-20">
-                    <span className="block bg-[#DAA520] px-3 py-1 text-[10px] font-black tracking-widest uppercase text-zinc-900 shadow-sm">
+                    <span className="block bg-[#DAA520] px-3 py-1 text-[15px] font-black tracking-widest uppercase text-zinc-900 shadow-sm">
                       {p.category || "SELECT"}
                     </span>
                   </div>
@@ -161,7 +161,7 @@ export default function WorkJSFast() {
                     <a
                       href="https://lin.ee/twVZIGO"
                       target="_blank"
-                      className="group/btn relative overflow-hidden flex items-center justify-between w-full pl-4 pr-2 py-3 bg-white border border-zinc-200 text-zinc-900 font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:bg-zinc-900 hover:border-zinc-900 hover:text-white"
+                      className="group/btn relative overflow-hidden flex items-center justify-between w-full pl-4 pr-2 py-3 bg-white border border-zinc-200 text-zinc-900 font-bold text-[15px] uppercase tracking-wider transition-all duration-300 hover:bg-zinc-900 hover:border-zinc-900 hover:text-white"
                     >
                       <span className="relative z-10">
                         สอบถามข้อมูล
@@ -184,7 +184,7 @@ export default function WorkJSFast() {
           className="inline-block group relative"
         >
           <div className="absolute inset-0 bg-zinc-200 transform translate-x-2 translate-y-2 transition-transform group-hover:translate-x-0 group-hover:translate-y-0"></div>
-          <div className="relative bg-[#DAA520] px-14 py-5 text-zinc-900 font-black text-sm uppercase tracking-[0.25em] transition-all duration-300 hover:shadow-xl hover:shadow-[#DAA520]/20 flex items-center gap-4 border-2 border-[#DAA520]">
+          <div className="relative bg-[#DAA520] px-14 py-5 text-zinc-900 font-black text-[20px] uppercase tracking-[0.25em] transition-all duration-300 hover:shadow-xl hover:shadow-[#DAA520]/20 flex items-center gap-4 border-2 border-[#DAA520]">
             <span>ดูสินค้าทั้งหมด</span>
             <i className="bx bx-grid-alt text-xl" />
           </div>

@@ -38,7 +38,7 @@ export default function Hero() {
                         loop
                         muted
                         playsInline
-                        className="absolute inset-0 w-full h-full object-cover object-top"
+                        className="absolute inset-0 w-full h-400 object-cover object-top"
                     >
                         <source src="/video/1112.mp4" type="video/mp4" />
                     </video>
@@ -99,7 +99,7 @@ export default function Hero() {
                                 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5"}
                             `}
                         >
-                           คอร์ปอเรชั่น จำกัด<span className="text-[#DAA520]">.</span>
+                           คอร์ปอเรชั่น จำกัด
                         </h1>
 
                         {/* DESCRIPTION */}

@@ -87,7 +87,6 @@ export default function ServicesSection() {
             <h2 className="text-5xl md:text-7xl font-black bg-linear-to-r from-zinc-900 to-[#DAA520] bg-clip-text text-transparent tracking-tighter leading-[0.9]">
               บริการ<br />
               <span className="bg-linear-to-r from-zinc-900 to-[#DAA520] bg-clip-text text-transparent">ครบวงจร</span>
-              <span className="text-zinc-300 text-6xl md:text-8xl leading-none">.</span>
             </h2>
           </div>
           <div className="hidden md:block pb-2 border-l-4 border-zinc-200 pl-6">
@@ -143,7 +142,7 @@ export default function ServicesSection() {
             <div className="absolute inset-0 bg-zinc-200 transform translate-x-2 translate-y-2 transition-transform group-hover:translate-x-0 group-hover:translate-y-0"></div>
 
             {/* ตัวปุ่มสีทอง */}
-            <div className="relative bg-[#DAA520] px-14 py-5 text-zinc-900 font-black text-sm uppercase tracking-[0.25em] transition-all duration-300 hover:shadow-xl hover:shadow-[#DAA520]/20 flex items-center gap-4 border-2 border-[#DAA520]">
+            <div className="relative bg-[#DAA520] px-14 py-5 text-zinc-900 font-black text-[20px] uppercase tracking-[0.25em] transition-all duration-300 hover:shadow-xl hover:shadow-[#DAA520]/20 flex items-center gap-4 border-2 border-[#DAA520]">
               <span>ดูบริการทั้งหมด</span>
               {/* เลือกเปลี่ยนไอค่อนตรงนี้ครับ */}
               <Boxes size={20} className="transition-transform duration-500 group-hover:scale-110" />

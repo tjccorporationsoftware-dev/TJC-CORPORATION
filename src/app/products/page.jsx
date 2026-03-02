@@ -180,7 +180,6 @@ function ProductContent() {
               <span className="bg-linear-to-r from-zinc-900 via-zinc-800 to-[#DAA520] bg-clip-text text-transparent">
                 PRODUCT CATALOG
               </span>
-              <span className="text-[#DAA520]">.</span>
             </h1>
             <p className="mt-8 lg:mt-12 text-zinc-500 font-medium text-lg lg:text-xl leading-relaxed italic border-l-4 border-[#DAA520] pl-6 lg:pl-10 max-w-2xl">
               ศูนย์รวมนวัตกรรมไอทีและครุภัณฑ์สำนักงานระดับมาตรฐานสากล เพื่อขับเคลื่อนธุรกิจของคุณสู่ความสำเร็จ
@@ -277,7 +276,7 @@ function CategoryLink({ active, label, onClick }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-4 py-3 text-[12px] uppercase tracking-wide transition-all duration-300 flex items-start justify-between gap-2 rounded-lg
+      className={`w-full text-left px-4 py-3 text-[15px] uppercase tracking-wide transition-all duration-300 flex items-start justify-between gap-2 rounded-lg
         ${active
           ? "bg-zinc-100 text-[#b49503] font-black border-l-4 border-[#DAA520]"
           : "text-zinc-500 hover:text-zinc-900 font-bold hover:bg-zinc-50"
@@ -300,7 +299,7 @@ const MemoizedProductCard = memo(function ProductCard({ product, getImageUrl }) 
         >
           <div className="absolute w-40 h-40 bg-[#DAA520] rounded-full blur-[60px] opacity-20 group-hover:opacity-40 transition-opacity duration-500 will-change-opacity" />
           <div className="absolute top-4 left-4 z-20">
-            <span className="block bg-[#DAA520] px-3 py-1 text-[10px] font-black tracking-widest uppercase text-zinc-900 shadow-sm">
+            <span className="block bg-[#DAA520] px-3 py-1 text-[15px] font-black tracking-widest uppercase text-zinc-900 shadow-sm">
               {product.category || "SELECT"}
             </span>
           </div>
@@ -350,8 +349,8 @@ const PartnerSlider = ({ logos, resolveUrl }) => {
       <div className="absolute top-0 right-0 w-32 h-full bg-linear-to-l from-zinc-50 to-transparent z-10 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-6 text-center mb-10 bg-linear-to-r from-zinc-900 via-zinc-800 to-[#DAA520] bg-clip-text text-transparent ">
-        <span className="text-[10px] font-black text-[#DAA520] tracking-[0.3em] uppercase">Trusted Partners</span>
-        <h3 className="text-2xl font-black text-zinc-900 uppercase mt-2">พาร์ทเนอร์ของเรา</h3>
+        <span className="text-[15px] font-black text-[#DAA520] tracking-[0.3em] uppercase">Trusted Partners</span>
+        <h3 className="text-3xl font-black text-zinc-900 uppercase mt-2">พาร์ทเนอร์ของเรา</h3>
       </div>
 
       <div className="flex w-full overflow-hidden">

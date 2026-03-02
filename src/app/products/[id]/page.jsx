@@ -118,15 +118,15 @@ export default function ProductDetailPage() {
                         )}
 
                         <div className="mb-10">
-                            <h3 className="text-xs font-black text-zinc-400 uppercase tracking-widest mb-4">
+                            <h3 className="text-xl font-black text-zinc-400 uppercase tracking-widest mb-4">
                                 รายละเอียดเพิ่มเติม (Description)
                             </h3>
-                            <div className="text-zinc-600 leading-relaxed font-medium text-base">
+                            <div className="text-zinc-600 text-[15px] leading-relaxed font-medium text-base">
                                 {product.description || "รายละเอียดเพิ่มเติม กรุณาติดต่อฝ่ายขาย"}
                             </div>
                         </div>
 
-                        <div className="pt-6 border-t border-zinc-100 space-y-3">
+                        <div className="pt-6 border-t text-[20px] border-zinc-100 space-y-3">
                             {product.subcategory && <MetaInfo label="Subcategory" value={product.subcategory} />}
                         </div>
 

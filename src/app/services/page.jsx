@@ -68,7 +68,7 @@ function ServicesContent() {
   return (
     <>
       {/* ======= HERO SECTION ======= */}
-      <div className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+      <div className="relative pt-32 pb-10 lg:pt-48 lg:pb-12 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute top-0 right-0 w-[45%] h-full bg-zinc-50 -skew-x-12 transform origin-top-right opacity-40" />
           <div className="absolute bottom-0 left-0 w-[35%] h-[40%] bg-[#DAA520]/5 -skew-x-12 transform origin-bottom-left" />
@@ -82,8 +82,7 @@ function ServicesContent() {
           </div>
 
           <h1 className="text-4xl lg:text-7xl font-bold text-zinc-900 tracking-tighter leading-[1.1] mb-10 max-w-5xl mx-auto uppercase">
-            Integrated Services<br />
-            & Innovations<span className="text-[#DAA520]">.</span>
+            Integrated Services<br /> & Innovations
           </h1>
 
           <p className="text-zinc-500 text-lg lg:text-2xl max-w-3xl mx-auto font-medium leading-relaxed">
@@ -93,7 +92,7 @@ function ServicesContent() {
       </div>
 
       {/* ======= TABS ======= */}
-      <div className="sticky top-16 z-30 mb-12">
+      <div className="sticky top-1 z-30 mb-12">
         <div className="max-w-min mx-auto bg-white/90 backdrop-blur-xl border border-zinc-100 p-2 rounded-full shadow-[0_10px_30px_-10px_rgba(0,0,0,0.05)]">
           <div className="flex items-center gap-1 overflow-x-auto no-scrollbar px-1">
             {categories.map((cat) => (
@@ -101,7 +100,7 @@ function ServicesContent() {
                 key={cat}
                 onClick={() => handleCategoryChange(cat)}
                 className={`
-                  relative px-6 py-2.5 rounded-full text-[13px] font-bold uppercase tracking-wider transition-all duration-500 whitespace-nowrap
+                  relative px-6 py-2.5 rounded-full text-[15px] font-bold uppercase tracking-wider transition-all duration-500 whitespace-nowrap
                   ${activeCategory === cat
                     ? "bg-zinc-900/90 text-[#DAA520] shadow-md"
                     : "text-zinc-400 hover:text-zinc-900 hover:bg-zinc-50"}
@@ -173,11 +172,11 @@ function ServicesPage() {
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <h2 className="text-4xl lg:text-7xl font-bold text-zinc-900 mb-8 tracking-tighter leading-none uppercase">
             Let's build the future <br className="hidden md:block" />
-            together<span className="text-[#DAA520] text-5xl md:text-8xl">.</span>
+            togethe
           </h2>
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <a href="https://lin.ee/twVZIGO" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-3 px-14 py-5 bg-[#DAA520] text-zinc-900 font-bold text-[12px] uppercase tracking-[0.3em] rounded-sm transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1">
-              Line Official <i className="bx bxl-line text-xl" />
+            <a href="https://lin.ee/twVZIGO" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-3 px-14 py-5 bg-[#DAA520] text-zinc-900 font-bold text-[15px] uppercase tracking-[0.3em] rounded-sm transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1">
+              Line Official 
             </a>
           </div>
         </div>

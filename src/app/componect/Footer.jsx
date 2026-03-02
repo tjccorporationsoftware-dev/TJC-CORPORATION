@@ -75,10 +75,10 @@ export default function FooterContact() {
             variants={fadeUp}
             className="rounded-2xl p-5 bg-zinc-700/60 backdrop-blur-xl border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.35)] h-full"
           >
-            <h3 className="text-lg md:text-xl font-extrabold bg-linear-to-r from-[#DAA520] via-[#DAA520] to-white bg-clip-text text-transparent">
+            <h3 className="text-[20px] md:text-[25px] font-extrabold bg-linear-to-r from-[#DAA520] via-[#DAA520] to-white bg-clip-text text-transparent">
               {d.heading || "ติดต่อเรา"}
             </h3>
-            <p className="mt-1 text-zinc-200 text-sm">
+            <p className="mt-1 text-zinc-200 text-xl">
               {d.description || "สอบถามข้อมูล ขอใบเสนอราคา หรือติดต่อทีมงานของเราได้ทุกเวลา"}
             </p>
 
@@ -123,7 +123,7 @@ export default function FooterContact() {
 
             {addressLines.length > 0 && (
               <div className="mt-3 p-3 rounded-xl bg-zinc-800/60 border border-white/10">
-                <p className="text-[11px] text-zinc-300 mb-2 font-semibold">ข้อมูลที่อยู่ & ใบกำกับภาษี</p>
+                <p className="text-[15px] text-zinc-300 mb-2 font-semibold">ข้อมูลที่อยู่ & ใบกำกับภาษี</p>
                 <div className="text-sm text-white flex flex-col gap-1.5">
                   {addressLines.map((line, i) => {
                     const label = addressLabels[i];
