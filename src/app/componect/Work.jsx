@@ -102,7 +102,7 @@ export default function WorkJSFast() {
         >
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-6">
-              <span className="bg-zinc-50 text-zinc-800 border-l-4 border-[#DAA520] font-bold tracking-[0.2em] uppercase text-[11px] px-4 py-1.5 shadow-sm">
+              <span className="bg-zinc-50 text-zinc-800 border-l-4 border-[#DAA520] font-bold tracking-[0.2em] uppercase text-[15px] px-4 py-1.5 shadow-sm">
                 EXECUTIVE SHOWCASE
               </span>
             </div>
@@ -117,7 +117,7 @@ export default function WorkJSFast() {
           </div>
 
           <div className="hidden md:block pb-2 border-l-4 border-zinc-200 pl-6">
-            <p className="text-zinc-500 text-sm max-w-xs leading-relaxed font-bold">
+            <p className="text-zinc-500 text-xl max-w-xs leading-relaxed font-bold">
               คัดสรรนวัตกรรมคุณภาพสูง<br />
               <span className="text-zinc-900">เพื่อยกระดับธุรกิจของคุณให้เหนือกว่า</span>
             </p>

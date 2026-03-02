@@ -64,7 +64,7 @@ export default function Hero() {
                     >
                         {/* TAG: สไตล์พรีเมียมพื้นดำตัวทอง */}
                         <div className="inline-flex items-center gap-3 mb-8 reveal-on-scroll">
-                            <span className=" text-[#DAA520] font-black tracking-[0.25em] uppercase text-[10px] px-4 py-2 shadow-xl">
+                            <span className=" text-[#DAA520] font-black tracking-[0.25em] uppercase text-[15px] px-4 py-2 shadow-xl">
                                 INNOVATING YOUR FUTURE
                             </span>
                         </div>

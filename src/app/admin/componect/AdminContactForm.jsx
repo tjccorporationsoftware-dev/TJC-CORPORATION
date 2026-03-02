@@ -15,16 +15,8 @@ function clearSession() {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
 }
-function resolveUrl(u) {
-  if (!u) return "";
-  if (u.startsWith("/uploads/") || u.startsWith("uploads/")) {
-    const cleanPath = u.startsWith("/") ? u : `/${u}`;
-    return `${API_BASE}${cleanPath}`;
-  }
-  return u;
-}
 
-/* ------------------ UI Components (Theme Consistent) ------------------ */
+/* ------------------ UI Components ------------------ */
 
 function ToastContainer({ toasts, removeToast }) {
   return (
@@ -92,8 +84,6 @@ function TextareaField({ label, value, onChange, rows = 4, placeholder = "" }) {
 /* ------------------ Page ------------------ */
 export default function AdminContactPage() {
   const router = useRouter();
-
-  // Toast logic compatible with the theme
   const [toasts, setToasts] = useState([]);
   const pushToast = (type, title, message) => {
     const id = Date.now();
@@ -104,13 +94,20 @@ export default function AdminContactPage() {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [uploading, setUploading] = useState(false);
 
+  // ✅ เพิ่มตัวแปรสำหรับ 6 บรรทัด
   const [form, setForm] = useState({
     heading: "", description: "", email: "", phone: "",
     line_label: "", line_url: "", line_icon_url: "",
-    address_lines_text: "", open_hours: "",
+    open_hours: "",
     map_title: "", map_embed_url: "",
+    // Address parts (6 lines)
+    addr_company: "",     // 1. ชื่อบริษัท
+    addr_house: "",       // 2. บ้านเลขที่
+    addr_subdistrict: "", // 3. ตำบล
+    addr_district: "",    // 4. อำเภอ
+    addr_province: "",    // 5. จังหวัด
+    addr_taxid: ""        // 6. เลขผู้เสียภาษี
   });
 
   useEffect(() => {
@@ -122,7 +119,6 @@ export default function AdminContactPage() {
     setToken(t);
   }, [router]);
 
-  // Load existing data
   useEffect(() => {
     if (!token) return;
     async function load() {
@@ -136,6 +132,8 @@ export default function AdminContactPage() {
         }
         const json = await res.json();
         const d = json?.data || {};
+        const lines = Array.isArray(d.address_lines) ? d.address_lines : [];
+
         setForm({
           heading: d.heading || "",
           description: d.description || "",
@@ -144,10 +142,17 @@ export default function AdminContactPage() {
           line_label: d.line_label || "",
           line_url: d.line_url || "",
           line_icon_url: d.line_icon_url || "",
-          address_lines_text: Array.isArray(d.address_lines) ? d.address_lines.join("\n") : "",
           open_hours: d.open_hours || "",
           map_title: d.map_title || "",
           map_embed_url: d.map_embed_url || "",
+
+          // Map address lines to 6 inputs
+          addr_company: lines[0] || "",
+          addr_house: lines[1] || "",
+          addr_subdistrict: lines[2] || "",
+          addr_district: lines[3] || "",
+          addr_province: lines[4] || "",
+          addr_taxid: lines[5] || "",
         });
       } catch (e) {
         pushToast("error", "โหลดข้อมูลไม่สำเร็จ");
@@ -163,7 +168,17 @@ export default function AdminContactPage() {
   async function onSave() {
     try {
       setSaving(true);
-      const address_lines = form.address_lines_text.split("\n").map((s) => s.trim()).filter(Boolean);
+
+      // ✅ รวม 6 ช่องเป็น Array ตามลำดับ
+      const address_lines = [
+        form.addr_company,
+        form.addr_house,
+        form.addr_subdistrict,
+        form.addr_district,
+        form.addr_province,
+        form.addr_taxid
+      ].map(s => s.trim()).filter(Boolean); // ตัดช่องว่างออก (ถ้าไม่ได้กรอกช่องไหน บรรทัดนั้นจะหายไป)
+
       const payload = { data: { ...form, heading: form.heading.trim(), address_lines } };
 
       const res = await fetch(`${API_BASE}/api/site/contact`, {
@@ -189,7 +204,6 @@ export default function AdminContactPage() {
       <ToastContainer toasts={toasts} removeToast={(id) => setToasts(prev => prev.filter(t => t.id !== id))} />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
-        {/* Header */}
         <div className="mb-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-2 mb-2">
@@ -212,7 +226,6 @@ export default function AdminContactPage() {
               disabled={saving}
               className="px-5 py-2 rounded-lg bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition-all shadow-sm active:scale-95 disabled:opacity-70 flex items-center gap-2"
             >
-              {saving && <svg className="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>}
               {saving ? "กำลังบันทึก..." : "บันทึกการเปลี่ยนแปลง"}
             </button>
           </div>
@@ -225,8 +238,6 @@ export default function AdminContactPage() {
           </div>
         ) : (
           <div className="space-y-8">
-
-            {/* Section 1: Branding & Hours */}
             <SectionShell title="ข้อมูลทั่วไป" subtitle="หัวข้อหลักและเวลาทำการ">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <InputField label="หัวข้อหลัก (Heading)" value={form.heading} onChange={(v) => setField("heading", v)} placeholder="เช่น ติดต่อเรา" />
@@ -237,7 +248,6 @@ export default function AdminContactPage() {
               </div>
             </SectionShell>
 
-            {/* Section 2: Contact Channels */}
             <SectionShell title="ช่องทางการติดต่อ" subtitle="อีเมล, เบอร์โทรศัพท์ และโซเชียลมีเดีย">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 <InputField label="อีเมล" value={form.email} onChange={(v) => setField("email", v)} placeholder="example@company.com" />
@@ -247,10 +257,53 @@ export default function AdminContactPage() {
               </div>
             </SectionShell>
 
-            {/* Section 3: Address & Map */}
+            {/* ✅ ส่วนที่อยู่: 6 ช่องแยกตามที่ขอ */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
-              <SectionShell title="ที่อยู่บริษัท" subtitle="รายละเอียดที่ตั้งสำนักงาน">
-                <TextareaField label="ที่อยู่ (กด Enter เพื่อขึ้นบรรทัดใหม่)" value={form.address_lines_text} onChange={(v) => setField("address_lines_text", v)} rows={8} placeholder={"บริษัท...\nเลขที่...\nถนน..."} />
+              <SectionShell title="ที่อยู่บริษัท" subtitle="กรอกข้อมูลแยกบรรทัดตามลำดับ">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-4">
+                    <InputField
+                      label="1. ชื่อบริษัท / หน่วยงาน"
+                      value={form.addr_company}
+                      onChange={(v) => setField("addr_company", v)}
+                      placeholder="เช่น บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด (สำนักงานใหญ่)"
+                    />
+                    <InputField
+                      label="2. บ้านเลขที่ / หมู่ที่"
+                      value={form.addr_house}
+                      onChange={(v) => setField("addr_house", v)}
+                      placeholder="เช่น เลขที่ 311/1 หมู่ 4"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <InputField
+                      label="3. ตำบล / แขวง"
+                      value={form.addr_subdistrict}
+                      onChange={(v) => setField("addr_subdistrict", v)}
+                      placeholder="เช่น ตำบลคำน้ำแซบ"
+                    />
+                    <InputField
+                      label="4. อำเภอ / เขต"
+                      value={form.addr_district}
+                      onChange={(v) => setField("addr_district", v)}
+                      placeholder="เช่น อำเภอวารินชำราบ"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 gap-4">
+                    <InputField
+                      label="5. จังหวัด / รหัสไปรษณีย์"
+                      value={form.addr_province}
+                      onChange={(v) => setField("addr_province", v)}
+                      placeholder="เช่น จังหวัดอุบลราชธานี 34190"
+                    />
+                    <InputField
+                      label="6. เลขประจำตัวผู้เสียภาษี"
+                      value={form.addr_taxid}
+                      onChange={(v) => setField("addr_taxid", v)}
+                      placeholder="เช่น เลขประจำตัวผู้เสียภาษี 0325563000203"
+                    />
+                  </div>
+                </div>
               </SectionShell>
 
               <SectionShell
@@ -271,12 +324,10 @@ export default function AdminContactPage() {
                     placeholder="https://www.google.com/maps/embed?pb=..."
                     hint="คัดลอกเฉพาะค่าในเครื่องหมายคำพูดของ src='...'"
                   />
-
                   <div className="mt-4">
-                    <span className="text-sm font-semibold text-slate-700 block mb-2">ตัวอย่างแผนที่</span>
                     {canPreviewMap ? (
                       <div className="rounded-lg overflow-hidden border border-slate-200 bg-slate-50 h-64 shadow-sm">
-                        <iframe src={form.map_embed_url} width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" title="Map Preview" />
+                        <iframe src={form.map_embed_url} width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" />
                       </div>
                     ) : (
                       <div className="rounded-lg border-2 border-dashed border-slate-200 bg-slate-50 flex items-center justify-center h-64 text-slate-400 text-sm">

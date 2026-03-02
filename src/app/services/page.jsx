@@ -76,7 +76,7 @@ function ServicesContent() {
 
         <div className="max-w-7xl mx-auto px-6 lg:px-12 text-center animate-soft-fade">
           <div className="flex items-center justify-center gap-3 mb-8">
-            <span className="text-[#DAA520] font-bold tracking-[0.25em] uppercase text-[10px] px-5 py-2 shadow-sm">
+            <span className="text-[#DAA520] font-bold tracking-[0.25em] uppercase text-[15px] px-5 py-2 shadow-sm">
               EXECUTIVE SERVICES
             </span>
           </div>

@@ -88,7 +88,7 @@ export default function CertificationsSection() {
           <div ref={headerRef} className="text-center mb-20 opacity-0 max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 bg-white border border-zinc-200 rounded-full px-4 py-1 mb-6 shadow-sm">
                <i className="bx bxs-certification text-[#DAA520] text-lg"></i>
-               <span className="text-zinc-600 font-bold tracking-widest uppercase text-[10px]">
+               <span className="text-zinc-600 font-bold tracking-widest uppercase text-[15px]">
                   Official Certifications
                </span>
             </div>

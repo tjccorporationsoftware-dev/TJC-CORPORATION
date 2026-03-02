@@ -52,7 +52,7 @@ export default function CustomersCarousel({ speed = 40 }) {
 
                     <div className="flex items-center justify-center gap-3 mb-6">
 
-                        <span className=" text-[#DAA520] font-black tracking-[0.25em] uppercase text-[10px] px-4 py-2 shadow-lg">
+                        <span className=" text-[#DAA520] font-black tracking-[0.25em] uppercase text-[15px] px-4 py-2 shadow-lg">
                             Trusted Partners
                         </span>
                     </div>

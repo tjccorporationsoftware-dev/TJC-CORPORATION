@@ -35,7 +35,7 @@ export default function AboutHeader() {
 
               {/* Executive Tag: ใช้ความหนา 700 และระยะห่างตัวอักษรกว้างตามหน้า Hero */}
               <div className="flex items-center gap-3 mb-10">
-                <span className="text-[#DAA520] font-bold tracking-[0.25em] uppercase text-[10px] px-5 py-2 shadow-lg">
+                <span className="text-[#DAA520] font-bold tracking-[0.25em] uppercase text-[15px] px-5 py-2 shadow-lg">
                   Established Excellence
                 </span>
               </div>
@@ -81,7 +81,7 @@ export default function AboutHeader() {
 
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-[#DAA520] font-black text-[9px] tracking-[0.3em] uppercase">// VISION</span>
+                <span className="text-[#DAA520] font-black text-[13px] tracking-[0.3em] uppercase"> VISION</span>
               </div>
 
               <h3 className="text-3xl lg:text-4xl font-black mb-4 tracking-tighter uppercase">
@@ -110,7 +110,7 @@ export default function AboutHeader() {
 
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-4">
-                <span className="text-zinc-400 font-black text-[9px] tracking-[0.3em] uppercase">// MISSION</span>
+                <span className="text-zinc-400 font-black text-[13px] tracking-[0.3em] uppercase">MISSION</span>
               </div>
 
               <h3 className="text-3xl lg:text-4xl font-black mb-4 tracking-tighter uppercase text-zinc-900">
@@ -144,7 +144,7 @@ export default function AboutHeader() {
           <div className="text-center mb-24 reveal-on-scroll fade-up">
             <div className="flex items-center justify-center gap-3 mb-6">
               <div className="h-px w-8 bg-[#DAA520]/30" />
-              <span className="text-[10px] font-black text-[#DAA520] tracking-[0.5em] uppercase">
+              <span className="text-[15px] font-black text-[#DAA520] tracking-[0.5em] uppercase">
                 Our Core Philosophy
               </span>
               <div className="h-px w-8 bg-[#DAA520]/30" />
@@ -209,7 +209,7 @@ export default function AboutHeader() {
 
                     {/* Text Content */}
                     <div className="grow">
-                      <h4 className="text-[10px] font-black text-[#DAA520] uppercase tracking-[0.4em] mb-4 opacity-80">
+                      <h4 className="text-[15px] font-black text-[#DAA520] uppercase tracking-[0.4em] mb-4 opacity-80">
                         {val.title}
                       </h4>
 

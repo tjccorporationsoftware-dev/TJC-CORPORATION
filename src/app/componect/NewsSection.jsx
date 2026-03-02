@@ -194,7 +194,7 @@ export default function NewsSlider() {
                 <div className="text-center max-w-4xl mx-auto mb-24">
 
                     <div className="flex items-center justify-center gap-3 mb-4">
-                        <span className="text-zinc-400 font-bold tracking-[0.3em] uppercase text-xs">
+                        <span className="text-zinc-400 font-bold tracking-[0.3em] uppercase text-[15px]">
                             Update Stories
                         </span>
                     </div>
