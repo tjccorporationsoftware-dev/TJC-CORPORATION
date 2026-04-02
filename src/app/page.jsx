@@ -15,6 +15,7 @@ import ReviewsSection from "./componect/ReviewsSection";
 import NewsSection from "./componect/NewsSection";
 import CustomersCarousel from "./componect/CustomersCarousel";
 import QuotationBuilder from "./componect/QuotationBuilder";
+import WelcomeLoader from "./componect/WelcomeLoader";
 
 
 

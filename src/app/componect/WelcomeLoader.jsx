@@ -42,7 +42,7 @@ export default function WelcomeLoader({ onFinished }) {
                         alt="TJC Corporation Team"
                         fill
                         priority
-                        className="object-cover object-top" // object-cover จะทำให้ภาพเต็มพื้นที่เสมอโดยไม่เสียสัดส่วน
+                        className="object-cover object-top"
                         sizes="100vw"
                     />
                 </div>

@@ -11,6 +11,46 @@ import FooterContact from "../componect/Footer";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const normalize = (val) => String(val || "").toLowerCase().trim();
 
+// --- 🚀 NEW: SCROLL TO TOP COMPONENT ---
+const ScrollToTopBtn = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      // แสดงปุ่มเมื่อเลื่อนลงมาเกิน 400px
+      if (window.scrollY > 400) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  return (
+    <button
+      onClick={scrollToTop}
+      className={`fixed bottom-8 right-52 z-[99] flex h-14 w-14 items-center justify-center bg-zinc-900 border border-[#DAA520]/30 shadow-2xl transition-all duration-500 group
+        ${isVisible ? "translate-y-0 opacity-100" : "translate-y-16 opacity-0 pointer-events-none"}
+        hover:bg-[#DAA520] hover:border-white`}
+    >
+      <div className="flex flex-col items-center">
+        <i className="bx bx-chevron-up text-3xl text-[#DAA520] group-hover:text-white transition-colors leading-none" />
+        <span className="text-[8px] font-black text-white group-hover:text-zinc-900 uppercase tracking-tighter -mt-1">TOP</span>
+      </div>
+    </button>
+  );
+};
+
 // ✅ Search Input Component
 const SearchInput = ({ value, onChange }) => {
   return (
@@ -39,7 +79,7 @@ function ProductContent() {
 
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
-  const [partnerLogos, setPartnerLogos] = useState([]); // ✅ State สำหรับโลโก้พาร์ทเนอร์
+  const [partnerLogos, setPartnerLogos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedSubcategory, setSelectedSubcategory] = useState("all");
 
@@ -61,17 +101,16 @@ function ProductContent() {
     const fetchData = async () => {
       try {
         setLoading(true);
-        // ✅ ดึงข้อมูลพร้อมกันทั้ง Categories, Products และ Partner Logos
         const [catRes, prodRes, partnerRes] = await Promise.all([
           fetch(`${API_BASE_URL}/api/product-categories`),
           fetch(`${API_BASE_URL}/api/products`),
-          fetch(`${API_BASE_URL}/api/partner-logos`), // ดึง API
+          fetch(`${API_BASE_URL}/api/partner-logos`),
         ]);
 
         const [cats, prods, partners] = await Promise.all([
           catRes.json(),
           prodRes.json(),
-          partnerRes.ok ? partnerRes.json() : [], // กัน Error ถ้า API มีปัญหา
+          partnerRes.ok ? partnerRes.json() : [],
         ]);
 
         setCategories(cats);
@@ -92,12 +131,9 @@ function ProductContent() {
     router.push(`?${params.toString()}`, { scroll: false });
   };
 
-  // ✅ แก้: หา activeCategoryData ให้ match ได้ทั้ง slug / id / title
   const activeCategoryData = useMemo(() => {
     if (selectedIdentifier === "all") return null;
-
     const needle = normalize(selectedIdentifier);
-
     return categories.find((c) => {
       const slug = normalize(c.slug);
       const id = normalize(c.id);
@@ -106,43 +142,28 @@ function ProductContent() {
     });
   }, [categories, selectedIdentifier]);
 
-  // ✅ แก้: filter ให้รองรับทั้ง category_slug / category_id / category(title/slug)
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      // --- category filter ---
       if (selectedIdentifier !== "all") {
         if (!activeCategoryData) return false;
-
         const selectedSlug = normalize(activeCategoryData.slug);
         const selectedId = normalize(activeCategoryData.id);
         const selectedTitle = normalize(activeCategoryData.title);
-
-        // Product fields (รองรับหลายรูปแบบจาก API)
         const prodCatSlug = normalize(product.category_slug);
         const prodCatId = normalize(product.category_id);
-
-        // บางระบบเก็บ product.category เป็น "title" หรือ "slug" หรือ "id"
         const prodCategory = normalize(product.category);
-
         const isMatch =
           (selectedSlug && prodCatSlug && prodCatSlug === selectedSlug) ||
           (selectedId && prodCatId && prodCatId === selectedId) ||
           (selectedTitle && prodCategory && prodCategory === selectedTitle) ||
           (selectedSlug && prodCategory && prodCategory === selectedSlug) ||
           (selectedId && prodCategory && prodCategory === selectedId);
-
         if (!isMatch) return false;
       }
-
-      // --- subcategory filter ---
       if (selectedSubcategory !== "all" && normalize(product.subcategory) !== normalize(selectedSubcategory))
         return false;
-
-      // --- search filter ---
       if (debouncedSearchQuery.trim() !== "" && !normalize(product.name).includes(normalize(debouncedSearchQuery)))
         return false;
-
-      // --- active ---
       return product.is_active !== false;
     });
   }, [products, selectedIdentifier, activeCategoryData, selectedSubcategory, debouncedSearchQuery]);
@@ -163,9 +184,12 @@ function ProductContent() {
     );
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900 selection:bg-[#DAA520]/30 pb-0 overflow-hidden">
+    <div className="min-h-screen bg-white text-zinc-900 selection:bg-[#DAA520]/30 pb-0 overflow-hidden relative">
       <Navbar />
       <FloatingPotatoCorner />
+      
+      {/* ✅ Scroll To Top Button */}
+      <ScrollToTopBtn />
 
       {/* --- BACKGROUND DECOR --- */}
       <div className="pointer-events-none fixed inset-0 -z-10">
@@ -194,7 +218,6 @@ function ProductContent() {
       {/* --- CONTENT SECTION --- */}
       <div className="max-w-400 mx-auto px-6 lg:px-12 mb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 xl:gap-8 items-start">
-          {/* 1. CATEGORY BOX */}
           <div className="col-span-1 w-full">
             <div className="bg-white border border-zinc-200 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.06)] flex flex-col rounded-none">
               <div className="px-6 py-5 bg-zinc-900 flex items-center justify-between shrink-0">
@@ -250,7 +273,6 @@ function ProductContent() {
             </div>
           </div>
 
-          {/* 2. PRODUCT CARDS */}
           {filteredProducts.length === 0 ? (
             <div className="col-span-1 sm:col-span-2 lg:col-span-2 xl:col-span-4 min-h-60 flex flex-col items-center justify-center bg-zinc-50 border-2 border-dashed border-zinc-200">
               <i className="bx bx-package text-5xl text-zinc-300 mb-4" />
@@ -264,7 +286,6 @@ function ProductContent() {
         </div>
       </div>
 
-      {/* ✅ PARTNER SLIDER จาก API */}
       {partnerLogos.length > 0 && <PartnerSlider logos={partnerLogos} resolveUrl={getImageUrl} />}
 
       <FooterContact />
@@ -292,7 +313,6 @@ const MemoizedProductCard = memo(function ProductCard({ product, getImageUrl }) 
   return (
     <div className="group relative w-full transform transition-transform duration-300 hover:z-10">
       <div className="relative flex flex-col bg-white transition-all duration-500 group-hover:-translate-y-2 border border-zinc-200 group-hover:border-[#DAA520] group-hover:shadow-[0_20px_40px_-12px_rgba(255,213,5,0.2)] overflow-hidden">
-        {/* Image Section */}
         <Link
           href={`/products/${product.id}`}
           className="block relative h-75 overflow-hidden bg-zinc-50/80 items-center justify-center p-8 cursor-pointer"
@@ -314,7 +334,6 @@ const MemoizedProductCard = memo(function ProductCard({ product, getImageUrl }) 
           />
         </Link>
 
-        {/* Content Section */}
         <div className="p-6 flex flex-col relative bg-white border-t border-zinc-100">
           <Link href={`/products/${product.id}`}>
             <h3 className="text-lg font-black text-zinc-900 mb-3 leading-tight group-hover:text-[#b49503] transition-colors line-clamp-2 uppercase h-[2.8em] cursor-pointer">
@@ -341,7 +360,6 @@ const MemoizedProductCard = memo(function ProductCard({ product, getImageUrl }) 
   );
 });
 
-// ✅ PARTNER SLIDER COMPONENT (เชื่อมต่อข้อมูลจริง)
 const PartnerSlider = ({ logos, resolveUrl }) => {
   return (
     <section className="py-16 bg-zinc-50 border-t border-zinc-100 overflow-hidden relative">
@@ -355,7 +373,6 @@ const PartnerSlider = ({ logos, resolveUrl }) => {
 
       <div className="flex w-full overflow-hidden">
         <div className="flex animate-infinite-scroll gap-16 items-center pr-16">
-          {/* Render วนลูป 4 รอบเพื่อให้ไร้รอยต่อ */}
           {[...Array(4)].map((_, i) => (
             <React.Fragment key={i}>
               {logos.map((logo) => (
@@ -368,12 +385,8 @@ const PartnerSlider = ({ logos, resolveUrl }) => {
 
       <style jsx>{`
         @keyframes scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
         .animate-infinite-scroll {
           animation: scroll 40s linear infinite;
@@ -386,7 +399,6 @@ const PartnerSlider = ({ logos, resolveUrl }) => {
 };
 
 const PartnerLogo = ({ logo, resolveUrl }) => (
-  // ✅ แก้ไข: นำ grayscale และ opacity-50 ออก เพื่อให้แสดงสีปกติ
   <div className="relative w-36 h-20 shrink-0 transition-all duration-500 cursor-pointer">
     <img
       src={resolveUrl(logo.image_url)}
