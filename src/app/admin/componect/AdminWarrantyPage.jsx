@@ -98,7 +98,11 @@ export default function AdminWarrantyPage() {
         heading: "",
         general_terms: [],
         exclusion_heading: "",
-        exclusions: []
+        exclusions: [],
+        // ✅ เพิ่มฟิลด์ใหม่สำหรับส่วนขั้นตอนการเคลม
+        claim_heading: "",
+        claim_steps: [],
+        claim_notes: ""
     });
 
     useEffect(() => {
@@ -128,7 +132,11 @@ export default function AdminWarrantyPage() {
                     heading: d.heading || "นโยบายการรับประกันสินค้า",
                     general_terms: Array.isArray(d.general_terms) ? d.general_terms : [],
                     exclusion_heading: d.exclusion_heading || "เงื่อนไขที่อยู่นอกเหนือการรับประกัน",
-                    exclusions: Array.isArray(d.exclusions) ? d.exclusions : []
+                    exclusions: Array.isArray(d.exclusions) ? d.exclusions : [],
+                    // ✅ ดึงข้อมูลส่วนเคลมจาก Backend
+                    claim_heading: d.claim_heading || "ขั้นตอนส่งเรื่องพิจารณาการใช้รับประกันสินค้า",
+                    claim_steps: Array.isArray(d.claim_steps) ? d.claim_steps : [],
+                    claim_notes: d.claim_notes || ""
                 });
             } catch (e) {
                 pushToast("error", "โหลดข้อมูลไม่สำเร็จ");
@@ -179,6 +187,18 @@ export default function AdminWarrantyPage() {
     const removeExclusion = (idx) => {
         const newEx = form.exclusions.filter((_, i) => i !== idx);
         setForm({ ...form, exclusions: newEx });
+    };
+
+    // ✅ Helper Functions สำหรับขั้นตอนการเคลม
+    const addClaimStep = () => setForm({ ...form, claim_steps: [...form.claim_steps, ""] });
+    const updateClaimStep = (idx, val) => {
+        const newSteps = [...form.claim_steps];
+        newSteps[idx] = val;
+        setForm({ ...form, claim_steps: newSteps });
+    };
+    const removeClaimStep = (idx) => {
+        const newSteps = form.claim_steps.filter((_, i) => i !== idx);
+        setForm({ ...form, claim_steps: newSteps });
     };
 
     return (
@@ -336,6 +356,71 @@ export default function AdminWarrantyPage() {
                             </SectionShell>
 
                         </div>
+
+                        {/* ✅ Section 4: ขั้นตอนส่งเรื่องพิจารณา (ส่วนที่เพิ่มใหม่) */}
+                        <SectionShell
+                            title="ขั้นตอนส่งเรื่องพิจารณาการใช้รับประกันสินค้า"
+                            subtitle="ข้อปฏิบัติและขั้นตอนการเคลม"
+                            right={
+                                <button onClick={addClaimStep} className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-100 px-3 py-1.5 rounded-md font-bold hover:bg-emerald-100 transition-colors flex items-center gap-1">
+                                    <i className="bx bx-plus"></i> เพิ่มขั้นตอน
+                                </button>
+                            }
+                        >
+                            <div className="space-y-8">
+                                <div className="w-full md:w-1/2">
+                                    <InputField
+                                        label="หัวข้อขั้นตอนการเคลม"
+                                        value={form.claim_heading}
+                                        onChange={v => setForm({ ...form, claim_heading: v })}
+                                        placeholder="เช่น ขั้นตอนส่งเรื่องพิจารณาการใช้รับประกันสินค้า"
+                                    />
+                                </div>
+
+                                <div className="space-y-4">
+                                    <label className="text-sm font-semibold text-slate-700 block border-b border-slate-100 pb-2">ลำดับขั้นตอน (กรอกรายละเอียด หรือ ข้อข้อย่อย 1.1, 1.2 ได้เลยในกล่องข้อความ)</label>
+                                    {form.claim_steps.map((step, idx) => (
+                                        <div key={idx} className="flex gap-4 items-start group">
+                                            <div className="mt-1 w-8 h-8 flex items-center justify-center bg-slate-100 text-slate-600 rounded-full font-bold text-sm shrink-0">
+                                                {idx + 1}
+                                            </div>
+                                            <div className="flex-1">
+                                                <textarea
+                                                    value={step}
+                                                    onChange={e => updateClaimStep(idx, e.target.value)}
+                                                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none transition-all text-sm resize-none"
+                                                    rows={3}
+                                                    placeholder={`รายละเอียดขั้นตอนที่ ${idx + 1}...`}
+                                                />
+                                            </div>
+                                            <button
+                                                onClick={() => removeClaimStep(idx)}
+                                                className="mt-1 w-9 h-9 flex items-center justify-center bg-white border border-slate-200 text-slate-400 rounded-lg hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all shrink-0 shadow-sm"
+                                                title="ลบ"
+                                            >
+                                                <i className="bx bx-trash text-lg"></i>
+                                            </button>
+                                        </div>
+                                    ))}
+                                    {form.claim_steps.length === 0 && (
+                                        <div className="text-center py-6 text-slate-400 text-sm border-2 border-dashed border-slate-200 rounded-lg">
+                                            ยังไม่มีรายการขั้นตอน
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="pt-4 border-t border-slate-100">
+                                    <TextareaField
+                                        label="หมายเหตุเพิ่มเติมด้านล่าง (Footer Notes)"
+                                        value={form.claim_notes}
+                                        onChange={v => setForm({ ...form, claim_notes: v })}
+                                        rows={4}
+                                        placeholder="เช่น ทั้งนี้ บริษัทฯ ขอสงวนสิทธิ์ที่จะพิจารณาชี้ขาด... หรือคำเตือนการถ่ายวิดีโอ"
+                                    />
+                                </div>
+                            </div>
+                        </SectionShell>
+
                     </div>
                 )}
             </div>

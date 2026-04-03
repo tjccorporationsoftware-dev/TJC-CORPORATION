@@ -29,7 +29,6 @@ export default function CompanyLandingPage() {
         <ScrollToTop />
         <Hero />
         <AboutHeader />
-
         <Work />
         <Services />
         <CertificationsSection />

@@ -1,11 +1,30 @@
 "use client";
 import { useEffect, useRef } from "react";
+import { Zap, Users, ShieldCheck } from "lucide-react"; // ✅ นำเข้าไอคอน Lucide
 
 export default function CoreValues() {
   const values = [
-    { title: "นวัตกรรม", desc: "กล้าคิด กล้าทำสิ่งใหม่ ๆ เพื่อสร้างคุณค่า" },
-    { title: "ความร่วมมือ", desc: "ทำงานเป็นทีมอย่างแข็งแกร่งเพื่อผลลัพธ์ที่ดีที่สุด" },
-    { title: "คุณภาพ", desc: "มุ่งมั่นสร้างงานคุณภาพและมาตรฐานระดับสูง" },
+    {
+      number: "01",
+      engTitle: "INNOVATION",
+      icon: Zap, // ✅ ใช้ไอคอน Zap สำหรับนวัตกรรม
+      title: "นวัตกรรม",
+      desc: "กล้าคิด กล้าทำสิ่งใหม่ ๆ เพื่อสร้างคุณค่า"
+    },
+    {
+      number: "02",
+      engTitle: "COLLABORATION",
+      icon: Users, // ✅ ใช้ไอคอน Users สำหรับความร่วมมือ
+      title: "ความร่วมมือ",
+      desc: "ทำงานเป็นทีมอย่างแข็งแกร่งเพื่อผลลัพธ์ที่ดีที่สุด"
+    },
+    {
+      number: "03",
+      engTitle: "QUALITY",
+      icon: ShieldCheck, // ✅ ใช้ไอคอน ShieldCheck สำหรับคุณภาพ
+      title: "คุณภาพ",
+      desc: "มุ่งมั่นสร้างงานคุณภาพและมาตรฐานระดับสูง"
+    },
   ];
 
   const sectionRef = useRef(null);
@@ -57,12 +76,30 @@ export default function CoreValues() {
             <div
               key={i}
               ref={(el) => (cardRefs.current[i] = el)}
-              className="opacity-0 scale-90 translate-y-10 bg-white border border-gray-200 rounded-3xl shadow p-5 md:p-10 lg:px-5 text-center transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-yellow-50/80 cursor-pointer"
+              className="opacity-0 scale-90 translate-y-10 bg-white border border-gray-200 rounded-3xl shadow p-6 text-center transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:bg-yellow-50/80 cursor-pointer relative"
             >
-              <h4 className="text-xl md:text-2xl lg:text-3xl font-semibold text-yellow-700 mb-4">
+              {/* ✅ เลขอันดับขวาบน เหมือนในรูป */}
+              <div className="text-4xl font-bold text-[#DAA520]/20 absolute top-4 right-4">
+                {item.number}
+              </div>
+
+              {/* ✅ ไอคอนในสี่เหลี่ยมสีดำ ขอบมน เรืองแสง เหมือนในรูป */}
+              <div className="w-20 h-20 rounded-xl bg-black flex center mx-auto mb-6 relative icon-glow overflow-hidden">
+                {/* แสงเรืองแสงชั้นใน */}
+                <div className="absolute inset-0 icon-center-glow" />
+                {/* ไอคอนหลัก Lucide */}
+                <item.icon size={32} className="text-[#DAA520] relative z-10" />
+              </div>
+
+              {/* ✅ ข้อความภาษาอังกฤษ ก่อนหัวข้อภาษาไทย */}
+              <p className="text-[10px] font-black text-[#DAA520] uppercase tracking-[0.2em] mb-2">
+                {item.engTitle}
+              </p>
+
+              <h4 className="text-xl md:text-2xl font-semibold text-[#DAA520] mb-4">
                 {item.title}
               </h4>
-              <p className="text-gray-700  leading-relaxed text-base md:text-lg lg:text-xl">
+              <p className="text-gray-700 leading-relaxed text-sm">
                 {item.desc}
               </p>
             </div>
@@ -70,7 +107,7 @@ export default function CoreValues() {
         </div>
       </div>
 
-      {/* CSS ANIMATIONS */}
+      {/* CSS ANIMATIONS & PSEUDO-ELEMENTS */}
       <style>{`
         .fade-up-big {
           animation: fadeUpBig 1s ease-out forwards;
@@ -80,6 +117,61 @@ export default function CoreValues() {
         }
         .card-anim {
           animation: cardFade 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        /* ✅ CSS สำหรับอนุภาคระยิบระยับ แอนิเมชัน เหมือนในรูป */
+        @keyframes particleAnimation {
+          from { background-position: 0 0; }
+          to { background-position: 200% 200%; }
+        }
+
+        .icon-glow::before {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          background-image: 
+            radial-gradient(1px 1px at 20% 30%, #fff, rgba(0,0,0,0)),
+            radial-gradient(2px 2px at 40% 70%, #fff, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 60% 50%, #fff, rgba(0,0,0,0)),
+            radial-gradient(2px 2px at 80% 90%, #fff, rgba(0,0,0,0)),
+            radial-gradient(1px 1px at 90% 10%, #fff, rgba(0,0,0,0)),
+            radial-gradient(2px 2px at 10% 60%, #fff, rgba(0,0,0,0));
+          background-size: 200% 200%;
+          animation: particleAnimation 10s linear infinite;
+          opacity: 0.8;
+          z-index: 1;
+        }
+
+        /* ✅ CSS สำหรับแสงเรืองแสงสีทอง เหมือนในรูป */
+        .icon-glow::after {
+          content: '';
+          position: absolute;
+          width: 140%;
+          height: 140%;
+          top: -20%;
+          left: -20%;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(218, 165, 32, 0.4) 0%, rgba(218, 165, 32, 0) 70%);
+          filter: blur(15px);
+          z-index: -1;
+        }
+
+        /* แสงเรืองแสงชั้นใน */
+        .icon-center-glow::before {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          border-radius: inherit;
+          background: radial-gradient(circle, rgba(218, 165, 32, 0.8) 0%, rgba(218, 165, 32, 0) 70%);
+          filter: blur(10px);
+          opacity: 0.8;
+          z-index: 1;
         }
 
         @keyframes fadeUpBig {

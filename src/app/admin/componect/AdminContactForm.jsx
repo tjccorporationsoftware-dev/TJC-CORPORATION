@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -16,14 +16,21 @@ function clearSession() {
   localStorage.removeItem("user");
 }
 
+// ✅ แก้ไข resolveUrl ให้ครอบคลุมทุก Path ภาพ
+function resolveUrl(u) {
+  if (!u) return "";
+  if (u.startsWith("http")) return u;
+  if (u.startsWith("/images/")) return u;
+  const cleanPath = u.startsWith("/") ? u : `/${u}`;
+  return `${API_BASE}${cleanPath}`;
+}
+
 /* ------------------ UI Components ------------------ */
-// (ToastContainer, SectionShell, InputField, TextareaField คงเดิมตามที่คุณเขียนไว้)
 function ToastContainer({ toasts, removeToast }) {
   return (
-    <div className="fixed top-6 right-6 z-100 flex flex-col gap-3">
+    <div className="fixed top-6 right-6 z-[100] flex flex-col gap-3">
       {toasts.map((t) => (
-        <div key={t.id} className={`flex items-start gap-3 px-4 py-3 rounded-lg shadow-lg border animate-in slide-in-from-right duration-300 ${t.type === "success" ? "bg-white border-emerald-100 text-emerald-800" : "bg-white border-red-100 text-red-800"
-          }`} style={{ minWidth: "300px", maxWidth: "400px" }}>
+        <div key={t.id} className={`flex items-start gap-3 px-4 py-3 rounded-lg shadow-lg border animate-in slide-in-from-right duration-300 ${t.type === "success" ? "bg-white border-emerald-100 text-emerald-800" : "bg-white border-red-100 text-red-800"}`} style={{ minWidth: "300px", maxWidth: "400px" }}>
           <div className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${t.type === "success" ? "bg-emerald-100 text-emerald-600" : "bg-red-100 text-red-600"}`}>
             {t.type === "success" ? "✓" : "!"}
           </div>
@@ -81,6 +88,32 @@ function TextareaField({ label, value, onChange, rows = 4, placeholder = "" }) {
   );
 }
 
+// ✅ คอมโพเนนต์อัปโหลดรูปภาพ 
+function Dropzone({ disabled, onPick, accept, title = "คลิกเพื่ออัปโหลดรูป", previewUrl }) {
+  const inputRef = useRef(null);
+  return (
+    <div className="relative rounded-xl border-2 border-dashed border-slate-300 bg-slate-50/50 hover:bg-white hover:border-indigo-400 transition-all p-4 flex flex-col items-center text-center cursor-pointer group h-full min-h-[160px] justify-center overflow-hidden" onClick={() => !disabled && inputRef.current?.click()}>
+      {previewUrl ? (
+        <div className="absolute inset-0 p-2 bg-white">
+          <img src={resolveUrl(previewUrl)} className="w-full h-full object-contain" alt="Preview" />
+          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <span className="text-white text-xs font-bold">เปลี่ยนรูป</span>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="mb-2 text-slate-400 group-hover:text-indigo-500 transition-colors">
+            <svg className="w-8 h-8 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+          </div>
+          <p className="font-semibold text-slate-600 text-sm group-hover:text-indigo-600">{title}</p>
+        </>
+      )}
+      {/* ✅ ป้องกัน Click ทับซ้อน (stopPropagation) */}
+      <input ref={inputRef} type="file" accept={accept} onChange={onPick} disabled={disabled} className="hidden" onClick={(e) => e.stopPropagation()} />
+    </div>
+  );
+}
+
 /* ------------------ Page ------------------ */
 export default function AdminContactPage() {
   const router = useRouter();
@@ -94,19 +127,21 @@ export default function AdminContactPage() {
   const [token, setToken] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploadingQR, setUploadingQR] = useState(false);
 
   const [form, setForm] = useState({
     heading: "", description: "", email: "", phone: "",
     line_label: "", line_url: "", line_icon_url: "",
-    facebook_label: "", facebook_url: "", // ✅ เพิ่ม State Facebook
+    line_qr_url: "", // ✅ State สำหรับ QR Code
+    facebook_label: "", facebook_url: "",
     open_hours: "",
     map_title: "", map_embed_url: "",
-    addr_company: "",     // 1. ชื่อบริษัท
-    addr_house: "",       // 2. บ้านเลขที่
-    addr_subdistrict: "", // 3. ตำบล
-    addr_district: "",    // 4. อำเภอ
-    addr_province: "",    // 5. จังหวัด
-    addr_taxid: ""        // 6. เลขผู้เสียภาษี
+    addr_company: "",
+    addr_house: "",
+    addr_subdistrict: "",
+    addr_district: "",
+    addr_province: "",
+    addr_taxid: ""
   });
 
   useEffect(() => {
@@ -141,12 +176,12 @@ export default function AdminContactPage() {
           line_label: d.line_label || "",
           line_url: d.line_url || "",
           line_icon_url: d.line_icon_url || "",
-          facebook_label: d.facebook_label || "", // ✅ ดึงข้อมูล Facebook มาแสดง
-          facebook_url: d.facebook_url || "",     // ✅ ดึงข้อมูล Facebook มาแสดง
+          line_qr_url: d.line_qr_url || "",
+          facebook_label: d.facebook_label || "",
+          facebook_url: d.facebook_url || "",
           open_hours: d.open_hours || "",
           map_title: d.map_title || "",
           map_embed_url: d.map_embed_url || "",
-
           addr_company: lines[0] || "",
           addr_house: lines[1] || "",
           addr_subdistrict: lines[2] || "",
@@ -165,17 +200,38 @@ export default function AdminContactPage() {
 
   const setField = (name, value) => setForm((prev) => ({ ...prev, [name]: value }));
 
+  async function onUploadQR(e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      setUploadingQR(true);
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch(`${API_BASE}/api/upload`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: fd
+      });
+      if (res.status === 401) { router.push("/admin/login"); return; }
+      const json = await res.json();
+      if (res.ok && json.url) {
+        setField("line_qr_url", json.url); // ✅ เก็บ URL ที่ได้ลงฟิลด์
+        pushToast("success", "อัปโหลด QR Code สำเร็จ");
+      }
+    } catch {
+      pushToast("error", "อัปโหลดไม่สำเร็จ");
+    } finally {
+      setUploadingQR(false);
+      if (e.target) e.target.value = ""; // เคลียร์ค่า input
+    }
+  }
+
   async function onSave() {
     try {
       setSaving(true);
-
       const address_lines = [
-        form.addr_company,
-        form.addr_house,
-        form.addr_subdistrict,
-        form.addr_district,
-        form.addr_province,
-        form.addr_taxid
+        form.addr_company, form.addr_house, form.addr_subdistrict,
+        form.addr_district, form.addr_province, form.addr_taxid
       ].map(s => s.trim()).filter(Boolean);
 
       const payload = { data: { ...form, heading: form.heading.trim(), address_lines } };
@@ -214,17 +270,10 @@ export default function AdminContactPage() {
           </div>
 
           <div className="flex gap-3">
-            <button
-              onClick={() => window.location.reload()}
-              className="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-600 font-medium text-sm hover:bg-slate-50 transition-all shadow-sm"
-            >
+            <button onClick={() => window.location.reload()} className="px-4 py-2 rounded-lg border border-slate-300 bg-white text-slate-600 font-medium text-sm hover:bg-slate-50 transition-all shadow-sm">
               รีเฟรช
             </button>
-            <button
-              onClick={onSave}
-              disabled={saving}
-              className="px-5 py-2 rounded-lg bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition-all shadow-sm active:scale-95 disabled:opacity-70 flex items-center gap-2"
-            >
+            <button onClick={onSave} disabled={saving} className="px-5 py-2 rounded-lg bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 transition-all shadow-sm active:scale-95 disabled:opacity-70 flex items-center gap-2">
               {saving ? "กำลังบันทึก..." : "บันทึกการเปลี่ยนแปลง"}
             </button>
           </div>
@@ -248,17 +297,40 @@ export default function AdminContactPage() {
             </SectionShell>
 
             <SectionShell title="ช่องทางการติดต่อ" subtitle="อีเมล, เบอร์โทรศัพท์ และโซเชียลมีเดีย">
-              {/* ✅ ปรับ Grid เป็น 3 คอลัมน์ เพื่อให้ 6 ช่องพอดีและสวยงาม */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <InputField label="อีเมล" value={form.email} onChange={(v) => setField("email", v)} placeholder="example@company.com" />
-                <InputField label="เบอร์โทรศัพท์" value={form.phone} onChange={(v) => setField("phone", v)} placeholder="045-xxx-xxxx" />
-                
-                <InputField label="LINE ID / Label" value={form.line_label} onChange={(v) => setField("line_label", v)} placeholder="@tjcgroup" />
-                <InputField label="LINE URL" value={form.line_url} onChange={(v) => setField("line_url", v)} placeholder="https://lin.ee/..." />
-                
-                {/* ✅ เพิ่มช่อง Facebook */}
-                <InputField label="Facebook ชื่อเพจ" value={form.facebook_label} onChange={(v) => setField("facebook_label", v)} placeholder="TJC Corporation" />
-                <InputField label="Facebook URL" value={form.facebook_url} onChange={(v) => setField("facebook_url", v)} placeholder="https://facebook.com/..." />
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+
+                {/* ข้อมูลพื้นฐาน */}
+                <div className="space-y-6">
+                  <InputField label="อีเมล" value={form.email} onChange={(v) => setField("email", v)} placeholder="example@company.com" />
+                  <InputField label="เบอร์โทรศัพท์" value={form.phone} onChange={(v) => setField("phone", v)} placeholder="045-xxx-xxxx" />
+                  <InputField label="Facebook ชื่อเพจ" value={form.facebook_label} onChange={(v) => setField("facebook_label", v)} placeholder="TJC Corporation" />
+                  <InputField label="Facebook URL" value={form.facebook_url} onChange={(v) => setField("facebook_url", v)} placeholder="https://facebook.com/..." />
+                </div>
+
+                {/* ข้อมูล LINE + QR Code แยก */}
+                <div className="bg-slate-50 border border-slate-200 rounded-xl p-5 space-y-6">
+                  <h3 className="font-bold text-slate-800 text-base">การตั้งค่าแอปพลิเคชัน LINE</h3>
+                  <div className="space-y-4">
+                    <InputField label="LINE ID / ชื่อที่แสดง" value={form.line_label} onChange={(v) => setField("line_label", v)} placeholder="@tjcgroup" />
+                    <InputField label="LINE URL (สำหรับกดลิงก์)" value={form.line_url} onChange={(v) => setField("line_url", v)} placeholder="https://lin.ee/..." />
+                  </div>
+
+                  <div className="pt-4 border-t border-slate-200">
+                    {/* ✅ แก้จาก <label> เป็น <div> เพื่อแก้ปัญหาเด้ง 2 ครั้ง */}
+                    <div className="block space-y-1.5 h-full">
+                      <span className="text-sm font-semibold text-slate-700">อัปโหลดรูปภาพ QR Code</span>
+                      <span className="block text-xs text-slate-500 mb-2">รูประบบจะนำไปแสดงเป็นเมนูสแกนเพิ่มเพื่อนแยกต่างหาก</span>
+                      <Dropzone
+                        disabled={uploadingQR}
+                        accept="image/*"
+                        onPick={onUploadQR}
+                        title={uploadingQR ? "กำลังอัปโหลด..." : "คลิกที่นี่เพื่ออัปโหลด QR Code"}
+                        previewUrl={form.line_qr_url}
+                      />
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </SectionShell>
 

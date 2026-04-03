@@ -374,18 +374,41 @@ export default function AdminProductsPage() {
 
     async function onSaveItem() {
         if (!form.category || !form.name.trim()) return push("warning", "กรุณากรอกข้อมูล", "หมวดหมู่และชื่อสินค้าห้ามว่าง");
+
         try {
             setSavingItem(true);
             const cleanSpecs = (form.specifications || []).filter(s => s.label.trim() || s.value.trim());
-            // ✅ ใช้ Global Link แทน cta_url ส่วนตัว
-            const payload = { ...form, name: form.name.trim(), specifications: cleanSpecs, cta_url: globalLink };
+
+            // ดึง id ออกมาแยกไว้ ป้องกัน Backend นำไปอัปเดตทับ Primary Key
+            const { id, ...restForm } = form;
+
+            const payload = {
+                ...restForm,
+                name: form.name.trim(),
+                // ✅ แก้ไขตรงนี้: บังคับแปลง Array ให้เป็น JSON String ก่อนส่ง!
+                specifications: JSON.stringify(cleanSpecs)
+            };
+
             const method = form.id ? "PATCH" : "POST";
             const url = form.id ? `${API_BASE}/api/products/${form.id}` : `${API_BASE}/api/products`;
-            const res = await fetch(url, { method, headers: headersAuth, body: JSON.stringify(payload) });
+
+            const res = await fetch(url, {
+                method,
+                headers: headersAuth,
+                body: JSON.stringify(payload)
+            });
+
             if (res.status === 401) { router.push("/admin/login"); return; }
-            if (!res.ok) throw new Error();
-            push("success", "บันทึกสำเร็จ"); setEditorOpen(false); loadData();
-        } catch { push("error", "บันทึกไม่สำเร็จ"); } finally { setSavingItem(false); }
+            if (!res.ok) throw new Error("Backend error");
+
+            push("success", "บันทึกสำเร็จ");
+            setEditorOpen(false);
+            loadData();
+        } catch (err) {
+            push("error", "บันทึกไม่สำเร็จ", "เกิดข้อผิดพลาดในการบันทึกข้อมูล");
+        } finally {
+            setSavingItem(false);
+        }
     }
 
     async function onSaveGlobalLink(newLink) {
