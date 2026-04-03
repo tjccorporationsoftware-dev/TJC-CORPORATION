@@ -13,6 +13,7 @@ export default function Navbar() {
     const [mobileMenu, setMobileMenu] = useState(false);
     const [loading, setLoading] = useState(true);
     const [menuData, setMenuData] = useState({ products: [], services: [] });
+    const [contactData, setContactData] = useState(null); // ✅ เพิ่ม State เก็บข้อมูลติดต่อ
     const [openDropdown, setOpenDropdown] = useState(null);
     const [mobileOpen, setMobileOpen] = useState(null);
 
@@ -20,6 +21,7 @@ export default function Navbar() {
 
     useEffect(() => {
         fetchMenu();
+        fetchContact(); // ✅ เรียกดึงข้อมูลติดต่อ
     }, []);
 
     useEffect(() => {
@@ -50,6 +52,19 @@ export default function Navbar() {
         }
     };
 
+    // ✅ ฟังก์ชันดึงข้อมูล LINE / Facebook จาก API
+    const fetchContact = async () => {
+        try {
+            const res = await fetch(`${API_BASE}/api/site/contact`, { cache: "no-store" });
+            if (res.ok) {
+                const json = await res.json();
+                setContactData(json?.data || null);
+            }
+        } catch (error) {
+            console.error("Failed to fetch contact:", error);
+        }
+    };
+
     function goHash(href) {
         setMobileMenu(false);
         setOpenDropdown(null);
@@ -57,7 +72,6 @@ export default function Navbar() {
         router.push(href);
     }
 
-    // ✅ แก้: ส่ง identifier ที่ "เสถียร" (slug > id > title) เพื่อให้หน้า products match ได้แน่นอน
     function goCategory(type, identifier) {
         setMobileMenu(false);
         setOpenDropdown(null);
@@ -73,32 +87,32 @@ export default function Navbar() {
         () => [
             { label: "หน้าแรก", href: "/#", type: "link" },
             { label: "เกี่ยวกับเรา", href: "/#about", type: "link" },
-            { label: "นโยบายการรับประกันสินค้า", href: "/#warranty", type: "link" },
             { label: "สินค้าของเรา", type: "dropdown", key: "products", data: menuData.products },
             { label: "งานบริการ", type: "dropdown", key: "services", data: menuData.services },
             { label: "ติดต่อเรา", href: "/#contact", type: "link" },
+            { label: "การรับประกันสินค้า", href: "/#warranty", type: "link" },
         ],
         [menuData]
     );
 
+    const d = contactData || {};
+
     return (
         <header className="fixed top-0 left-0 w-full z-100 bg-zinc-700 py-3 shadow-2xl">
-            {/* เส้นสีทองด้านล่าง Navbar */}
             <div className="absolute bottom-0 left-0 w-full h-0.5 bg-linear-to-r from-transparent via-[#DAA520] to-transparent" />
 
-            <div className="max-w-7xl mx-auto px-3  ">
-                <div className="flex items-center justify-between h-20 gap-3  ">
+            <div className="max-w-7xl mx-auto px-3">
+                <div className="flex items-center justify-between h-20 gap-3">
                     <Link href="/" className="flex items-center gap-4 group shrink-0">
                         <div className="relative">
-                            <div className="  rounded-[100%] flex items-center justify-center shadow-lg transition-all duration-500 group-hover:-rotate-3 group-hover:scale-105">
-                                <img src="/images/logo.png" alt="TJC" className="w-20 h-20 bg-white rounded-[100%] " />
+                            <div className="rounded-[100%] flex items-center justify-center shadow-lg transition-all duration-500 group-hover:-rotate-3 group-hover:scale-105">
+                                <img src="/images/logo.png" alt="TJC" className="w-20 h-20 bg-white rounded-[100%]" />
                             </div>
                         </div>
                         <div className="flex flex-col border-l border-zinc-400 pl-4 whitespace-nowrap transition-all duration-300">
                             <div className="flex items-baseline font-black text-2xl leading-none tracking-tighter uppercase py-0.5">
                                 <span className="text-[#DAA520]">TJC CORPORATION</span>
                             </div>
-
                             <span className="text-[9px] font-bold text-zinc-200 mt-1 uppercase tracking-[0.25em]">
                                 Established Excellence
                             </span>
@@ -108,7 +122,6 @@ export default function Navbar() {
                     <nav className="hidden lg:flex items-center gap-2" ref={desktopDropdownRef}>
                         {menuConfig.map((item, i) => {
                             const isActive = openDropdown === item.key;
-
                             if (item.type === "dropdown") {
                                 return (
                                     <div
@@ -118,21 +131,13 @@ export default function Navbar() {
                                         onMouseLeave={() => setOpenDropdown(null)}
                                     >
                                         <button
-                                            className={`px-4 py-2 text-base font-bold transition-all duration-300 flex items-center gap-1 rounded-md whitespace-nowrap ${isActive ? "text-[#DAA520] bg-white/5" : "text-zinc-200 hover:text-[#DAA520]"
-                                                }`}
+                                            className={`px-4 py-2 text-base font-bold transition-all duration-300 flex items-center gap-1 rounded-md whitespace-nowrap ${isActive ? "text-[#DAA520] bg-white/5" : "text-zinc-200 hover:text-[#DAA520]"}`}
                                         >
                                             {item.label}
-                                            <i
-                                                className={`bx bx-chevron-down text-xl transition-transform duration-500 ${isActive ? "rotate-180" : "opacity-30"
-                                                    }`}
-                                            />
+                                            <i className={`bx bx-chevron-down text-xl transition-transform duration-500 ${isActive ? "rotate-180" : "opacity-30"}`} />
                                         </button>
 
-                                        {/* Dropdown Panel */}
-                                        <div
-                                            className={`absolute left-0 top-full pt-4 transition-all duration-500 ${isActive ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-4 invisible"
-                                                }`}
-                                        >
+                                        <div className={`absolute left-0 top-full pt-4 transition-all duration-500 ${isActive ? "opacity-100 translate-y-0 visible" : "opacity-0 translate-y-4 invisible"}`}>
                                             <div className="w-72 bg-zinc-900 border border-white/10 shadow-[0_40px_80px_rgba(0,0,0,0.8)] rounded-2xl overflow-hidden p-3 backdrop-blur-xl">
                                                 <button
                                                     onClick={() => goCategory(item.key, "all")}
@@ -173,26 +178,33 @@ export default function Navbar() {
                             );
                         })}
 
-                        {/* Social Buttons */}
+                        {/* Social Buttons (ดึงข้อมูลจาก API) */}
                         <div className="flex items-center gap-3 ml-4 pl-4 border-l border-zinc-600">
-                            <a
-                                href="https://lin.ee/twVZIGO"
-                                target="_blank"
-                                className="w-9 h-9 flex items-center justify-center rounded-lg bg-zinc-900 border border-zinc-800 text-[#DAA520] hover:bg-[#DAA520] hover:text-zinc-950 transition-all duration-500 shadow-xl"
-                            >
-                                <SiLine size={18} />
-                            </a>
-                            <a
-                                href="https://facebook.com/..."
-                                target="_blank"
-                                className="w-9 h-9 flex items-center justify-center rounded-lg bg-zinc-900 border border-zinc-800 text-[#DAA520] hover:bg-[#DAA520] hover:text-zinc-950 transition-all duration-500 shadow-xl"
-                            >
-                                <SiFacebook size={18} />
-                            </a>
+                            {d.line_url && (
+                                <a
+                                    href={d.line_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-9 h-9 flex items-center justify-center rounded-lg bg-zinc-900 border border-zinc-800 text-[#DAA520] hover:bg-[#DAA520] hover:text-zinc-950 transition-all duration-500 shadow-xl"
+                                    title="LINE"
+                                >
+                                    <SiLine size={18} />
+                                </a>
+                            )}
+                            {d.facebook_url && (
+                                <a
+                                    href={d.facebook_url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-9 h-9 flex items-center justify-center rounded-lg bg-zinc-900 border border-zinc-800 text-[#DAA520] hover:bg-[#DAA520] hover:text-zinc-950 transition-all duration-500 shadow-xl"
+                                    title="Facebook"
+                                >
+                                    <SiFacebook size={18} />
+                                </a>
+                            )}
                         </div>
                     </nav>
 
-                    {/* --- MOBILE TOGGLE --- */}
                     <button
                         className="lg:hidden w-11 h-11 flex items-center justify-center text-[#DAA520] bg-white/5 rounded-lg border border-zinc-600 shadow-lg"
                         onClick={() => setMobileMenu(!mobileMenu)}
@@ -203,10 +215,7 @@ export default function Navbar() {
             </div>
 
             {/* --- MOBILE MENU --- */}
-            <div
-                className={`lg:hidden fixed inset-x-0 top-23 bg-zinc-700 shadow-2xl transition-all duration-500 ${mobileMenu ? "max-h-screen opacity-100 py-8" : "max-h-0 opacity-0 overflow-hidden"
-                    }`}
-            >
+            <div className={`lg:hidden fixed inset-x-0 top-23 bg-zinc-700 shadow-2xl transition-all duration-500 ${mobileMenu ? "max-h-screen opacity-100 py-8" : "max-h-0 opacity-0 overflow-hidden"}`}>
                 <nav className="px-8 space-y-6">
                     {menuConfig.map((item, i) => (
                         <div key={i} className="border-b border-white/5 pb-4">
@@ -217,15 +226,9 @@ export default function Navbar() {
                                         className="w-full flex items-center justify-between text-xl font-black text-white tracking-tight"
                                     >
                                         {item.label}
-                                        <i
-                                            className={`bx bx-chevron-down transition-transform duration-500 ${mobileOpen === item.key ? "rotate-180 text-[#DAA520]" : "opacity-20"
-                                                }`}
-                                        />
+                                        <i className={`bx bx-chevron-down transition-transform duration-500 ${mobileOpen === item.key ? "rotate-180 text-[#DAA520]" : "opacity-20"}`} />
                                     </button>
-                                    <div
-                                        className={`overflow-hidden transition-all duration-500 ${mobileOpen === item.key ? "max-h-screen mt-4" : "max-h-0"
-                                            }`}
-                                    >
+                                    <div className={`overflow-hidden transition-all duration-500 ${mobileOpen === item.key ? "max-h-screen mt-4" : "max-h-0"}`}>
                                         <div className="flex flex-col gap-4 pl-6 border-l-2 border-[#DAA520]/40">
                                             <button
                                                 onClick={() => goCategory(item.key, "all")}
@@ -255,21 +258,28 @@ export default function Navbar() {
                             )}
                         </div>
                     ))}
+
+                    {/* Social Icons for Mobile */}
+                    <div className="flex items-center gap-6 pt-4">
+                        {d.line_url && (
+                            <a href={d.line_url} target="_blank" rel="noopener noreferrer" className="text-[#DAA520] hover:text-white transition-colors">
+                                <SiLine size={24} />
+                            </a>
+                        )}
+                        {d.facebook_url && (
+                            <a href={d.facebook_url} target="_blank" rel="noopener noreferrer" className="text-[#DAA520] hover:text-white transition-colors">
+                                <SiFacebook size={24} />
+                            </a>
+                        )}
+                    </div>
                 </nav>
             </div>
 
             <style jsx>{`
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: rgba(218, 165, 32, 0.2);
-          border-radius: 10px;
-        }
-      `}</style>
+                .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+                .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(218, 165, 32, 0.2); border-radius: 10px; }
+            `}</style>
         </header>
     );
 }
