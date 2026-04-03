@@ -32,7 +32,7 @@ export default function CompanyLandingPage() {
         <Work />
         <Services />
         <CertificationsSection />
-        <WarrantyPolicySection />
+        {/* <WarrantyPolicySection /> */}
         <NewsSection />
         <CustomersCarousel />
         <Footer />

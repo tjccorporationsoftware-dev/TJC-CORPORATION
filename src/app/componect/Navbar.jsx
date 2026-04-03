@@ -90,7 +90,7 @@ export default function Navbar() {
             { label: "สินค้าของเรา", type: "dropdown", key: "products", data: menuData.products },
             { label: "งานบริการ", type: "dropdown", key: "services", data: menuData.services },
             { label: "ติดต่อเรา", href: "/#contact", type: "link" },
-            { label: "การรับประกันสินค้า", href: "/#warranty", type: "link" },
+            { label: "การรับประกันสินค้า", href: "/WarrantyPolicySection", type: "link" },
         ],
         [menuData]
     );
