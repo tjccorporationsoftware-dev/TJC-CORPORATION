@@ -115,7 +115,7 @@ function WarrantyContent() {
     return (
         <div className="min-h-screen bg-zinc-50 text-zinc-900 font-(family-name:--font-ibm-plex-thai) selection:bg-[#DAA520]/30 pb-0 overflow-hidden relative">
             <Navbar />
-            <FloatingPotatoCorner />
+            
             <ScrollToTopBtn />
 
             {/* --- BACKGROUND DECOR --- */}
