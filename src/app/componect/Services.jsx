@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import Link from "next/link"; // ✅ เพิ่มการ Import Link
-import { Boxes } from "lucide-react";
+import Link from "next/link";
+import { Boxes, ArrowUpRight } from "lucide-react";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -101,50 +101,66 @@ export default function ServicesSection() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-20">
           {loading ? (
             [...Array(4)].map((_, i) => (
-              <div key={i} className="h-80 bg-zinc-50 animate-pulse border border-zinc-100" />
+              <div key={i} className="h-80 bg-zinc-50 animate-pulse border border-zinc-100 rounded-xl" />
             ))
-          ) : (
-            services.map((service, index) => (
-              <div
-                key={service.id || index}
-                ref={(el) => (cardsRef.current[index] = el)}
-                className="group relative bg-white border border-zinc-200 hover:border-[#DAA520] transition-all duration-500 flex flex-col h-full opacity-0 hover:-translate-y-2 hover:shadow-[0_20px_40px_-12px_rgba(255,213,5,0.15)] overflow-hidden"
-              >
-                {/* Image Area */}
-                <div className="relative h-48 bg-zinc-50 flex items-center justify-center overflow-hidden p-6 border-b border-zinc-100">
-                  <div className="absolute w-32 h-32 bg-[#DAA520] rounded-full blur-[60px] opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
-                  <img
-                    src={resolveUrl(service.image_url)}
-                    alt={service.title}
-                    className="relative z-10 w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
-                    onError={(e) => { e.target.src = "/images/placeholder.png"; }}
-                  />
-                </div>
+          ) : services.length > 0 ? (
+            services.map((service, index) => {
+              const firstImage = service.image_url ? service.image_url.split(",")[0] : null;
 
-                {/* Content Area */}
-                <div className="p-6 flex flex-col grow bg-white relative">
-                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="text-4xl font-black text-zinc-200 group-hover:text-[#DAA520]/20">0{index + 1}</span>
+              return (
+                <Link
+                  key={service.id || index}
+                  href={`/services/${service.id}`}
+                  ref={(el) => (cardsRef.current[index] = el)}
+                  className="group relative bg-white border border-zinc-200 hover:border-[#DAA520] transition-all duration-500 flex flex-col h-full  hover:-translate-y-2 hover:shadow-[0_20px_40px_-12px_rgba(255,213,5,0.15)] overflow-hidden cursor-pointer"
+                >
+                  {/* Image Area */}
+                  <div className="relative h-48 bg-zinc-50 flex items-center justify-center overflow-hidden p-6 border-b border-zinc-100">
+                    <div className="absolute w-32 h-32 bg-[#DAA520] rounded-full blur-[60px] opacity-0 group-hover:opacity-30 transition-opacity duration-500" />
+                    <img
+                      src={resolveUrl(firstImage)}
+                      alt={service.title}
+                      className="relative z-10 w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
+                      onError={(e) => { e.target.src = "/images/placeholder.png"; }}
+                    />
                   </div>
-                  <h3 className="text-lg font-black text-zinc-900 mb-3 group-hover:text-[#b49503] transition-colors relative z-10">{service.title}</h3>
-                  <p className="text-sm text-zinc-500 leading-relaxed grow font-medium relative z-10 line-clamp-3">{service.description}</p>
-                  <div className="w-8 h-1 bg-zinc-200 mt-6 group-hover:w-full group-hover:bg-[#DAA520] transition-all duration-500" />
-                </div>
-              </div>
-            ))
+
+                  {/* Content Area */}
+                  <div className="p-6 flex flex-col grow bg-white relative">
+                    <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                      <span className="text-4xl font-black text-zinc-200 group-hover:text-[#DAA520]/20">0{index + 1}</span>
+                    </div>
+                    <h3 className="text-lg font-black text-zinc-900 mb-3 group-hover:text-[#b49503] transition-colors relative z-10 line-clamp-2">{service.title}</h3>
+                    <p className="text-sm text-zinc-500 leading-relaxed grow font-medium relative z-10 line-clamp-3">{service.description}</p>
+
+                    {/* ลูกเล่นเส้นวิ่งตอน Hover */}
+                    <div className="mt-6 flex flex-col gap-2">
+                      <div className="flex items-center justify-between relative z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                        <span className="text-[10px] font-bold text-[#b49503] uppercase tracking-widest">ดูรายละเอียดเพิ่มเติม</span>
+                        <ArrowUpRight size={16} className="text-[#b49503] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                      </div>
+                      <div className="w-8 h-1 bg-zinc-200 group-hover:w-full group-hover:bg-[#DAA520] transition-all duration-500" />
+                    </div>
+                  </div>
+                </Link>
+              );
+            })
+          ) : (
+            // ✅ แสดงกล่องนี้ถ้าไม่มีข้อมูล (Empty State)
+            <div className="col-span-full py-20 text-center bg-zinc-50 border-2 border-dashed border-zinc-200 rounded-2xl animate-in fade-in duration-500">
+              <Boxes className="mx-auto text-zinc-300 mb-4" size={40} />
+              <h3 className="text-lg font-bold text-zinc-700">ยังไม่มีรายการบริการ</h3>
+              <p className="text-sm text-zinc-500 mt-2">กรุณาเพิ่มข้อมูลบริการใหม่ผ่านระบบหลังบ้าน</p>
+            </div>
           )}
         </div>
 
-        {/* ======= ✅ เพิ่มปุ่มลิงก์ไปหน้า Services ตรงนี้ ======= */}
+        {/* ======= ปุ่มลิงก์ไปหน้า Services ======= */}
         <div className="text-center relative z-10">
           <Link href="/services" className="inline-block group relative">
-            {/* เงาสีเทาด้านหลัง */}
             <div className="absolute inset-0 bg-zinc-200 transform translate-x-2 translate-y-2 transition-transform group-hover:translate-x-0 group-hover:translate-y-0"></div>
-
-            {/* ตัวปุ่มสีทอง */}
             <div className="relative bg-[#DAA520] px-14 py-5 text-zinc-900 font-black text-[20px] uppercase tracking-[0.25em] transition-all duration-300 hover:shadow-xl hover:shadow-[#DAA520]/20 flex items-center gap-4 border-2 border-[#DAA520]">
               <span>ดูบริการทั้งหมด</span>
-              {/* เลือกเปลี่ยนไอค่อนตรงนี้ครับ */}
               <Boxes size={20} className="transition-transform duration-500 group-hover:scale-110" />
             </div>
           </Link>

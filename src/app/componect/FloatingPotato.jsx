@@ -1,23 +1,40 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { X, MapPin, Phone, Mail, Facebook } from "lucide-react";
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
 export default function FloatingPotatoCorner() {
     const [showBubble, setShowBubble] = useState(false);
     const [messageIndex, setMessageIndex] = useState(0);
     const [isFading, setIsFading] = useState(false);
     const [isContactOpen, setIsContactOpen] = useState(false);
+    const [data, setData] = useState(null);
 
     const messages = [
         "ยินดีต้อนรับสู่ TJC Corporation คัดสรรนวัตกรรมเพื่อคุณครับ .",
-        "ตรวจสอบสเปกสินค้าและราคากลางได้ใน Catalog นี้ครับ .",
         "ต้องการใบเสนอราคาสำหรับงานโครงการ ติดต่อเราได้ทันที .",
         "อัปเดตเทคโนโลยีและอุปกรณ์ไอทีล่าสุดเพื่อธุรกิจของคุณ ."
     ];
 
     useEffect(() => {
-        const initialTimer = setTimeout(() => setShowBubble(true), 1500);
+        let alive = true;
+        async function load() {
+            try {
+                const res = await fetch(`${API_BASE}/api/site/contact`, { cache: "no-store" });
+                const json = await res.json();
+                if (alive) setData(json?.data || null);
+            } catch (e) {
+                if (alive) setData(null);
+            }
+        }
+        load();
+        return () => { alive = false; };
+    }, []);
 
+    useEffect(() => {
+        const initialTimer = setTimeout(() => setShowBubble(true), 1500);
         const interval = setInterval(() => {
             if (!isContactOpen) {
                 setIsFading(true);
@@ -27,112 +44,129 @@ export default function FloatingPotatoCorner() {
                 }, 500);
             }
         }, 5000);
-
         return () => {
             clearTimeout(initialTimer);
             clearInterval(interval);
         };
-    }, [isContactOpen]); // ทำงานใหม่เมื่อสถานะ Contact เปลี่ยน
+    }, [isContactOpen]);
+
+    const d = data || {};
+
+    const ContactItem = ({ href, label, icon, color, delay }) => (
+        <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex items-center justify-end gap-4 group pointer-events-auto animate-in fade-in slide-in-from-bottom-5 duration-500 fill-mode-both`}
+            style={{ animationDelay: delay }}
+        >
+            <div className="relative bg-[#333333] text-white px-6 py-2.5 rounded-2xl text-[15px] font-bold shadow-2xl transition-all group-hover:-translate-x-2 group-hover:bg-black">
+                {label}
+                <div className="absolute top-1/2 -right-2 -translate-y-1/2 w-0 h-0 border-t-[7px] border-t-transparent border-l-[10px] border-l-[#333333] border-b-[7px] border-b-transparent group-hover:border-l-black transition-colors"></div>
+            </div>
+            <div className={`w-[56px] h-[56px] ${color} rounded-full flex items-center justify-center text-white shadow-lg transition-all group-hover:scale-110`}>
+                {icon}
+            </div>
+        </a>
+    );
 
     return (
-        <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end pointer-events-none">
+        <div className="fixed bottom-8 right-8 z-[9999] flex flex-col items-end pointer-events-none gap-5">
 
-            {/* --- Bubble Section --- */}
-            <div
-                className={`
-                    mb-4 transition-all duration-700 ease-out transform pointer-events-auto
-                    ${showBubble ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-10 scale-90"}
-                `}
-            >
-                <div className="bg-white/95 backdrop-blur-md border border-zinc-100 p-5 rounded-2xl shadow-[0_20px_50px_-15px_rgba(0,0,0,0.15)] relative w-64 min-h-27.5 flex flex-col justify-center">
+            {/* --- 1. เมนูติดต่อ --- */}
+            {isContactOpen && (
+                <div className="flex flex-col gap-5 mb-2">
+                    {d.map_embed_url && (
+                        <ContactItem
+                            href={d.map_embed_url}
+                            label="ดูแผนที่"
+                            icon={<MapPin size={28} fill="currentColor" />}
+                            color="bg-[#E14B3D]"
+                            delay="0ms"
+                        />
+                    )}
+                    {d.facebook_url && (
+                        <ContactItem
+                            href={d.facebook_url}
+                            label="แชทผ่าน Facebook"
+                            icon={<Facebook size={28} fill="currentColor" />}
+                            color="bg-[#1877F2]"
+                            delay="50ms"
+                        />
+                    )}
+                    {d.line_url && (
+                        <ContactItem
+                            href={d.line_url}
+                            label="แชทผ่าน LINE"
+                            icon={
+                                <svg viewBox="0 0 24 24" width="32" height="32" fill="white">
+                                    <path d="M24 10.304c0-5.23-5.383-9.486-12-9.486-6.617 0-12 4.256-12 9.486 0 4.69 4.27 8.606 10.022 9.362.39.084.92.258 1.054.592.12.302.079.774.038 1.079l-.164 1.002c-.049.303-.24 1.187 1.035.647 1.275-.54 6.879-4.05 9.387-6.932 1.739-1.892 2.628-3.716 2.628-5.75zm-15.54 3.731h-2.14a.375.375 0 01-.375-.375V8.527a.375.375 0 01.375-.375h.5a.375.375 0 01.375.375v4.264h1.265a.375.375 0 01.375.375v.5a.375.375 0 01-.375.375zm3.11 0h-.5a.375.375 0 01-.375-.375V8.527a.375.375 0 01.375-.375h.5a.375.375 0 01.375.375v5.133a.375.375 0 01-.375.375zm5.727 0h-.578a.372.372 0 01-.318-.178l-2.074-3.037v2.84a.375.375 0 01-.375.375h-.5a.375.375 0 01-.375-.375V8.527a.375.375 0 01.375-.375h.578c.127 0 .245.065.318.173l2.074 3.037v-2.835a.375.375 0 01.375-.375h.5a.375.375 0 01.375.375v5.133a.375.375 0 01-.375.375zm3.504-2.115h-1.265v-1.147h1.265a.375.375 0 01.375.375v.4a.375.375 0 01-.375.375zm0-2.148h-1.265V8.897h1.265a.375.375 0 01.375.375v.4a.375.375 0 01-.375.375zm.375 2.523a.375.375 0 01-.375.375h-2.14a.375.375 0 01-.375-.375V8.527a.375.375 0 01.375-.375h2.14a.375.375 0 01.375.375v.4a.375.375 0 01-.375.375h-1.265v1.148h1.265a.375.375 0 01.375.375v.4a.375.375 0 01-.375.375z" />
+                                </svg>
+                            }
+                            color="bg-[#00B900]"
+                            delay="100ms"
+                        />
+                    )}
+                    {d.phone && (
+                        <ContactItem
+                            href={`tel:${d.phone}`}
+                            label="โทรศัพท์"
+                            icon={<Phone size={28} fill="currentColor" />}
+                            color="bg-[#F7941E]"
+                            delay="150ms"
+                        />
+                    )}
+                    {d.email && (
+                        <ContactItem
+                            href={`mailto:${d.email}`}
+                            label="ส่งอีเมล"
+                            icon={<Mail size={28} />}
+                            color="bg-[#4CB0A9]"
+                            delay="200ms"
+                        />
+                    )}
+                </div>
+            )}
 
-                    {/* Header */}
-                    <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                            <span className="h-1.5 w-1.5 rounded-full bg-[#DAA520] animate-pulse" />
-                            <span className="text-[9px] font-black text-[#DAA520] tracking-[0.2em] uppercase opacity-80">
-                                {isContactOpen ? "Contact Us" : "TJC Assistant"}
-                            </span>
+            {/* --- 2. กล่องข้อความต้อนรับ --- */}
+            {!isContactOpen && showBubble && (
+                <div className="mb-3 transition-all duration-700 ease-out transform pointer-events-auto">
+                    <div className="bg-white/95 backdrop-blur-md border border-zinc-100 p-6 rounded-3xl shadow-2xl relative w-72 min-h-[90px] flex flex-col justify-center">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="h-2 w-2 rounded-full bg-[#DAA520] animate-pulse" />
+                            <span className="text-[10px] font-black text-[#DAA520] tracking-widest uppercase">TJC Assistant</span>
                         </div>
-                        {isContactOpen && (
-                            <button onClick={() => setIsContactOpen(false)} className="text-zinc-400 hover:text-zinc-900 transition-colors">
-                                <i className="bx bx-x text-lg"></i>
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Content: สลับระหว่างข้อความปกติ กับ ข้อมูลติดต่อ */}
-                    {!isContactOpen ? (
-                        <p className={`
-                            text-zinc-800 font-bold text-xs leading-relaxed transition-all duration-500
-                            ${isFading ? "opacity-0 -translate-x-2" : "opacity-100 translate-x-0"}
-                        `}>
+                        <p className={`text-zinc-800 font-bold text-sm leading-relaxed transition-all duration-500 ${isFading ? "opacity-0" : "opacity-100"}`}>
                             {messages[messageIndex]}
                         </p>
-                    ) : (
-                        <div className="flex flex-col gap-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
-                            {/* Line Button */}
-                            <a
-                                href="https://lin.ee/kfKx9AW8" // 👈 แก้ Link Line ของคุณที่นี่
-                                target="_blank"
-                                className="flex items-center justify-between bg-[#06C755] text-white p-2.5 rounded-xl hover:brightness-105 transition-all shadow-sm"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <i className="bx bxl-line text-xl"></i>
-                                    <span className="text-xs font-black">@660gvigl</span>
-                                </div>
-                                <i className="bx bx-chevron-right"></i>
-                            </a>
-
-                            {/* Phone Button */}
-                            <a
-                                href="tel:0993613247" // 👈 แก้เบอร์โทรของคุณที่นี่
-                                className="flex items-center justify-between bg-zinc-900 text-[#DAA520] p-2.5 rounded-xl hover:bg-zinc-800 transition-all shadow-sm"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <i className="bx bxs-phone-call text-xl"></i>
-                                    <span className="text-xs font-black">099-361-3247</span>
-                                </div>
-                                <i className="bx bx-chevron-right text-white/50"></i>
-                            </a>
-                        </div>
-                    )}
-
-                    {/* หางของกล่องข้อความ */}
-                    <div className="absolute -bottom-2 right-10 w-4 h-4 bg-white border-r border-b border-zinc-100 rotate-45" />
+                        <div className="absolute -bottom-2 right-12 w-5 h-5 bg-white border-r border-b border-zinc-100 rotate-45" />
+                    </div>
                 </div>
-            </div>
+            )}
 
-            {/* --- Avatar Section (Video) --- */}
+            {/* --- 3. ปุ่มหลัก (ขยายเป็น w-28 h-28) --- */}
             <button
                 onClick={() => setIsContactOpen(!isContactOpen)}
                 className={`
-                    group pointer-events-auto relative w-32 h-32 overflow-hidden rounded-full border-4 transition-all duration-500
-                    ${isContactOpen ? "border-[#DAA520] scale-110 shadow-[0_0_30px_rgba(218,165,32,0.3)]" : "border-gray-100 hover:border-[#DAA520]/50 shadow-xl"}
-                    bg-white active:scale-95
+                    group pointer-events-auto relative w-28 h-28 overflow-hidden rounded-full transition-all duration-500 shadow-2xl active:scale-95 flex items-center justify-center
+                    ${isContactOpen ? "bg-[#1877F2] rotate-180" : "bg-white border-4 border-white"}
                 `}
             >
-                <video
-                    autoPlay
-                    muted
-                    loop
-                    playsInline
-                    disablePictureInPicture
-                    preload="metadata"
-                    className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700"
-                >
-                    <source src="/video/vo002.mp4" type="video/mp4" />
-                </video>
-
-                {/* Overlay แสงเงาเวลา Hover */}
-                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-                <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(0,0,0,0.1)] rounded-full pointer-events-none" />
-
-                {/* Badge เล็กๆ บอกว่ากดได้ */}
-                {!isContactOpen && (
-                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-[#DAA520] text-zinc-900 text-[8px] font-black px-2 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-all translate-y-2 group-hover:translate-y-0">
-                        CLICK ME
-                    </div>
+                {isContactOpen ? (
+                    <X size={56} className="text-white animate-in zoom-in duration-300" />
+                ) : (
+                    <video
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        disablePictureInPicture
+                        controlsList="nopictureinpicture"
+                        onContextMenu={(e) => e.preventDefault()}
+                        className="w-full h-full object-cover scale-110 group-hover:scale-125 transition-transform duration-700"
+                    >
+                        <source src="/video/vo002.mp4" type="video/mp4" />
+                    </video>
                 )}
             </button>
         </div>

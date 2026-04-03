@@ -73,6 +73,7 @@ export default function Navbar() {
         () => [
             { label: "หน้าแรก", href: "/#", type: "link" },
             { label: "เกี่ยวกับเรา", href: "/#about", type: "link" },
+            { label: "นโยบายการรับประกันสินค้า", href: "/#warranty", type: "link" },
             { label: "สินค้าของเรา", type: "dropdown", key: "products", data: menuData.products },
             { label: "งานบริการ", type: "dropdown", key: "services", data: menuData.services },
             { label: "ติดต่อเรา", href: "/#contact", type: "link" },
@@ -85,12 +86,12 @@ export default function Navbar() {
             {/* เส้นสีทองด้านล่าง Navbar */}
             <div className="absolute bottom-0 left-0 w-full h-0.5 bg-linear-to-r from-transparent via-[#DAA520] to-transparent" />
 
-            <div className="max-w-7xl mx-auto px-6">
-                <div className="flex items-center justify-between h-20">
+            <div className="max-w-7xl mx-auto px-3  ">
+                <div className="flex items-center justify-between h-20 gap-3  ">
                     <Link href="/" className="flex items-center gap-4 group shrink-0">
                         <div className="relative">
-                            <div className=" bg-white rounded-[100%] flex items-center justify-center shadow-lg transition-all duration-500 group-hover:-rotate-3 group-hover:scale-105">
-                                <img src="/images/logo.png" alt="TJC" className="w-16 h-16 object-contain" />
+                            <div className="  rounded-[100%] flex items-center justify-center shadow-lg transition-all duration-500 group-hover:-rotate-3 group-hover:scale-105">
+                                <img src="/images/logo.png" alt="TJC" className="w-20 h-20 bg-white rounded-[100%] " />
                             </div>
                         </div>
                         <div className="flex flex-col border-l border-zinc-400 pl-4 whitespace-nowrap transition-all duration-300">

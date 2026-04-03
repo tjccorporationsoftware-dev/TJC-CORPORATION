@@ -12,6 +12,7 @@ import AdminCertificationsPage from "../componect/Admincertifications";
 import AdminCustomerLogosPage from "../componect/Admincustomer-logos";
 import Adminservices from "../componect/Adminservices";
 import AdminPartnerLogosPage from "../componect/Adminpartners";
+import AdminWarrantyPage from "../componect/AdminWarrantyPage";
 
 export default function DashboardPage() {
     const router = useRouter();
@@ -25,11 +26,8 @@ export default function DashboardPage() {
             label: "ข่าวประชาสัมพันธ์",
             icon: (
                 <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    {/* Newspaper */}
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M19 20H6a2 2 0 01-2-2V7a3 3 0 013-3h9a2 2 0 012 2v12a2 2 0 002 2z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M5 7v11a2 2 0 002 2h12M9 8h6M9 12h6M9 16h4" />
+                    {/* Newspaper / News */}
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
                 </svg>
             ),
             component: <AdminNewsPage />,
@@ -40,8 +38,7 @@ export default function DashboardPage() {
             icon: (
                 <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     {/* Grid / Categories */}
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                 </svg>
             ),
             component: <AdminMenuPage />,
@@ -51,13 +48,8 @@ export default function DashboardPage() {
             label: "จัดการสินค้า",
             icon: (
                 <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    {/* Cube / Product */}
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M21 8l-9-5-9 5 9 5 9-5z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M3 8v8l9 5 9-5V8" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M12 13v8" />
+                    {/* Box / Products */}
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                 </svg>
             ),
             component: <AdminProductsPage />,
@@ -68,8 +60,8 @@ export default function DashboardPage() {
             icon: (
                 <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     {/* Wrench / Services */}
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M14.7 6.3a4 4 0 01-5.66 5.66l-5.1 5.1a2 2 0 102.83 2.83l5.1-5.1a4 4 0 005.66-5.66l-1.6 1.6-2.83-2.83 1.6-1.6z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             ),
             component: <Adminservices />,
@@ -79,9 +71,8 @@ export default function DashboardPage() {
             label: "ข้อมูลติดต่อ",
             icon: (
                 <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    {/* Phone */}
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    {/* Phone/Contact */}
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
             ),
             component: <AdminContactPage />,
@@ -91,13 +82,8 @@ export default function DashboardPage() {
             label: "จัดการใบรับรอง",
             icon: (
                 <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    {/* Badge Check */}
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M9 12l2 2 4-4" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M12 2l2.2 2.2 3.1.4-1.7 2.6.5 3.1-2.8-1.2L12 10l-1.3-1-2.8 1.3.5-3.1L6.7 4.6l3.1-.4L12 2z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M7 14v6l5-2 5 2v-6" />
+                    {/* Badge Check / Certifications */}
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             ),
             component: <AdminCertificationsPage />,
@@ -107,15 +93,8 @@ export default function DashboardPage() {
             label: "จัดการโลโก้ลูกค้า",
             icon: (
                 <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    {/* Users / Customers */}
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M17 20h5v-1a4 4 0 00-4-4h-1" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M7 20H2v-1a4 4 0 014-4h1" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M12 12a4 4 0 100-8 4 4 0 000 8z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M6 12a3 3 0 100-6 3 3 0 000 6zM18 12a3 3 0 100-6 3 3 0 000 6z" />
+                    {/* Storefront / Customers */}
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
             ),
             component: <AdminCustomerLogosPage />,
@@ -125,16 +104,22 @@ export default function DashboardPage() {
             label: "จัดการโลโก้พาร์ทเนอร์",
             icon: (
                 <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    {/* Handshake-ish / Partners */}
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M8 12l2-2a3 3 0 014 0l2 2" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M4 14l4 4m12-4l-4 4" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                        d="M3 10l4-4 4 4m6-4l4 4" />
+                    {/* Handshake / Network / Partners */}
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                 </svg>
             ),
             component: <AdminPartnerLogosPage />,
+        },
+        {
+            id: "warranty",
+            label: "จัดการนโยบายการรับประกัน",
+            icon: (
+                <svg className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    {/* Shield Check / Warranty */}
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                </svg>
+            ),
+            component: <AdminWarrantyPage />,
         },
     ];
 
@@ -173,8 +158,8 @@ export default function DashboardPage() {
                                 key={item.id}
                                 onClick={() => setActiveMenuId(item.id)}
                                 className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 group text-sm font-medium ${isActive
-                                        ? "bg-indigo-600 text-white shadow-lg shadow-indigo-900/20"
-                                        : "hover:bg-slate-800/50 hover:text-white"
+                                    ? "bg-indigo-600 text-white shadow-lg shadow-indigo-900/20"
+                                    : "hover:bg-slate-800/50 hover:text-white"
                                     }`}
                             >
                                 <span className={`${isActive ? "text-indigo-200" : "text-slate-500 group-hover:text-slate-300"}`}>

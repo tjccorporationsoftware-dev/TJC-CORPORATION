@@ -2,9 +2,11 @@
 
 import React, { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
+import Link from "next/link"; // ✅ เพิ่ม Import Link
 import Navbar from "../componect/Navbar";
 import { Loader2, ArrowUpRight, Sparkles } from "lucide-react";
 import FooterContact from "../componect/Footer";
+import ScrollToTop from "../componect/ScrollToTop";
 
 // บังคับให้เป็น Dynamic Rendering เพื่อป้องกันการ Error ตอน Build เมื่อ API ไม่พร้อม
 export const dynamic = "force-dynamic";
@@ -157,6 +159,7 @@ function ServicesPage() {
         }}
       />
       <Navbar />
+      <ScrollToTop />
 
       {/* ใช้ Suspense หุ้มส่วนที่มีการเรียกใช้ useSearchParams */}
       <Suspense fallback={
@@ -172,11 +175,11 @@ function ServicesPage() {
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <h2 className="text-4xl lg:text-7xl font-bold text-zinc-900 mb-8 tracking-tighter leading-none uppercase">
             Let's build the future <br className="hidden md:block" />
-            togethe
+            together
           </h2>
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
             <a href="https://lin.ee/twVZIGO" target="_blank" rel="noreferrer" className="flex items-center justify-center gap-3 px-14 py-5 bg-[#DAA520] text-zinc-900 font-bold text-[15px] uppercase tracking-[0.3em] rounded-sm transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1">
-              Line Official 
+              Line Official
             </a>
           </div>
         </div>
@@ -186,12 +189,19 @@ function ServicesPage() {
   );
 }
 
+// ✅ อัปเดต ServiceCard ให้เป็น <Link> ไปยังหน้า Detail
 function ServiceCard({ service, index }) {
+  // รองรับรูปภาพที่คั่นด้วยลูกน้ำ (Multi-image) ดึงมาเฉพาะรูปแรก
+  const firstImage = service.image_url ? service.image_url.split(",")[0] : null;
+
   return (
-    <div className="group relative flex flex-col bg-white rounded-none border border-zinc-100 transition-all duration-700 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] hover:border-[#DAA520]/30 hover:-translate-y-2 h-full overflow-hidden">
+    <Link
+      href={`/services/${service.id}`} // 👈 ลิงก์ไปหน้า Detail
+      className="group relative flex flex-col bg-white rounded-none border border-zinc-100 transition-all duration-700 hover:shadow-[0_30px_60px_-15px_rgba(0,0,0,0.08)] hover:border-[#DAA520]/30 hover:-translate-y-2 h-full overflow-hidden cursor-pointer"
+    >
       <div className="relative h-64 overflow-hidden bg-zinc-50">
-        {getImgUrl(service.image_url) ? (
-          <img src={getImgUrl(service.image_url)} alt={service.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+        {firstImage ? (
+          <img src={getImgUrl(firstImage)} alt={service.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
         ) : (
           <div className="w-full h-full flex items-center justify-center opacity-30">
             <Sparkles size={40} className="text-zinc-300" />
@@ -211,13 +221,14 @@ function ServiceCard({ service, index }) {
           {service.description || "สอบถามข้อมูลเพิ่มเติมเกี่ยวกับบริการและรายละเอียดการติดตั้งได้โดยตรง"}
         </p>
         <div className="mt-auto">
-          <a href="https://lin.ee/twVZIGO" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.25em] text-zinc-800 group/link">
+          {/* ✅ เปลี่ยนเป็น <span> แทน <a> เพื่อป้องกัน Error nested link ซ้อนทับกัน */}
+          <span className="inline-flex items-center gap-2 text-[12px] font-bold uppercase tracking-[0.25em] text-zinc-800 group-hover:text-[#DAA520] transition-colors">
             <span>Explore Solution</span>
-            <ArrowUpRight size={18} className="text-[#DAA520] transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" />
-          </a>
+            <ArrowUpRight size={18} className="text-[#DAA520] transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+          </span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

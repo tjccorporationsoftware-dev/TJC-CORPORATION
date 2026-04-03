@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link"; // ✅ เพิ่ม Link
 import Navbar from "../../componect/Navbar";
 import FooterContact from "../../componect/Footer";
+import ScrollToTop from "../../componect/ScrollToTop";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -68,6 +69,7 @@ export default function ProductDetailPage() {
     return (
         <div className="min-h-screen bg-white text-zinc-900 selection:bg-[#DAA520]/30">
             <Navbar />
+            <ScrollToTop />
             <main className="max-w-7xl mx-auto px-6 lg:px-12 pt-32 lg:pt-48 pb-24">
 
                 {/* --- Main Detail --- */}

@@ -16,6 +16,8 @@ import NewsSection from "./componect/NewsSection";
 import CustomersCarousel from "./componect/CustomersCarousel";
 import QuotationBuilder from "./componect/QuotationBuilder";
 import WelcomeLoader from "./componect/WelcomeLoader";
+import ScrollToTop from "./componect/ScrollToTop";
+import WarrantyPolicySection from "./componect/WarrantyPolicySection";
 
 
 
@@ -24,12 +26,14 @@ export default function CompanyLandingPage() {
   return (
     <div className="min-h-screen bg-gray-50 text-slate-900 antialiased">
         <Navbar />
+        <ScrollToTop />
         <Hero />
         <AboutHeader />
 
         <Work />
         <Services />
         <CertificationsSection />
+        <WarrantyPolicySection />
         <NewsSection />
         <CustomersCarousel />
         <Footer />

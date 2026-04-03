@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
 import Link from "next/link";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -37,6 +36,27 @@ export default function Contact() {
         };
     }, []);
 
+    // JS Animation: สังเกตการเลื่อนหน้าจอแทน Framer Motion
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("opacity-100", "translate-y-0");
+                        entry.target.classList.remove("opacity-0", "translate-y-10");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            { threshold: 0.3 }
+        );
+
+        const elements = document.querySelectorAll(".animate-on-scroll");
+        elements.forEach((el) => observer.observe(el));
+
+        return () => observer.disconnect();
+    }, [data]); // ทำงานใหม่เมื่อโหลดข้อมูลเสร็จและ render html แล้ว
+
     const d = data || {};
 
     const addressLines = useMemo(() => {
@@ -44,24 +64,15 @@ export default function Contact() {
         return [];
     }, [d]);
 
-    const fadeUp = {
-        hidden: { opacity: 0, y: 40 },
-        show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-    };
-
     return (
-        <motion.section
+        <section
             id="contact"
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, amount: 0.3 }}
             className="bg-linear-to-br from-white via-gray-50 to-gray-100 py-20 px-6 border-t border-gray-200"
         >
             <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-start">
                 {/* ข้อมูลติดต่อ */}
-                <motion.div
-                    variants={fadeUp}
-                    className="space-y-6 bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-[10px_10px_0px_rgba(180,180,180,0.3)] border border-[#d4af37]/50"
+                <div
+                    className="animate-on-scroll opacity-0 translate-y-10 transition-all duration-700 ease-out space-y-6 bg-white/80 backdrop-blur-sm rounded-2xl p-8 shadow-[10px_10px_0px_rgba(180,180,180,0.3)] border border-[#d4af37]/50"
                 >
                     <div>
                         <h2 className="text-2xl md:text-3xl font-extrabold bg-linear-to-r from-yellow-500 to-gray-700 bg-clip-text text-transparent drop-shadow-sm leading-tight mb-10">
@@ -115,13 +126,30 @@ export default function Contact() {
                                         {d.line_icon_url ? (
                                             <img src={resolveUrl(d.line_icon_url)} className="w-7 mx-auto" alt="Line" />
                                         ) : (
-                                            <div className="w-7 h-7 mx-auto bg-gray-200 rounded" />
+                                            <i className="bx bxl-line text-[#bfa334] text-2xl"></i>
                                         )}
                                     </div>
                                     <div>
                                         <p className="text-sm text-gray-500">Line Official</p>
                                         <p className="font-semibold hover:text-[#bfa334] transition">
                                             {d.line_label || "Line"}
+                                        </p>
+                                    </div>
+                                </div>
+                            </Link>
+                        )}
+
+                        {/* Facebook (✅ ส่วนที่เพิ่มเข้ามาใหม่) */}
+                        {(d.facebook_url || d.facebook_label) && (
+                            <Link href={d.facebook_url || "#"} target="_blank">
+                                <div className="flex items-start gap-4 cursor-pointer">
+                                    <div className="w-8 text-center">
+                                        <i className="bx bxl-facebook-circle text-[#bfa334] text-2xl"></i>
+                                    </div>
+                                    <div>
+                                        <p className="text-sm text-gray-500">Facebook Page</p>
+                                        <p className="font-semibold hover:text-[#bfa334] transition">
+                                            {d.facebook_label || "Facebook"}
                                         </p>
                                     </div>
                                 </div>
@@ -161,10 +189,13 @@ export default function Contact() {
                             </div>
                         )}
                     </div>
-                </motion.div>
+                </div>
 
                 {/* แผนที่ */}
-                <motion.div variants={fadeUp} transition={{ delay: 0.2 }} className="space-y-5">
+                <div
+                    className="animate-on-scroll opacity-0 translate-y-10 transition-all duration-700 ease-out space-y-5"
+                    style={{ transitionDelay: "200ms" }}
+                >
                     <h3 className="text-2xl md:text-3xl font-extrabold bg-linear-to-r from-yellow-500 to-gray-700 bg-clip-text text-transparent drop-shadow-sm leading-tight mb-10">
                         {d.map_title || "ตำแหน่งที่ตั้งสำนักงาน"}
                     </h3>
@@ -187,8 +218,8 @@ export default function Contact() {
                             ยังไม่ได้ตั้งค่าแผนที่
                         </div>
                     )}
-                </motion.div>
+                </div>
             </div>
-        </motion.section>
+        </section>
     );
 }

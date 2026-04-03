@@ -1,7 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useState } from "react";
-import { motion } from "framer-motion";
+import React, { useEffect, useMemo, useState, useRef } from "react";
 import Link from "next/link";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -17,6 +16,10 @@ function resolveUrl(u) {
 
 export default function FooterContact() {
   const [data, setData] = useState(null);
+
+  // Refs สำหรับการทำ Scroll Animation แทน Framer Motion
+  const cardLeftRef = useRef(null);
+  const cardRightRef = useRef(null);
 
   useEffect(() => {
     let alive = true;
@@ -37,6 +40,27 @@ export default function FooterContact() {
     };
   }, []);
 
+  // IntersectionObserver สำหรับ Animation
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("opacity-100", "translate-y-0");
+            entry.target.classList.remove("opacity-0", "translate-y-5");
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.2 } // เทียบเท่า amount: 0.2 ใน motion
+    );
+
+    if (cardLeftRef.current) observer.observe(cardLeftRef.current);
+    if (cardRightRef.current) observer.observe(cardRightRef.current);
+
+    return () => observer.disconnect();
+  }, [data]);
+
   const d = data || {};
   const addressLines = useMemo(() => Array.isArray(d.address_lines) ? d.address_lines : [], [d]);
 
@@ -49,17 +73,9 @@ export default function FooterContact() {
     "เลขผู้เสียภาษี:"
   ];
 
-  const fadeUp = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
-  };
-
   return (
-    <motion.footer
+    <footer
       id="contact"
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
       className="relative overflow-hidden bg-linear-to-br from-zinc-800 via-zinc-700 to-zinc-800 border-t border-[#DAA520]/30"
     >
       <div className="pointer-events-none absolute inset-0">
@@ -71,9 +87,9 @@ export default function FooterContact() {
         <div className="grid md:grid-cols-2 gap-6">
 
           {/* CONTACT INFO CARD */}
-          <motion.div
-            variants={fadeUp}
-            className="rounded-2xl p-5 bg-zinc-700/60 backdrop-blur-xl border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.35)] h-full"
+          <div
+            ref={cardLeftRef}
+            className="opacity-0 translate-y-5 transition-all duration-700 ease-out rounded-2xl p-5 bg-zinc-700/60 backdrop-blur-xl border border-white/15 shadow-[0_10px_30px_rgba(0,0,0,0.35)] h-full"
           >
             <h3 className="text-[20px] md:text-[25px] font-extrabold bg-linear-to-r from-[#DAA520] via-[#DAA520] to-white bg-clip-text text-transparent">
               {d.heading || "ติดต่อเรา"}
@@ -103,10 +119,20 @@ export default function FooterContact() {
               )}
               {(d.line_url || d.line_label) && (
                 <Link href={d.line_url || "#"} target="_blank" className="flex gap-3 items-start rounded-xl p-3 hover:bg-white/5 transition">
-                  {d.line_icon_url ? <img src={resolveUrl(d.line_icon_url)} className="w-6 h-6 rounded" /> : <div className="w-6 h-6 bg-white/20 rounded" />}
+                  {d.line_icon_url ? <img src={resolveUrl(d.line_icon_url)} className="w-6 h-6 rounded" alt="Line" /> : <i className="bx bxl-line text-[#DAA520] text-xl" />}
                   <div>
                     <p className="text-[11px] text-zinc-300">Line Official</p>
                     <p className="font-semibold text-white truncate">{d.line_label || "Line"}</p>
+                  </div>
+                </Link>
+              )}
+              {/* ✅ เพิ่มส่วน Facebook เข้ามา */}
+              {(d.facebook_url || d.facebook_label) && (
+                <Link href={d.facebook_url || "#"} target="_blank" className="flex gap-3 items-start rounded-xl p-3 hover:bg-white/5 transition">
+                  <i className="bx bxl-facebook-circle text-[#DAA520] text-xl" />
+                  <div>
+                    <p className="text-[11px] text-zinc-300">Facebook Page</p>
+                    <p className="font-semibold text-white truncate">{d.facebook_label || "Facebook"}</p>
                   </div>
                 </Link>
               )}
@@ -143,11 +169,13 @@ export default function FooterContact() {
                 </div>
               </div>
             )}
-          </motion.div>
-          <motion.div
-            variants={fadeUp}
-            transition={{ delay: 0.1 }}
+          </div>
+
+          {/* MAP CARD */}
+          <div
+            ref={cardRightRef}
             className="
+              opacity-0 translate-y-5 transition-all duration-700 ease-out delay-100
               rounded-2xl overflow-hidden
               bg-zinc-700/60 backdrop-blur-xl
               border border-white/15
@@ -161,7 +189,7 @@ export default function FooterContact() {
                 {d.map_title || "แผนที่"}
               </div>
               {d.map_open_url && (
-                <a href={d.map_open_url} target="_blank" className="text-xs text-[#DAA520] hover:text-[#DAA520]/80 transition">
+                <a href={d.map_open_url} target="_blank" rel="noreferrer" className="text-xs text-[#DAA520] hover:text-[#DAA520]/80 transition">
                   เปิดแผนที่ →
                 </a>
               )}
@@ -173,6 +201,7 @@ export default function FooterContact() {
                   className="absolute inset-0 w-full h-full"
                   style={{ border: 0 }}
                   loading="lazy"
+                  title="Google Map"
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center p-5 text-sm text-zinc-200">
@@ -180,7 +209,7 @@ export default function FooterContact() {
                 </div>
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
 
         <div className="mt-8 h-px bg-linear-to-r from-transparent via-[#DAA520]/30 to-transparent" />
@@ -202,6 +231,6 @@ export default function FooterContact() {
           </div>
         </div>
       </div>
-    </motion.footer>
+    </footer>
   );
 }

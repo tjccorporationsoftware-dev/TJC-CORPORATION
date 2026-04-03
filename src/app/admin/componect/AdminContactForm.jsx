@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -17,7 +17,7 @@ function clearSession() {
 }
 
 /* ------------------ UI Components ------------------ */
-
+// (ToastContainer, SectionShell, InputField, TextareaField คงเดิมตามที่คุณเขียนไว้)
 function ToastContainer({ toasts, removeToast }) {
   return (
     <div className="fixed top-6 right-6 z-100 flex flex-col gap-3">
@@ -95,13 +95,12 @@ export default function AdminContactPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
-  // ✅ เพิ่มตัวแปรสำหรับ 6 บรรทัด
   const [form, setForm] = useState({
     heading: "", description: "", email: "", phone: "",
     line_label: "", line_url: "", line_icon_url: "",
+    facebook_label: "", facebook_url: "", // ✅ เพิ่ม State Facebook
     open_hours: "",
     map_title: "", map_embed_url: "",
-    // Address parts (6 lines)
     addr_company: "",     // 1. ชื่อบริษัท
     addr_house: "",       // 2. บ้านเลขที่
     addr_subdistrict: "", // 3. ตำบล
@@ -142,11 +141,12 @@ export default function AdminContactPage() {
           line_label: d.line_label || "",
           line_url: d.line_url || "",
           line_icon_url: d.line_icon_url || "",
+          facebook_label: d.facebook_label || "", // ✅ ดึงข้อมูล Facebook มาแสดง
+          facebook_url: d.facebook_url || "",     // ✅ ดึงข้อมูล Facebook มาแสดง
           open_hours: d.open_hours || "",
           map_title: d.map_title || "",
           map_embed_url: d.map_embed_url || "",
 
-          // Map address lines to 6 inputs
           addr_company: lines[0] || "",
           addr_house: lines[1] || "",
           addr_subdistrict: lines[2] || "",
@@ -169,7 +169,6 @@ export default function AdminContactPage() {
     try {
       setSaving(true);
 
-      // ✅ รวม 6 ช่องเป็น Array ตามลำดับ
       const address_lines = [
         form.addr_company,
         form.addr_house,
@@ -177,7 +176,7 @@ export default function AdminContactPage() {
         form.addr_district,
         form.addr_province,
         form.addr_taxid
-      ].map(s => s.trim()).filter(Boolean); // ตัดช่องว่างออก (ถ้าไม่ได้กรอกช่องไหน บรรทัดนั้นจะหายไป)
+      ].map(s => s.trim()).filter(Boolean);
 
       const payload = { data: { ...form, heading: form.heading.trim(), address_lines } };
 
@@ -249,59 +248,34 @@ export default function AdminContactPage() {
             </SectionShell>
 
             <SectionShell title="ช่องทางการติดต่อ" subtitle="อีเมล, เบอร์โทรศัพท์ และโซเชียลมีเดีย">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* ✅ ปรับ Grid เป็น 3 คอลัมน์ เพื่อให้ 6 ช่องพอดีและสวยงาม */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <InputField label="อีเมล" value={form.email} onChange={(v) => setField("email", v)} placeholder="example@company.com" />
                 <InputField label="เบอร์โทรศัพท์" value={form.phone} onChange={(v) => setField("phone", v)} placeholder="045-xxx-xxxx" />
+                
                 <InputField label="LINE ID / Label" value={form.line_label} onChange={(v) => setField("line_label", v)} placeholder="@tjcgroup" />
                 <InputField label="LINE URL" value={form.line_url} onChange={(v) => setField("line_url", v)} placeholder="https://lin.ee/..." />
+                
+                {/* ✅ เพิ่มช่อง Facebook */}
+                <InputField label="Facebook ชื่อเพจ" value={form.facebook_label} onChange={(v) => setField("facebook_label", v)} placeholder="TJC Corporation" />
+                <InputField label="Facebook URL" value={form.facebook_url} onChange={(v) => setField("facebook_url", v)} placeholder="https://facebook.com/..." />
               </div>
             </SectionShell>
 
-            {/* ✅ ส่วนที่อยู่: 6 ช่องแยกตามที่ขอ */}
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
               <SectionShell title="ที่อยู่บริษัท" subtitle="กรอกข้อมูลแยกบรรทัดตามลำดับ">
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 gap-4">
-                    <InputField
-                      label="1. ชื่อบริษัท / หน่วยงาน"
-                      value={form.addr_company}
-                      onChange={(v) => setField("addr_company", v)}
-                      placeholder="เช่น บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด (สำนักงานใหญ่)"
-                    />
-                    <InputField
-                      label="2. บ้านเลขที่ / หมู่ที่"
-                      value={form.addr_house}
-                      onChange={(v) => setField("addr_house", v)}
-                      placeholder="เช่น เลขที่ 311/1 หมู่ 4"
-                    />
+                    <InputField label="1. ชื่อบริษัท / หน่วยงาน" value={form.addr_company} onChange={(v) => setField("addr_company", v)} placeholder="เช่น บริษัท ทีเจซี คอร์ปอเรชั่น จำกัด (สำนักงานใหญ่)" />
+                    <InputField label="2. บ้านเลขที่ / หมู่ที่" value={form.addr_house} onChange={(v) => setField("addr_house", v)} placeholder="เช่น เลขที่ 311/1 หมู่ 4" />
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <InputField
-                      label="3. ตำบล / แขวง"
-                      value={form.addr_subdistrict}
-                      onChange={(v) => setField("addr_subdistrict", v)}
-                      placeholder="เช่น ตำบลคำน้ำแซบ"
-                    />
-                    <InputField
-                      label="4. อำเภอ / เขต"
-                      value={form.addr_district}
-                      onChange={(v) => setField("addr_district", v)}
-                      placeholder="เช่น อำเภอวารินชำราบ"
-                    />
+                    <InputField label="3. ตำบล / แขวง" value={form.addr_subdistrict} onChange={(v) => setField("addr_subdistrict", v)} placeholder="เช่น ตำบลคำน้ำแซบ" />
+                    <InputField label="4. อำเภอ / เขต" value={form.addr_district} onChange={(v) => setField("addr_district", v)} placeholder="เช่น อำเภอวารินชำราบ" />
                   </div>
                   <div className="grid grid-cols-1 gap-4">
-                    <InputField
-                      label="5. จังหวัด / รหัสไปรษณีย์"
-                      value={form.addr_province}
-                      onChange={(v) => setField("addr_province", v)}
-                      placeholder="เช่น จังหวัดอุบลราชธานี 34190"
-                    />
-                    <InputField
-                      label="6. เลขประจำตัวผู้เสียภาษี"
-                      value={form.addr_taxid}
-                      onChange={(v) => setField("addr_taxid", v)}
-                      placeholder="เช่น เลขประจำตัวผู้เสียภาษี 0325563000203"
-                    />
+                    <InputField label="5. จังหวัด / รหัสไปรษณีย์" value={form.addr_province} onChange={(v) => setField("addr_province", v)} placeholder="เช่น จังหวัดอุบลราชธานี 34190" />
+                    <InputField label="6. เลขประจำตัวผู้เสียภาษี" value={form.addr_taxid} onChange={(v) => setField("addr_taxid", v)} placeholder="เช่น เลขประจำตัวผู้เสียภาษี 0325563000203" />
                   </div>
                 </div>
               </SectionShell>
