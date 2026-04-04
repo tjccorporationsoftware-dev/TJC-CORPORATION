@@ -20,6 +20,9 @@ export default function ProductDetailPage() {
     const [allProducts, setAllProducts] = useState([]);
     const [loading, setLoading] = useState(true);
 
+    // ✅ State สำหรับจัดการการแสดงผล "อ่านต่อ" ของ Description
+    const [isExpanded, setIsExpanded] = useState(false);
+
     useEffect(() => {
         const fetchAllData = async () => {
             try {
@@ -65,7 +68,6 @@ export default function ProductDetailPage() {
         </div>
     );
 
-    // ✅ แก้ไขปัญหาข้อมูลสเปกหาย โดยการเช็คและแปลง JSON String เป็น Array ให้ถูกต้อง
     let specs = [];
     if (product && product.specifications) {
         if (Array.isArray(product.specifications)) {
@@ -79,6 +81,41 @@ export default function ProductDetailPage() {
             }
         }
     }
+
+    // ✅ ฟังก์ชันจัดการการตัดข้อความ Description (300 ตัวอักษร)
+    const renderDescription = () => {
+        const descText = product.description || "รายละเอียดเพิ่มเติม กรุณาติดต่อฝ่ายขาย";
+        const MAX_LENGTH = 300;
+
+        if (descText.length <= MAX_LENGTH) {
+            return <div className="text-zinc-600 text-[15px] leading-relaxed font-medium text-base whitespace-pre-wrap">{descText}</div>;
+        }
+
+        return (
+            <div className="text-zinc-600 text-[15px] leading-relaxed font-medium text-base whitespace-pre-wrap relative">
+                {/* แสดงข้อความตามสถานะการกาง (Expanded) */}
+                <div className={`transition-all duration-300 overflow-hidden ${!isExpanded && "max-h-[140px] relative"}`}>
+                    {descText}
+                    {/* เกรเดียนต์ทำเฟดข้อความด้านล่างตอนหุบอยู่ */}
+                    {!isExpanded && (
+                        <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-white to-transparent"></div>
+                    )}
+                </div>
+
+                {/* ปุ่ม อ่านต่อ / ย่อลง */}
+                <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="mt-2 text-[#DAA520] hover:text-[#b88a1b] font-bold text-sm flex items-center gap-1 transition-colors"
+                >
+                    {isExpanded ? (
+                        <>ย่อข้อความ <i className="bx bx-chevron-up"></i></>
+                    ) : (
+                        <>อ่านต่อ <i className="bx bx-chevron-down"></i></>
+                    )}
+                </button>
+            </div>
+        );
+    };
 
     return (
         <div className="min-h-screen bg-white text-zinc-900 font-(family-name:--font-ibm-plex-thai) selection:bg-[#DAA520]/30">
@@ -138,9 +175,8 @@ export default function ProductDetailPage() {
                             <h3 className="text-xl font-black text-zinc-400 uppercase tracking-widest mb-4">
                                 รายละเอียดเพิ่มเติม (Description)
                             </h3>
-                            <div className="text-zinc-600 text-[15px] leading-relaxed font-medium text-base">
-                                {product.description || "รายละเอียดเพิ่มเติม กรุณาติดต่อฝ่ายขาย"}
-                            </div>
+                            {/* ✅ เรียกใช้คอมโพเนนต์ส่วนของ Description ที่รองรับ Read More */}
+                            {renderDescription()}
                         </div>
 
                         <div className="pt-6 border-t text-[20px] border-zinc-100 space-y-3">
