@@ -7,6 +7,7 @@ import Navbar from "../componect/Navbar";
 import { Loader2, ArrowUpRight, Sparkles } from "lucide-react";
 import FooterContact from "../componect/Footer";
 import ScrollToTop from "../componect/ScrollToTop";
+import FloatingPotatoCorner from "../componect/FloatingPotato";
 
 // บังคับให้เป็น Dynamic Rendering เพื่อป้องกันการ Error ตอน Build เมื่อ API ไม่พร้อม
 export const dynamic = "force-dynamic";
@@ -159,6 +160,7 @@ function ServicesPage() {
         }}
       />
       <Navbar />
+      <FloatingPotatoCorner />
       <ScrollToTop />
 
       {/* ใช้ Suspense หุ้มส่วนที่มีการเรียกใช้ useSearchParams */}

@@ -7,6 +7,7 @@ import { ArrowLeft, Tag } from "lucide-react";
 import Navbar from "../../componect/Navbar";
 import Footer from "../../componect/Footer";
 import ScrollToTop from "../../componect/ScrollToTop";
+import FloatingPotatoCorner from "../../componect/FloatingPotato";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -74,7 +75,7 @@ export default function ServiceDetailPage() {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+            <div className="min-h-screen bg-slate-50 flex items-center justify-center font-(family-name:--font-ibm-plex-thai)">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-[#DAA520] border-t-transparent rounded-full animate-spin"></div>
                     <p className="text-slate-500 font-medium tracking-wide">กำลังโหลดข้อมูล...</p>
@@ -85,7 +86,7 @@ export default function ServiceDetailPage() {
 
     if (!service) {
         return (
-            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-6 p-6 text-center">
+            <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-6 p-6 text-center font-(family-name:--font-ibm-plex-thai)">
                 <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm border border-slate-200 text-slate-300">
                     <i className="bx bx-file-blank text-4xl"></i>
                 </div>
@@ -99,10 +100,11 @@ export default function ServiceDetailPage() {
     }
 
     return (
-        <div>
+        <div className="font-(family-name:--font-ibm-plex-thai) selection:bg-[#DAA520]/30 text-slate-900">
             <Navbar />
+            <FloatingPotatoCorner />
             <ScrollToTop />
-            <div className="min-h-screen bg-white font-sans pb-24 mt-20">
+            <div className="min-h-screen bg-white pb-24 mt-20">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 lg:pt-12">
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
                         {/* --- ฝั่งซ้าย: รูปภาพ (Gallery) --- */}
@@ -163,11 +165,11 @@ export default function ServiceDetailPage() {
                             <div className="w-16 h-1.5 bg-[#DAA520] mb-8 rounded-full"></div>
 
                             {/* รายละเอียด */}
-                            <div className="text-slate-600 text-lg leading-relaxed mb-10 whitespace-pre-wrap">
+                            <div className="text-slate-600 text-lg leading-relaxed mb-10 whitespace-pre-wrap font-medium">
                                 {service.description ? service.description : "ไม่มีรายละเอียดเพิ่มเติมสำหรับบริการนี้"}
                             </div>
 
-                            {/* ✅ กล่องติดต่อ (Call to action) แบบใหม่ */}
+                            {/* ✅ กล่องติดต่อ (Call to action) */}
                             <div className="mt-auto">
                                 <p className="text-sm font-bold text-slate-400 mb-3 uppercase tracking-widest">สนใจบริการนี้?</p>
                                 <div className="flex flex-col sm:flex-row gap-4">
@@ -176,19 +178,16 @@ export default function ServiceDetailPage() {
                                         href="https://lin.ee/kfKx9AW8"
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="flex-1 bg-[#06C755] hover:bg-[#05b34c] text-white px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-[#06C755]/20"
+                                        className="flex-1 bg-[#06C755] hover:bg-[#05b34c] text-white px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 shadow-lg shadow-[#06C755]/20 hover:-translate-y-1"
                                     >
                                         <i className="bx bxl-line text-2xl"></i> สอบถามข้อมูลเพิ่มเติม
                                     </a>
                                     <button
                                         onClick={() => router.push('/services')}
-                                        className="flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300"
+                                        className="flex-none bg-slate-100 hover:bg-slate-200 text-slate-700 px-6 py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all duration-300 hover:-translate-y-1"
                                     >
                                         <ArrowLeft size={18} /> ย้อนกลับ
                                     </button>
-
-                                    {/* ปุ่มสอบถามผ่าน LINE */}
-
 
                                 </div>
                             </div>

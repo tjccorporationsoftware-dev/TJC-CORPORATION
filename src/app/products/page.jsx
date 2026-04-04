@@ -11,6 +11,9 @@ import FooterContact from "../componect/Footer";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const normalize = (val) => String(val || "").toLowerCase().trim();
 
+// ✅ กำหนดจำนวนสินค้าต่อ 1 หน้า
+const ITEMS_PER_PAGE = 54;
+
 // --- 🚀 NEW: SCROLL TO TOP COMPONENT ---
 const ScrollToTopBtn = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -86,6 +89,9 @@ function ProductContent() {
   const [inputValue, setInputValue] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
 
+  // ✅ State สำหรับจัดการหน้าที่กำลังแสดงอยู่
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchQuery(inputValue);
@@ -96,6 +102,11 @@ function ProductContent() {
   useEffect(() => {
     setSelectedSubcategory("all");
   }, [selectedIdentifier]);
+
+  // ✅ เมื่อมีการเปลี่ยนเงื่อนไขค้นหา หรือ หมวดหมู่ ให้กลับไปหน้า 1
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedIdentifier, selectedSubcategory, debouncedSearchQuery]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -168,12 +179,79 @@ function ProductContent() {
     });
   }, [products, selectedIdentifier, activeCategoryData, selectedSubcategory, debouncedSearchQuery]);
 
+  // ✅ คำนวณสินค้าที่จะแสดงในหน้าปัจจุบัน
+  const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
+  const paginatedProducts = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredProducts.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredProducts, currentPage]);
+
   const getImageUrl = (url) => {
     if (!url) return "https://placehold.co/600x600/f4f4f5/a1a1aa?text=No+Image";
     if (url.startsWith("http")) return url;
     if (url.startsWith("/images/")) return url;
     const cleanPath = url.startsWith("/") ? url : `/${url}`;
     return `${API_BASE_URL}${cleanPath}`;
+  };
+
+  // ✅ ฟังก์ชันแสดงปุ่มเปลี่ยนหน้า
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    const pages = [];
+    const maxVisible = 5; // จำนวนปุ่มหน้าสูงสุดที่จะแสดง
+    let start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+    let end = Math.min(totalPages, start + maxVisible - 1);
+
+    if (end - start + 1 < maxVisible) {
+      start = Math.max(1, end - maxVisible + 1);
+    }
+
+    for (let i = start; i <= end; i++) {
+      pages.push(
+        <button
+          key={i}
+          onClick={() => {
+            setCurrentPage(i);
+            window.scrollTo({ top: 400, behavior: "smooth" });
+          }}
+          className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-bold transition-all duration-300 ${currentPage === i
+              ? "bg-[#DAA520] text-white border border-[#DAA520] shadow-md"
+              : "bg-white text-zinc-600 border border-zinc-200 hover:bg-zinc-50 hover:border-zinc-300"
+            }`}
+        >
+          {i}
+        </button>
+      );
+    }
+
+    return (
+      <div className="col-span-1 sm:col-span-2 lg:col-span-3 xl:col-span-5 w-full flex justify-center items-center gap-2 mt-12 mb-8">
+        <button
+          onClick={() => {
+            setCurrentPage((p) => Math.max(1, p - 1));
+            window.scrollTo({ top: 400, behavior: "smooth" });
+          }}
+          disabled={currentPage === 1}
+          className="w-10 h-10 flex items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        >
+          <i className="bx bx-chevron-left text-xl"></i>
+        </button>
+
+        {pages}
+
+        <button
+          onClick={() => {
+            setCurrentPage((p) => Math.min(totalPages, p + 1));
+            window.scrollTo({ top: 400, behavior: "smooth" });
+          }}
+          disabled={currentPage === totalPages}
+          className="w-10 h-10 flex items-center justify-center rounded-lg border border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50 hover:text-zinc-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+        >
+          <i className="bx bx-chevron-right text-xl"></i>
+        </button>
+      </div>
+    );
   };
 
   if (loading)
@@ -187,7 +265,7 @@ function ProductContent() {
     <div className="min-h-screen bg-white text-zinc-900 selection:bg-[#DAA520]/30 pb-0 overflow-hidden relative">
       <Navbar />
       <FloatingPotatoCorner />
-      
+
       {/* ✅ Scroll To Top Button */}
       <ScrollToTopBtn />
 
@@ -218,6 +296,7 @@ function ProductContent() {
       {/* --- CONTENT SECTION --- */}
       <div className="max-w-400 mx-auto px-6 lg:px-12 mb-24">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 xl:gap-8 items-start">
+
           <div className="col-span-1 w-full">
             <div className="bg-white border border-zinc-200 shadow-[0_20px_40px_-20px_rgba(0,0,0,0.06)] flex flex-col rounded-none">
               <div className="px-6 py-5 bg-zinc-900 flex items-center justify-between shrink-0">
@@ -279,9 +358,15 @@ function ProductContent() {
               <p className="text-zinc-400 font-bold text-base uppercase tracking-widest">No matching items found</p>
             </div>
           ) : (
-            filteredProducts.map((product) => (
-              <MemoizedProductCard key={product.id} product={product} getImageUrl={getImageUrl} />
-            ))
+            <>
+              {/* ✅ เปลี่ยนมาใช้ paginatedProducts แทน filteredProducts แบบเดิม */}
+              {paginatedProducts.map((product) => (
+                <MemoizedProductCard key={product.id} product={product} getImageUrl={getImageUrl} />
+              ))}
+
+              {/* ✅ ส่วนแสดงปุ่ม Pagination ไว้ด้านล่างสุดของ Grid */}
+              {renderPagination()}
+            </>
           )}
         </div>
       </div>

@@ -9,6 +9,20 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 // ชุด Icon แบบ Fix ตายตัว ตามลำดับ
 const FIXED_ICONS = ["bx-time-five", "bx-calendar-check", "bx-user-check", "bx-file"];
 
+// ✅ Helper สำหรับแปลง JSON String กลับเป็น Array อย่างปลอดภัย
+const safeParseArray = (val) => {
+    if (Array.isArray(val)) return val;
+    if (typeof val === 'string') {
+        try {
+            const parsed = JSON.parse(val);
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+            return [];
+        }
+    }
+    return [];
+};
+
 // --- 🚀 SCROLL TO TOP COMPONENT ---
 const ScrollToTopBtn = () => {
     const [isVisible, setIsVisible] = useState(false);
@@ -97,10 +111,12 @@ function WarrantyContent() {
     }, [data]);
 
     const d = data || {};
-    const generalTerms = Array.isArray(d.general_terms) ? d.general_terms : [];
-    const exclusions = Array.isArray(d.exclusions) ? d.exclusions : [];
-    const productWarranties = Array.isArray(d.product_warranties) ? d.product_warranties : [];
-    const claimSteps = Array.isArray(d.claim_steps) ? d.claim_steps : [];
+
+    // ✅ ใช้ฟังก์ชัน safeParseArray ป้องกันข้อมูลหาย
+    const generalTerms = safeParseArray(d.general_terms);
+    const exclusions = safeParseArray(d.exclusions);
+    const productWarranties = safeParseArray(d.product_warranties);
+    const claimSteps = safeParseArray(d.claim_steps);
 
     if (loading) {
         return (
@@ -115,7 +131,8 @@ function WarrantyContent() {
     return (
         <div className="min-h-screen bg-zinc-50 text-zinc-900 font-(family-name:--font-ibm-plex-thai) selection:bg-[#DAA520]/30 pb-0 overflow-hidden relative">
             <Navbar />
-            
+            <FloatingPotatoCorner />
+
             <ScrollToTopBtn />
 
             {/* --- BACKGROUND DECOR --- */}
@@ -164,25 +181,39 @@ function WarrantyContent() {
                             })}
                         </div>
 
-                        {/* --- RIGHT SIDE: EXCLUSIONS --- */}
+                        {/* --- RIGHT SIDE: EXCLUSIONS (PREMIUM GOLD EDITION) --- */}
                         <div className="lg:col-span-5 opacity-0 scroll-element" style={{ animationDelay: "0.4s" }}>
-                            <div className="bg-zinc-900 rounded-[2rem] p-8 md:p-10 text-white relative overflow-hidden shadow-2xl border border-zinc-800">
-                                <div className="absolute top-0 right-0 w-64 h-64 bg-[#DAA520]/10 rounded-full blur-[60px] -mr-20 -mt-20"></div>
-                                <h4 className="text-2xl font-black mb-8 flex items-center gap-3 tracking-tight">
-                                    <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center text-red-500 shrink-0">
-                                        <i className="bx bx-x text-2xl"></i>
+                            {/* เปลี่ยนพื้นหลังเป็นสีทอง Luxury Gradient พร้อมเงาสะท้อนเรืองแสง */}
+                            <div className="bg-gradient-to-br from-[#FCE883] via-[#DAA520] to-[#997300] rounded-[2.5rem] p-8 md:p-10 text-zinc-900 relative overflow-hidden shadow-[0_25px_50px_-12px_rgba(218,165,32,0.4)] border border-white/40">
+
+                                {/* เอฟเฟกต์แสงสว่างวาบที่มุมขวาบน (Glossy Flare) */}
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-white/40 rounded-full blur-[60px] -mr-20 -mt-20 pointer-events-none"></div>
+                                {/* เอฟเฟกต์แสงสะท้อนด้านล่างซ้าย */}
+                                <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#FFD700]/30 rounded-full blur-[70px] -ml-20 -mb-20 pointer-events-none"></div>
+
+                                {/* ลวดลายเส้นกรอบทองคำแบบบางๆ เพิ่มความหรูหรา (Filigree/Accent lines) */}
+                                <div className="absolute top-6 right-6 w-24 h-24 border-t border-r border-white/30 rounded-tr-[1rem] pointer-events-none"></div>
+                                <div className="absolute bottom-6 left-6 w-24 h-24 border-b border-l border-white/30 rounded-bl-[1rem] pointer-events-none"></div>
+
+                                <h4 className="text-2xl md:text-3xl font-black mb-8 flex items-center gap-4 tracking-tight relative z-10 text-zinc-950">
+                                    {/* กล่องไอคอนสีขาว ขับให้กากบาทสีแดงเด่นขึ้น */}
+                                    <div className="w-12 h-12 rounded-2xl bg-white/90 backdrop-blur-sm flex items-center justify-center text-red-600 shrink-0 shadow-xl shadow-black/10 border border-white">
+                                        <i className="bx bx-x text-3xl"></i>
                                     </div>
                                     {d.exclusion_heading || "เงื่อนไขที่อยู่นอกเหนือการรับประกัน"}
                                 </h4>
+
                                 <ul className="space-y-5 relative z-10">
                                     {exclusions.map((text, idx) => (
-                                        <li key={idx} className="flex gap-4 text-zinc-400 text-[15px] font-medium leading-relaxed">
-                                            <i className="bx bxs-circle text-[#DAA520] mt-1.5 shrink-0 text-[8px] opacity-60"></i>
+                                        <li key={idx} className="flex gap-4 text-zinc-900 text-[15px] md:text-base font-bold leading-relaxed">
+                                            {/* จุด List เปลี่ยนเป็นสีขาวเรืองแสง */}
+                                            <i className="bx bxs-circle text-white mt-1.5 shrink-0 text-[10px] drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]"></i>
                                             {text}
                                         </li>
                                     ))}
                                 </ul>
-                                <div className="mt-10 pt-6 border-t border-white/10 text-[13px] text-zinc-500 font-medium">
+
+                                <div className="mt-10 pt-6 border-t border-zinc-900/10 text-[13px] md:text-sm text-zinc-800 font-bold relative z-10">
                                     * เงื่อนไขเป็นไปตามที่บริษัทกำหนด และอาจเปลี่ยนแปลงได้โดยไม่ต้องแจ้งให้ทราบล่วงหน้า
                                 </div>
                             </div>

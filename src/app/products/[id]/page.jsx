@@ -3,10 +3,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import Link from "next/link"; // ✅ เพิ่ม Link
+import Link from "next/link";
 import Navbar from "../../componect/Navbar";
 import FooterContact from "../../componect/Footer";
 import ScrollToTop from "../../componect/ScrollToTop";
+import FloatingPotatoCorner from "../../componect/FloatingPotato";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 
@@ -64,11 +65,25 @@ export default function ProductDetailPage() {
         </div>
     );
 
-    const specs = Array.isArray(product.specifications) ? product.specifications : [];
+    // ✅ แก้ไขปัญหาข้อมูลสเปกหาย โดยการเช็คและแปลง JSON String เป็น Array ให้ถูกต้อง
+    let specs = [];
+    if (product && product.specifications) {
+        if (Array.isArray(product.specifications)) {
+            specs = product.specifications;
+        } else if (typeof product.specifications === 'string') {
+            try {
+                specs = JSON.parse(product.specifications);
+            } catch (e) {
+                console.error("Failed to parse specifications", e);
+                specs = [];
+            }
+        }
+    }
 
     return (
-        <div className="min-h-screen bg-white text-zinc-900 selection:bg-[#DAA520]/30">
+        <div className="min-h-screen bg-white text-zinc-900 font-(family-name:--font-ibm-plex-thai) selection:bg-[#DAA520]/30">
             <Navbar />
+            <FloatingPotatoCorner />
             <ScrollToTop />
             <main className="max-w-7xl mx-auto px-6 lg:px-12 pt-32 lg:pt-48 pb-24">
 
@@ -151,7 +166,7 @@ export default function ProductDetailPage() {
                     </div>
                 </div>
                 {relatedProducts.length > 0 && (
-                    <section className="pt-10 border-t border-zinc-100">
+                    <section className="pt-10 border-t border-zinc-100 mt-20">
                         <div className="flex items-end justify-between mb-12">
                             <div>
                                 <span className="text-[10px] font-black text-[#DAA520] tracking-[0.4em] uppercase mb-2 block">Related Items</span>

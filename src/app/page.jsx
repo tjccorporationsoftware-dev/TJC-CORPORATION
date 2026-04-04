@@ -18,7 +18,7 @@ import QuotationBuilder from "./componect/QuotationBuilder";
 import WelcomeLoader from "./componect/WelcomeLoader";
 import ScrollToTop from "./componect/ScrollToTop";
 import WarrantyPolicySection from "./componect/WarrantyPolicySection";
-
+import FloatingPotatoCorner from "./componect/FloatingPotato";
 
 
 
@@ -36,6 +36,7 @@ export default function CompanyLandingPage() {
         <NewsSection />
         <CustomersCarousel />
         <Footer />
+        <FloatingPotatoCorner />
     </div>
   );
 }

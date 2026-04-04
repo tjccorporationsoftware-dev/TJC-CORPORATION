@@ -377,7 +377,9 @@ export default function AdminProductsPage() {
 
         try {
             setSavingItem(true);
-            const cleanSpecs = (form.specifications || []).filter(s => s.label.trim() || s.value.trim());
+            // ✅ เปลี่ยนการเช็คให้ปลอดภัยขึ้น ป้องกันไม่ให้ error (.map/.filter is not a function)
+            const safeSpecs = Array.isArray(form.specifications) ? form.specifications : [];
+            const cleanSpecs = safeSpecs.filter(s => s.label.trim() || s.value.trim());
 
             // ดึง id ออกมาแยกไว้ ป้องกัน Backend นำไปอัปเดตทับ Primary Key
             const { id, ...restForm } = form;
@@ -385,7 +387,7 @@ export default function AdminProductsPage() {
             const payload = {
                 ...restForm,
                 name: form.name.trim(),
-                // ✅ แก้ไขตรงนี้: บังคับแปลง Array ให้เป็น JSON String ก่อนส่ง!
+                // ✅ บังคับแปลง Array ให้เป็น JSON String ก่อนส่ง
                 specifications: JSON.stringify(cleanSpecs)
             };
 
@@ -517,7 +519,7 @@ export default function AdminProductsPage() {
                                 <div className="flex flex-wrap gap-1.5 mb-4">
                                     <span className="text-[10px] text-slate-400 self-center mr-1">เพิ่มด่วน:</span>
                                     {commonSpecs.map((s) => (
-                                        <button key={s} type="button" onClick={() => setForm(p => ({ ...p, specifications: [...p.specifications, { label: s, value: "" }] }))} className="text-[10px] bg-slate-50 border border-slate-200 text-slate-600 px-2 py-1 rounded hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors">
+                                        <button key={s} type="button" onClick={() => setForm(p => ({ ...p, specifications: Array.isArray(p.specifications) ? [...p.specifications, { label: s, value: "" }] : [{ label: s, value: "" }] }))} className="text-[10px] bg-slate-50 border border-slate-200 text-slate-600 px-2 py-1 rounded hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition-colors">
                                             + {s}
                                         </button>
                                     ))}
@@ -525,16 +527,17 @@ export default function AdminProductsPage() {
                             </div>
 
                             <div className="space-y-2">
-                                {(form.specifications || []).map((spec, i) => (
+                                {/* ✅ เช็ค Array เสมอก่อน map เพื่อป้องกัน Error */}
+                                {Array.isArray(form.specifications) && form.specifications.map((spec, i) => (
                                     <div key={i} className="flex gap-2 items-center animate-in fade-in slide-in-from-left-2 duration-200">
                                         <div className="w-1/3"><input type="text" placeholder="หัวข้อ" value={spec.label} onChange={(e) => updateSpec(i, 'label', e.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 bg-slate-50 focus:bg-white transition-colors" /></div>
                                         <div className="flex-1"><input type="text" placeholder="รายละเอียด" value={spec.value} onChange={(e) => updateSpec(i, 'value', e.target.value)} className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 bg-slate-50 focus:bg-white transition-colors" /></div>
                                         <button type="button" onClick={() => setForm(p => ({ ...p, specifications: p.specifications.filter((_, idx) => idx !== i) }))} className="p-2 text-slate-400 hover:text-red-500 bg-slate-50 hover:bg-red-50 rounded-lg"><svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg></button>
                                     </div>
                                 ))}
-                                {(form.specifications || []).length === 0 && <div className="text-center py-4 text-xs text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-200">ยังไม่มีสเปกสินค้า</div>}
+                                {(!Array.isArray(form.specifications) || form.specifications.length === 0) && <div className="text-center py-4 text-xs text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-200">ยังไม่มีสเปกสินค้า</div>}
                             </div>
-                            <button type="button" onClick={() => setForm(p => ({ ...p, specifications: [...p.specifications, { label: "", value: "" }] }))} className="w-full py-2 rounded-lg border border-slate-200 text-slate-500 text-xs font-bold hover:bg-slate-50 hover:text-indigo-600 transition-all flex items-center justify-center gap-1 mt-2">
+                            <button type="button" onClick={() => setForm(p => ({ ...p, specifications: Array.isArray(p.specifications) ? [...p.specifications, { label: "", value: "" }] : [{ label: "", value: "" }] }))} className="w-full py-2 rounded-lg border border-slate-200 text-slate-500 text-xs font-bold hover:bg-slate-50 hover:text-indigo-600 transition-all flex items-center justify-center gap-1 mt-2">
                                 + เพิ่มรายการเอง (ว่าง)
                             </button>
                         </div>
@@ -612,7 +615,16 @@ export default function AdminProductsPage() {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                             {filteredItems.map(row => (
-                                <ProductCard key={row.id} row={row} onUp={() => moveItem(row.id, -1)} onDown={() => moveItem(row.id, 1)} onEdit={() => { setForm({ ...row, specifications: row.specifications || [] }); setEditorOpen(true); }} onDelete={() => setConfirm({ open: true, id: row.id })} />
+                              
+                                <ProductCard key={row.id} row={row} onUp={() => moveItem(row.id, -1)} onDown={() => moveItem(row.id, 1)} onEdit={() => { 
+                                    let parsedSpecs = [];
+                                    if (Array.isArray(row.specifications)) parsedSpecs = row.specifications;
+                                    else if (typeof row.specifications === 'string') {
+                                        try { parsedSpecs = JSON.parse(row.specifications || '[]'); } catch(e) {}
+                                    }
+                                    setForm({ ...row, specifications: parsedSpecs }); 
+                                    setEditorOpen(true); 
+                                }} onDelete={() => setConfirm({ open: true, id: row.id })} />
                             ))}
                         </div>
                     )}
